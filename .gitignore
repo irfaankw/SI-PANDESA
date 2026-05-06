@@ -1,0 +1,32 @@
+# Python / Django
+__pycache__/
+*.pyc
+db.sqlite3
+
+# Env (WAJIB)
+.env
+*.env
+
+# Virtual Environment
+env/
+venv/
+ENV/
+
+# Static & Media
+media/
+staticfiles/
+
+# Node (kalau pakai Tailwind / frontend tools)
+node_modules/
+.npm
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
