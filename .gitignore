@@ -15,6 +15,7 @@ ENV/
 # Static & Media
 media/
 staticfiles/
+static/tailwindcss.exe
 
 # Node (kalau pakai Tailwind / frontend tools)
 node_modules/

@@ -1,9 +1,8 @@
 asgiref==3.11.1
 Django==6.0.4
-django-tailwind==4.4.2
-pillow==12.2.0
+pillow==12.2.0s
 psycopg2-binary==2.9.12
-pytailwindcss==0.3.0
 python-dotenv==1.2.2
 sqlparse==0.5.5
 tzdata==2026.2
+whitenoise ("next")
