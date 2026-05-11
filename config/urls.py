@@ -4,11 +4,19 @@ from django.conf import settings
 from django.conf.urls.static import static 
 
 urlpatterns = [
+    # Admin
     path("admin/", admin.site.urls),
+
+    # Auth & Account
+    path('auth/', include('account.urls', namespace='account')),
+
+    # Features
+    path('market/', include('market.urls', namespace='market')),
+    path('news/', include('news.urls', namespace='news')),
+    path('service/', include('service.urls', namespace='service')),
+
+    # Core
     path('', include('core.urls', namespace='core')),
-    path('belanja/', include('market.urls', namespace='market')),
-    path('berita-pengumuman/', include('news.urls', namespace='news')),
-    path('layanan/', include('service.urls', namespace='service')),
 ]
 
 if settings.DEBUG:

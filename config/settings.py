@@ -35,6 +35,8 @@ INSTALLED_APPS = [
     "market.apps.MarketConfig",
     "news.apps.NewsConfig",
     "service.apps.ServiceConfig",
+    "account.apps.AccountConfig",
+    "storages",
 ]
 
 MIDDLEWARE = [
@@ -67,6 +69,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://rd3d9x6s-800s0.asse.devtunnels.ms',
+]
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -123,8 +128,35 @@ STATICFILES_DIRS = [
 ]
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+# Supabase Storage (S3-compatible)
+AWS_ACCESS_KEY_ID        = os.getenv("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY    = os.getenv("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME  = os.getenv("AWS_STORAGE_BUCKET_NAME", "media")
+AWS_S3_ENDPOINT_URL      = os.getenv("AWS_S3_ENDPOINT_URL")
+AWS_S3_REGION_NAME       = os.getenv("AWS_S3_REGION_NAME", "ap-southeast-1")
+SUPABASE_PROJECT_REF     = os.getenv("SUPABASE_PROJECT_REF")
+
+AWS_S3_FILE_OVERWRITE    = False
+AWS_S3_SIGNATURE_VERSION = "s3v4"
+AWS_DEFAULT_ACL          = None       # ← WAJIB: hapus ACL header (Supabase tidak support)
+AWS_QUERYSTRING_AUTH     = False      # ← WAJIB: matikan presigned URL
+
+AWS_S3_CUSTOM_DOMAIN = (
+    f"{SUPABASE_PROJECT_REF}.supabase.co"
+    f"/storage/v1/object/public/{AWS_STORAGE_BUCKET_NAME}"
+)
+
+# Semua file media dikelola django-storages
+STORAGES = {
+    "default": {
+        "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+    },
+    "staticfiles": {
+        "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+    },
+}
+
+MEDIA_URL            = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

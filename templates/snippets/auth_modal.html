@@ -1,0 +1,315 @@
+{% load static %}
+
+{# ══════════════════════════════════════════════════════════════ #}
+{#  AUTH MODAL — Login & Register                                #}
+{#  Error ditampilkan INLINE di bawah field masing-masing,       #}
+{#  bukan sebagai blok global yang muncul di kedua tab.          #}
+{# ══════════════════════════════════════════════════════════════ #}
+
+{# ── Kumpulkan pesan error ke variabel per-field di Python ───── #}
+{% with login_errors='' register_errors='' %}
+
+{# Pisahkan messages berdasarkan prefix tab:field:pesan #}
+{% for message in messages %}{% endfor %}
+
+<div x-data="authModal()"
+     x-show="$store.auth.open"
+     x-cloak
+     @keydown.escape.window="$store.auth.close()"
+     class="fixed inset-0 z-[100] flex items-center justify-center p-4">
+
+    <!-- Overlay -->
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"
+         @click="$store.auth.close()"></div>
+
+    <!-- Card -->
+    <div class="relative z-10 w-full max-w-sm rounded-2xl bg-white shadow-2xl flex flex-col max-h-[90vh]"
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 scale-95"
+         x-transition:enter-end="opacity-100 scale-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100 scale-100"
+         x-transition:leave-end="opacity-0 scale-95">
+
+        <!-- Header -->
+        <div class="flex items-center gap-3 rounded-t-2xl bg-emerald-600 px-5 py-4 shrink-0">
+            <img src="{% static 'assets/global/Logo-Desa-Sungai-Meriam.png' %}"
+                 alt="Logo" class="h-10 w-10 rounded-lg object-contain bg-white p-1">
+            <div>
+                <p class="text-xs text-emerald-100">Selamat datang di</p>
+                <p class="text-base font-bold text-white">SI-PANDESA</p>
+            </div>
+            <button @click="$store.auth.close()"
+                    class="ml-auto flex h-7 w-7 items-center justify-center rounded-full text-emerald-100 hover:bg-emerald-700 hover:text-white transition-colors duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-4 w-4">
+                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                </svg>
+            </button>
+        </div>
+
+        <!-- Scroll wrapper -->
+        <div class="overflow-y-auto flex-1">
+
+            <!-- Tab Switcher -->
+            <div class="flex gap-1 p-2 bg-slate-50 border-b border-slate-100 shrink-0">
+                <button @click="$store.auth.switchTab('login')"
+                        :class="$store.auth.tab === 'login' ? 'bg-white text-emerald-700 shadow-sm font-semibold' : 'text-slate-500 hover:text-slate-700'"
+                        class="flex-1 rounded-xl py-2 text-sm transition-all duration-200">
+                    Masuk
+                </button>
+                <button @click="$store.auth.switchTab('register')"
+                        :class="$store.auth.tab === 'register' ? 'bg-white text-emerald-700 shadow-sm font-semibold' : 'text-slate-500 hover:text-slate-700'"
+                        class="flex-1 rounded-xl py-2 text-sm transition-all duration-200">
+                    Daftar
+                </button>
+            </div>
+
+            {# ════════════════════════════════════════════ #}
+            {# ── FORM MASUK ────────────────────────────── #}
+            {# ════════════════════════════════════════════ #}
+            <div x-show="$store.auth.tab === 'login'" class="p-5 flex flex-col gap-4">
+
+                <form method="POST" action="{% url 'account:login' %}" class="flex flex-col gap-4" novalidate>
+                    {% csrf_token %}
+                    <input type="hidden" name="next" value="{{ request.path }}">
+
+                    <!-- Email -->
+                    <div>
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">Email</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                    <polyline points="22,6 12,13 2,6"/>
+                                </svg>
+                            </span>
+                            <input type="email" name="email"
+                                   placeholder="email@contoh.com"
+                                   :class="errors.login?.email ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-emerald-400'"
+                                   class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200">
+                        </div>
+                        <template x-if="errors.login?.email">
+                            <p class="mt-1 text-xs text-red-500" x-text="errors.login.email"></p>
+                        </template>
+                    </div>
+
+                    <!-- Password -->
+                    <div x-data="{ showPass: false }">
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">Password</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                            </span>
+                            <input :type="showPass ? 'text' : 'password'" name="password"
+                                   placeholder="Masukkan password"
+                                   :class="errors.login?.password ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-emerald-400'"
+                                   class="w-full pl-9 pr-10 py-2.5 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200">
+                            <button type="button" @click="showPass = !showPass"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                <svg x-show="!showPass" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg x-show="showPass" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <template x-if="errors.login?.password">
+                            <p class="mt-1 text-xs text-red-500" x-text="errors.login.password"></p>
+                        </template>
+                        <template x-if="errors.login?.__all__">
+                            <p class="mt-1 text-xs text-red-500" x-text="errors.login.__all__"></p>
+                        </template>
+                        <div class="mt-1.5 text-right">
+                            <a href="#" class="text-xs text-emerald-600 hover:text-emerald-700 hover:underline">Lupa password?</a>
+                        </div>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 py-2.5 text-sm font-semibold text-white shadow-sm shadow-emerald-400/30 transition-all duration-200 hover:-translate-y-px hover:shadow-md">
+                        Masuk
+                    </button>
+                </form>
+
+                <p class="text-center text-xs text-slate-500">
+                    Belum punya akun?
+                    <button @click="$store.auth.switchTab('register')"
+                            class="font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
+                        Daftar sekarang
+                    </button>
+                </p>
+
+            </div>{# /FORM MASUK #}
+
+            {# ════════════════════════════════════════════ #}
+            {# ── FORM DAFTAR ───────────────────────────── #}
+            {# ════════════════════════════════════════════ #}
+            <div x-show="$store.auth.tab === 'register'" class="p-5 flex flex-col gap-4">
+
+                <form method="POST" action="{% url 'account:register' %}" class="flex flex-col gap-3" novalidate>
+                    {% csrf_token %}
+
+                    <!-- Nama Lengkap -->
+                    <div>
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">Nama Lengkap</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                                </svg>
+                            </span>
+                            <input type="text" name="nama_lengkap" placeholder="Nama sesuai KTP"
+                                   :class="errors.register?.nama_lengkap ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-emerald-400'"
+                                   class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200">
+                        </div>
+                        <template x-if="errors.register?.nama_lengkap">
+                            <p class="mt-1 text-xs text-red-500" x-text="errors.register.nama_lengkap"></p>
+                        </template>
+                    </div>
+
+                    <!-- Email -->
+                    <div>
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">Email</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                    <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                    <polyline points="22,6 12,13 2,6"/>
+                                </svg>
+                            </span>
+                            <input type="email" name="email" placeholder="email@contoh.com"
+                                   :class="errors.register?.email ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-emerald-400'"
+                                   class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200">
+                        </div>
+                        <template x-if="errors.register?.email">
+                            <p class="mt-1 text-xs text-red-500" x-text="errors.register.email"></p>
+                        </template>
+                    </div>
+
+                    <!-- No. HP -->
+                    <div>
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">No. HP / WhatsApp</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                    <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/>
+                                </svg>
+                            </span>
+                            <input type="tel" name="no_hp" placeholder="08xxxxxxxxxx"
+                                   :class="errors.register?.no_hp ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-emerald-400'"
+                                   class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200">
+                        </div>
+                        <template x-if="errors.register?.no_hp">
+                            <p class="mt-1 text-xs text-red-500" x-text="errors.register.no_hp"></p>
+                        </template>
+                    </div>
+
+                    <!-- Password -->
+                    <div x-data="{ showPass: false }">
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-600">Password</label>
+                        <div class="relative">
+                            <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                </svg>
+                            </span>
+                            <input :type="showPass ? 'text' : 'password'" name="password"
+                                   placeholder="Min. 8 karakter"
+                                   :class="errors.register?.password ? 'border-red-400 focus:ring-red-400' : 'border-slate-200 focus:ring-emerald-400'"
+                                   class="w-full pl-9 pr-10 py-2.5 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:border-transparent transition-all duration-200">
+                            <button type="button" @click="showPass = !showPass"
+                                    class="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600">
+                                <svg x-show="!showPass" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+                                </svg>
+                                <svg x-show="showPass" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                    <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/>
+                                    <line x1="1" y1="1" x2="23" y2="23"/>
+                                </svg>
+                            </button>
+                        </div>
+                        <template x-if="errors.register?.password">
+                            <p class="mt-1 text-xs text-red-500" x-text="errors.register.password"></p>
+                        </template>
+                    </div>
+
+                    <button type="submit"
+                            class="w-full rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 py-2.5 text-sm font-semibold text-white shadow-sm shadow-emerald-400/30 transition-all duration-200 hover:-translate-y-px hover:shadow-md">
+                        Daftar Sekarang
+                    </button>
+                </form>
+
+                <p class="text-center text-xs text-slate-500">
+                    Sudah punya akun?
+                    <button @click="$store.auth.switchTab('login')"
+                            class="font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
+                        Masuk
+                    </button>
+                </p>
+
+            </div>{# /FORM DAFTAR #}
+
+        </div>{# /scroll wrapper #}
+    </div>{# /card #}
+</div>{# /modal #}
+
+{% endwith %}
+
+{# ── Inject errors dari Django messages ke Alpine ─────────────── #}
+{# Format pesan: "tab:field:pesan" — diparse oleh JS di bawah     #}
+<script>
+(function () {
+    // Kumpulkan semua error messages dari Django
+    const raw = [
+        {% for message in messages %}
+            {% if message.tags == 'error' %}"{{ message|escapejs }}",{% endif %}
+        {% endfor %}
+    ];
+
+    // Parse ke struktur { login: {field: msg}, register: {field: msg} }
+    const errors = { login: {}, register: {} };
+    raw.forEach(msg => {
+        const parts = msg.split(':');
+        if (parts.length >= 3) {
+            const [tab, field, ...rest] = parts;
+            if (tab === 'login' || tab === 'register') {
+                errors[tab][field] = rest.join(':');
+            }
+        }
+    });
+
+    // Tunggu Alpine siap lalu inject errors + buka tab yang tepat
+    document.addEventListener('alpine:init', () => {
+        Alpine.data('authModal', () => ({
+            errors: errors,
+            init() {
+                // Buka modal otomatis kalau ada error
+                const hasLogin    = Object.keys(errors.login).length > 0;
+                const hasRegister = Object.keys(errors.register).length > 0;
+                if (hasLogin) {
+                    Alpine.store('auth').tab  = 'login';
+                    Alpine.store('auth').open = true;
+                } else if (hasRegister) {
+                    Alpine.store('auth').tab  = 'register';
+                    Alpine.store('auth').open = true;
+                }
+            }
+        }));
+    });
+})();
+</script>
+
+{# Sinyal dari URL query: ?auth_modal=login atau ?auth_modal=register #}
+{% if request.GET.auth_modal %}
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.store('auth').tab  = '{{ request.GET.auth_modal|escapejs }}';
+    Alpine.store('auth').open = true;
+});
+</script>
+{% endif %}

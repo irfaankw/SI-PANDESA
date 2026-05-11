@@ -1,6 +1,6 @@
 from django.shortcuts import render
 
-def index(request):
+def home(request):
     template = 'core/index.html'
     context = {
         'title' : 'Website Resmi Desa Sungai Meriam'

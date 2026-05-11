@@ -1,0 +1,636 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<div class="min-h-screen bg-slate-50">
+
+    {# ── Breadcrumb ───────────────────────────────────────────── #}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <nav class="flex items-center gap-1.5 text-xs text-slate-400">
+            <a href="{% url 'core:index' %}" class="hover:text-emerald-600 transition-colors">Beranda</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
+                <polyline points="9 18 15 12 9 6"/>
+            </svg>
+            <span class="text-slate-600 font-medium">Profil Pengguna</span>
+        </nav>
+    </div>
+
+    {# ── Alert: profil belum lengkap ──────────────────────────── #}
+    {% if profile_incomplete %}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
+        <div class="flex items-start gap-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-700">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 mt-0.5">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span>
+                <strong>Lengkapi data diri Anda</strong> (NIK, Alamat, RT/RW) untuk dapat menggunakan layanan surat digital.
+            </span>
+        </div>
+    </div>
+    {% endif %}
+
+    {# ── Alert: catatan admin ─────────────────────────────────── #}
+    {% if profile.catatan_admin %}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
+        <div class="flex items-start gap-3 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 mt-0.5">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <div>
+                <strong class="block mb-0.5">Catatan dari Admin:</strong>
+                {{ profile.catatan_admin }}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    {# ── Layout utama ─────────────────────────────────────────── #}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div class="flex flex-col lg:flex-row gap-6 items-start">
+
+            {# ══════════════════════════════════════════ #}
+            {# SIDEBAR KIRI                               #}
+            {# ══════════════════════════════════════════ #}
+            <aside class="w-full lg:w-64 shrink-0 flex flex-col gap-4">
+
+                {# ── Card Avatar                                              #}
+                {# FIX: gradient gelap agar tidak "blok hijau ngejreng"       #}
+                {# Menggunakan inline style karena Tailwind tidak support      #}
+                {# arbitrary gradient di semua konfigurasi                    #}
+                <div class="rounded-2xl p-5 flex flex-col items-center gap-3 text-center shadow-sm"
+                     style="background: linear-gradient(160deg, #064e3b 0%, #065f46 50%, #047857 100%);">
+
+                    {# Avatar + tombol ganti #}
+                    <div class="relative group">
+                        <div class="h-20 w-20 rounded-full overflow-hidden flex items-center justify-center"
+                             style="background: rgba(255,255,255,0.15);
+                                    box-shadow: 0 0 0 3px rgba(255,255,255,0.25), 0 0 0 6px rgba(255,255,255,0.08);">
+                            {% if profile.avatar %}
+                                <img src="{{ profile.avatar.url }}"
+                                     alt="Foto {{ user.first_name }}"
+                                     class="h-full w-full object-cover">
+                            {% else %}
+                                {# Inisial nama, bukan tulisan "Avatar" #}
+                                <span class="text-2xl font-bold text-white select-none">
+                                    {{ profile.initials }}
+                                </span>
+                            {% endif %}
+                        </div>
+
+                        {# Overlay ganti foto — muncul saat hover #}
+                        <label for="avatarInput"
+                               class="absolute inset-0 rounded-full flex flex-col items-center justify-center
+                                      opacity-0 group-hover:opacity-100 cursor-pointer transition-opacity duration-200"
+                               style="background: rgba(0,0,0,0.45);">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" class="h-5 w-5">
+                                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                                <circle cx="12" cy="13" r="4"/>
+                            </svg>
+                            <span class="text-white text-[10px] font-semibold mt-0.5">Ganti</span>
+                        </label>
+
+                        {# Form upload avatar tersembunyi #}
+                        <form id="avatarForm" method="POST" action="{% url 'account:profile' %}"
+                              enctype="multipart/form-data" class="hidden">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="avatar">
+                            <input type="file" id="avatarInput" name="avatar"
+                                   accept="image/jpeg,image/png,image/webp"
+                                   class="hidden"
+                                   onchange="document.getElementById('avatarForm').submit()">
+                        </form>
+                    </div>
+
+                    <div>
+                        <p class="text-base font-bold text-white">
+                            {{ user.get_full_name|default:user.username }}
+                        </p>
+                        <p class="text-xs mt-0.5 mb-2" style="color: rgba(255,255,255,0.65);">
+                            {{ user.email }}
+                        </p>
+
+                        {# Badge Status Verifikasi — 2 warna saja (pending/verified) #}
+                        {% if profile.status_verifikasi == 'verified' %}
+                        <div class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+                             style="background: rgba(209,250,229,0.9); color: #065f46;">
+                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>
+                            Verified
+                        </div>
+                        {% else %}
+                        <div class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+                             style="background: rgba(254,226,226,0.9); color: #991b1b;">
+                            <span class="h-1.5 w-1.5 rounded-full bg-red-400"></span>
+                            Pending
+                        </div>
+                        {% endif %}
+                    </div>
+
+                    {# Info singkat #}
+                    {% if profile.nik or profile.no_hp or profile.rt %}
+                    <div class="w-full flex flex-col gap-1.5 pt-3 text-left"
+                         style="border-top: 1px solid rgba(255,255,255,0.15);">
+                        {% if profile.nik %}
+                        <div class="flex items-center gap-2 text-xs" style="color: rgba(255,255,255,0.75);">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 shrink-0">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15s.5-4 5-4 5 4 5 4"/><circle cx="12" cy="8" r="2"/>
+                            </svg>
+                            NIK: {{ profile.nik }}
+                        </div>
+                        {% endif %}
+                        {% if profile.no_hp %}
+                        <div class="flex items-center gap-2 text-xs" style="color: rgba(255,255,255,0.75);">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 shrink-0">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/>
+                            </svg>
+                            {{ profile.no_hp }}
+                        </div>
+                        {% endif %}
+                        {% if profile.rt and profile.rw %}
+                        <div class="flex items-center gap-2 text-xs" style="color: rgba(255,255,255,0.75);">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 shrink-0">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            RT {{ profile.rt }}/RW {{ profile.rw }}{% if profile.dusun %}, {{ profile.dusun }}{% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                {# ── Menu Sidebar ────────────────────── #}
+                <div class="rounded-2xl bg-white border border-slate-100 p-2 flex flex-col gap-0.5">
+                    <a href="{% url 'account:profile' %}"
+                       class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium
+                              bg-emerald-50 text-emerald-700 transition-colors duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Biodata
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 ml-auto">
+                            <polyline points="9 18 15 12 9 6"/>
+                        </svg>
+                    </a>
+                    <a href="{% url 'service:service_list' %}"
+                       class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium
+                              text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        Arsip Surat
+                    </a>
+                    <a href="#"
+                       class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium
+                              text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                        Riwayat Berobat
+                    </a>
+                    <div class="my-1 border-t border-slate-100"></div>
+                    <form method="POST" action="{% url 'account:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium
+                                       text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors duration-150">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            Keluar
+                        </button>
+                    </form>
+                </div>
+
+                {# ── Ringkasan ───────────────────────── #}
+                <div class="rounded-2xl bg-white border border-slate-100 p-4">
+                    <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">Ringkasan</p>
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="flex items-center gap-2 text-slate-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                Total Surat
+                            </span>
+                            <span class="font-bold text-slate-800">0</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="flex items-center gap-2 text-slate-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                Riwayat Berobat
+                            </span>
+                            <span class="font-bold text-slate-800">0</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="flex items-center gap-2 text-slate-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
+                                    <polyline points="9 11 12 14 22 4"/>
+                                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                                </svg>
+                                Surat Selesai
+                            </span>
+                            <span class="font-bold text-emerald-600">0</span>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
+            {# /SIDEBAR KIRI #}
+
+            {# ══════════════════════════════════════════ #}
+            {# KONTEN UTAMA — FORM BIODATA                #}
+            {# ══════════════════════════════════════════ #}
+            <main class="flex-1 min-w-0"
+                  x-data="profileForm()"
+                  x-init="init()">
+
+                <div class="rounded-2xl bg-white border border-slate-100 p-6">
+
+                    {# Header form #}
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-lg font-bold text-slate-800">Data Pribadi</h2>
+                            <p class="text-xs text-slate-400 mt-0.5">Informasi kependudukan Anda</p>
+                        </div>
+                        <template x-if="!editing">
+                            <button @click="editing = true"
+                                    class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700
+                                           px-4 py-2 text-sm font-semibold text-white transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
+                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                </svg>
+                                Edit Profil
+                            </button>
+                        </template>
+                        <template x-if="editing">
+                            <button @click="editing = false"
+                                    class="inline-flex items-center gap-2 rounded-xl border border-slate-200
+                                           bg-white hover:bg-slate-50 px-4 py-2 text-sm font-semibold
+                                           text-slate-600 transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
+                                    <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                                </svg>
+                                Batal
+                            </button>
+                        </template>
+                    </div>
+
+                    <form method="POST" action="{% url 'account:profile' %}"
+                          enctype="multipart/form-data"
+                          id="profileForm" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="biodata">
+
+                        {# Baris 1: NIK + Tanggal Lahir #}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-500">NIK</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                            <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15s.5-4 5-4 5 4 5 4"/><circle cx="12" cy="8" r="2"/>
+                                        </svg>
+                                    </span>
+                                    <input type="text" name="nik" maxlength="16"
+                                           value="{{ profile.nik|default:'' }}"
+                                           placeholder="16 digit NIK"
+                                           {% if is_verified %}readonly{% endif %}
+                                           :disabled="!editing"
+                                           :class="{ 'bg-slate-50 text-slate-400': !editing, 'bg-white text-slate-800': editing,
+                                                     'border-red-400': fieldErrors.nik, 'border-slate-200': !fieldErrors.nik }"
+                                           class="w-full pl-9 pr-9 py-2.5 text-sm rounded-xl border focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-200">
+                                    {% if is_verified %}
+                                    <span class="absolute right-3 top-1/2 -translate-y-1/2">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" class="h-4 w-4">
+                                            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+                                        </svg>
+                                    </span>
+                                    {% endif %}
+                                </div>
+                                <template x-if="fieldErrors.nik">
+                                    <p class="mt-1 text-xs text-red-500" x-text="fieldErrors.nik"></p>
+                                </template>
+                            </div>
+
+                            <div>
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-500">Tanggal Lahir</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+                                            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/>
+                                            <line x1="3" y1="10" x2="21" y2="10"/>
+                                        </svg>
+                                    </span>
+                                    <input type="date" name="tanggal_lahir"
+                                           value="{{ profile.tanggal_lahir|date:'Y-m-d'|default:'' }}"
+                                           {% if is_verified %}readonly{% endif %}
+                                           :disabled="!editing"
+                                           :class="{ 'bg-slate-50 text-slate-400': !editing, 'bg-white text-slate-800': editing }"
+                                           class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-200">
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Baris 2: Jenis Kelamin + Email #}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-500">Jenis Kelamin</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                                        </svg>
+                                    </span>
+                                    <select name="jenis_kelamin"
+                                            {% if is_verified %}disabled{% endif %}
+                                            :disabled="!editing {% if is_verified %}|| true{% endif %}"
+                                            :class="{ 'bg-slate-50 text-slate-400': !editing, 'bg-white text-slate-800': editing }"
+                                            class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-200 appearance-none">
+                                        <option value="">-- Pilih --</option>
+                                        <option value="L" {% if profile.jenis_kelamin == 'L' %}selected{% endif %}>Laki-laki</option>
+                                        <option value="P" {% if profile.jenis_kelamin == 'P' %}selected{% endif %}>Perempuan</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-500">Email</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+                                            <polyline points="22,6 12,13 2,6"/>
+                                        </svg>
+                                    </span>
+                                    <input type="email" value="{{ user.email }}" readonly disabled
+                                           class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed">
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Baris 3: Nama Lengkap + No. HP #}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-500">Nama Lengkap</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                                        </svg>
+                                    </span>
+                                    <input type="text" name="nama_lengkap"
+                                           value="{{ user.get_full_name }}"
+                                           placeholder="Nama Lengkap"
+                                           :disabled="!editing"
+                                           :class="{ 'bg-slate-50 text-slate-400': !editing, 'bg-white text-slate-800': editing }"
+                                           class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-200">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-500">No. Telepon / WA</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/>
+                                        </svg>
+                                    </span>
+                                    <input type="tel" name="no_hp"
+                                           value="{{ profile.no_hp|default:'' }}"
+                                           placeholder="08xxxxxxxxxx"
+                                           :disabled="!editing"
+                                           :class="{ 'bg-slate-50 text-slate-400': !editing, 'bg-white text-slate-800': editing }"
+                                           class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-200">
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Baris 4: Alamat #}
+                        <div class="mb-4">
+                            <label class="mb-1.5 block text-xs font-semibold text-slate-500">Alamat</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                        <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                                    </svg>
+                                </span>
+                                <input type="text" name="alamat"
+                                       value="{{ profile.alamat|default:'' }}"
+                                       placeholder="Nama jalan dan nomor"
+                                       :disabled="!editing"
+                                       :class="{ 'bg-slate-50 text-slate-400': !editing, 'bg-white text-slate-800': editing }"
+                                       class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-200">
+                            </div>
+                        </div>
+
+                        {# Baris 5: RT + RW + Dusun #}
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-4">
+                            <div>
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-500">RT</label>
+                                <input type="text" name="rt" maxlength="3"
+                                       value="{{ profile.rt|default:'' }}"
+                                       placeholder="001"
+                                       :disabled="!editing"
+                                       :class="{ 'bg-slate-50 text-slate-400': !editing, 'bg-white text-slate-800': editing }"
+                                       class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-200">
+                            </div>
+                            <div>
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-500">RW</label>
+                                <input type="text" name="rw" maxlength="3"
+                                       value="{{ profile.rw|default:'' }}"
+                                       placeholder="003"
+                                       :disabled="!editing"
+                                       :class="{ 'bg-slate-50 text-slate-400': !editing, 'bg-white text-slate-800': editing }"
+                                       class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-200">
+                            </div>
+                            <div class="col-span-2 sm:col-span-1">
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-500">Dusun</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                                        </svg>
+                                    </span>
+                                    <input type="text" name="dusun"
+                                           value="{{ profile.dusun|default:'' }}"
+                                           placeholder="Nama dusun"
+                                           :disabled="!editing"
+                                           :class="{ 'bg-slate-50 text-slate-400': !editing, 'bg-white text-slate-800': editing }"
+                                           class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-200">
+                                </div>
+                            </div>
+                        </div>
+
+                        {# Baris 6: Pekerjaan + Agama #}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div>
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-500">Pekerjaan</label>
+                                <div class="relative">
+                                    <span class="absolute left-3 top-1/2 -translate-y-1/2 text-slate-300">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                            <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                                            <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                                        </svg>
+                                    </span>
+                                    <input type="text" name="pekerjaan"
+                                           value="{{ profile.pekerjaan|default:'' }}"
+                                           placeholder="Petani, Pedagang, dll"
+                                           :disabled="!editing"
+                                           :class="{ 'bg-slate-50 text-slate-400': !editing, 'bg-white text-slate-800': editing }"
+                                           class="w-full pl-9 pr-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-200">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="mb-1.5 block text-xs font-semibold text-slate-500">Agama</label>
+                                <input type="text" name="agama"
+                                       value="{{ profile.agama|default:'' }}"
+                                       placeholder="Islam, Kristen, dll"
+                                       :disabled="!editing"
+                                       :class="{ 'bg-slate-50 text-slate-400': !editing, 'bg-white text-slate-800': editing }"
+                                       class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-200">
+                            </div>
+                        </div>
+
+                        {# ── Upload / Ganti KTP ─────────────────────────────────── #}
+                        {% if not is_verified %}
+                        <div class="mb-6 p-4 rounded-xl bg-slate-50 border border-slate-200">
+
+                            <p class="text-xs font-semibold text-slate-600 mb-3">
+                                Foto KTP
+                                <span class="ml-1 font-normal text-slate-400">(JPG/PNG, maks. 5MB)</span>
+                            </p>
+
+                            {% if profile.foto_ktp %}
+                            <div x-data="{ ubahKtp: false }">
+
+                                {# Status KTP sudah ada #}
+                                <div class="flex items-center justify-between gap-3 mb-2">
+                                    <div class="flex items-center gap-2 text-xs text-emerald-700">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0">
+                                            <polyline points="20 6 9 17 4 12"/>
+                                        </svg>
+                                        KTP sudah diunggah.
+                                        <a href="{{ profile.foto_ktp.url }}"
+                                           target="_blank"
+                                           class="underline hover:text-emerald-800 font-medium">
+                                            Lihat foto
+                                        </a>
+                                    </div>
+                                    {# Tombol Ubah KTP — hanya muncul saat mode edit #}
+                                    <template x-if="editing">
+                                        <button type="button"
+                                                @click="ubahKtp = !ubahKtp"
+                                                class="inline-flex items-center gap-1.5 rounded-lg border border-slate-300
+                                                       bg-white hover:bg-slate-50 px-2.5 py-1 text-xs font-medium
+                                                       text-slate-600 transition-colors duration-150 shrink-0">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
+                                                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                            </svg>
+                                            Ubah KTP
+                                        </button>
+                                    </template>
+                                </div>
+
+                                {# Input file — hanya muncul setelah klik "Ubah KTP" #}
+                                <div x-show="ubahKtp" x-cloak class="mt-2">
+                                    <input type="file" name="foto_ktp"
+                                           accept="image/jpeg,image/png"
+                                           class="w-full text-sm text-slate-500
+                                                  file:mr-3 file:py-1.5 file:px-3
+                                                  file:rounded-lg file:border-0
+                                                  file:text-xs file:font-semibold
+                                                  file:bg-emerald-600 file:text-white
+                                                  hover:file:bg-emerald-700">
+                                    <p class="mt-1.5 text-xs text-slate-400">
+                                        Pilih file baru untuk mengganti foto KTP yang sudah ada.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            {% else %}
+                            <input type="file" name="foto_ktp"
+                                   accept="image/jpeg,image/png"
+                                   :disabled="!editing"
+                                   class="w-full text-sm text-slate-500
+                                          file:mr-3 file:py-1.5 file:px-3
+                                          file:rounded-lg file:border-0
+                                          file:text-xs file:font-semibold
+                                          file:bg-emerald-50 file:text-emerald-700
+                                          hover:file:bg-emerald-100
+                                          disabled:opacity-50 disabled:cursor-not-allowed">
+                            {% endif %}
+
+                        </div>
+                        {% else %}
+                        {# KTP sudah verified — tampilkan info saja, tidak bisa diubah #}
+                        <div class="mb-6 p-3 rounded-xl bg-emerald-50 border border-emerald-200">
+                            <p class="text-xs text-emerald-700 flex items-center gap-2">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                    <polyline points="22 4 12 14.01 9 11.01"/>
+                                </svg>
+                                Identitas Anda telah terverifikasi. Data NIK dan KTP tidak dapat diubah.
+                            </p>
+                        </div>
+                        {% endif %}
+
+                        {# Tombol Simpan #}
+                        <template x-if="editing">
+                            <button type="submit"
+                                    class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700
+                                           active:bg-emerald-800 px-5 py-2.5 text-sm font-semibold text-white
+                                           shadow-sm shadow-emerald-400/20 transition-all duration-200
+                                           hover:-translate-y-px hover:shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                    <polyline points="17 21 17 13 7 13 7 21"/>
+                                    <polyline points="7 3 7 8 15 8"/>
+                                </svg>
+                                Simpan Perubahan
+                            </button>
+                        </template>
+
+                    </form>
+                </div>
+            </main>
+
+        </div>
+    </div>
+</div>
+
+<script>
+function profileForm() {
+    return {
+        editing: false,
+        fieldErrors: {},
+        init() {
+            const raw = [
+                {% for message in messages %}
+                    {% if message.tags == 'error' %}"{{ message|escapejs }}",{% endif %}
+                {% endfor %}
+            ];
+            raw.forEach(msg => {
+                const parts = msg.split(':');
+                if (parts.length >= 3 && parts[0] === 'profile') {
+                    this.fieldErrors[parts[1]] = parts.slice(2).join(':');
+                    this.editing = true;
+                }
+            });
+        }
+    };
+}
+</script>
+
+{% endblock content %}

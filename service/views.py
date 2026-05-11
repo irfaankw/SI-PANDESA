@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
-def index(request):
-    template_name = 'service/index.html'
+def service_list(request):
+    template_name = 'service/service.html'
     context = {
         'title' : 'Service | Website Resmi Desa Sungai Meriam',
     }

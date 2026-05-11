@@ -1,7 +1,7 @@
 from django.shortcuts import render
 
-def index(request):
-    template_name = 'market/index.html'
+def market_home(request):
+    template_name = 'market/market.html'
     context = {
         'title' : 'Belanja | Website Resmi Desa Sungai Meriam',
     }
