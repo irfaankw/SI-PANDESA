@@ -18,6 +18,7 @@ staticfiles/
 
 # --- TOOLS ---
 static/tailwindcss.exe
+static/dist/
 
 # OS & IDE
 .DS_Store
