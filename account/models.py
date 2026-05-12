@@ -1,17 +1,14 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-
 def avatar_upload_path(instance, filename):
-    return f"profile_photos/user_{instance.user.id}/{filename}"
+    return f"media/profile_photos/user_{instance.user.id}/{filename}"
 
 
 def ktp_upload_path(instance, filename):
-    return f"ktp_documents/user_{instance.user.id}/{filename}"
-
+    return f"media/ktp_documents/user_{instance.user.id}/{filename}"
 
 class UserProfile(models.Model):
-
     # ── Hanya 2 status: Pending dan Verified ──────────────────
     STATUS_CHOICES = [
         ('pending',  'Pending'),
