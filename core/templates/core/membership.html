@@ -1,7 +1,207 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
 
 {% block content %}
 
-<h1>KEANGGOTAAN</h1>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 
-{% endblock content %}
+<style>
+  :root {
+    --green-primary: #1a7a4a;
+    --green-light: #e8f5ee;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 8px 24px rgba(0,0,0,0.06);
+    --card-hover-shadow: 0 4px 12px rgba(0,0,0,0.1), 0 16px 40px rgba(0,0,0,0.1);
+  }
+  .membership-page { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f4f6f8; min-height: 100vh; }
+  .page-header { background: linear-gradient(135deg,#fff 0%,#f0faf4 100%); border-bottom: 1px solid #e2ede8; padding: 2.5rem 0 2rem; }
+  .page-header h1 { font-size: 1.9rem; font-weight: 800; color: #111827; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+  .page-header p  { font-family: 'DM Sans',sans-serif; color: #6b7280; font-size: 0.95rem; }
+  .search-container { position: relative; }
+  .search-container svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9ca3af; pointer-events: none; }
+  .search-input { width: 100%; padding: .65rem 1rem .65rem 2.75rem; border: 1.5px solid #e5e7eb; border-radius: 10px; font-family: 'DM Sans',sans-serif; font-size: .9rem; color: #374151; background: #fff; transition: border-color .2s,box-shadow .2s; outline: none; }
+  .search-input:focus { border-color: var(--green-primary); box-shadow: 0 0 0 3px rgba(26,122,74,.1); }
+  .filter-btn { padding: .45rem 1rem; border-radius: 8px; font-family: 'Plus Jakarta Sans',sans-serif; font-size: .82rem; font-weight: 600; cursor: pointer; border: 1.5px solid #e5e7eb; background: #fff; color: #6b7280; transition: all .18s ease; white-space: nowrap; }
+  .filter-btn:hover { border-color: var(--green-primary); color: var(--green-primary); background: var(--green-light); }
+  .filter-btn.active { background: var(--green-primary); color: #fff; border-color: var(--green-primary); }
+  .member-card { background: #fff; border-radius: 16px; overflow: hidden; box-shadow: var(--card-shadow); transition: transform .25s ease,box-shadow .25s ease; border: 1px solid rgba(0,0,0,.04); display: flex; flex-direction: column; }
+  .member-card:hover { transform: translateY(-4px); box-shadow: var(--card-hover-shadow); }
+  .card-image-wrapper { position: relative; width: 100%; aspect-ratio: 4/3; overflow: hidden; background: linear-gradient(135deg,#a8d5be 0%,#6bbf91 100%); }
+  .card-image-wrapper img { width: 100%; height: 100%; object-fit: cover; object-position: top center; transition: transform .4s ease; }
+  .member-card:hover .card-image-wrapper img { transform: scale(1.04); }
+  .placeholder-avatar { width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; font-weight: 800; background: linear-gradient(135deg,#d1fae5 0%,#6ee7b7 100%); color: #065f46; }
+  .category-badge { position: absolute; bottom: 10px; left: 12px; padding: .22rem .65rem; border-radius: 20px; font-family: 'Plus Jakarta Sans',sans-serif; font-size: .72rem; font-weight: 700; letter-spacing: .02em; backdrop-filter: blur(8px); border: 1px solid rgba(255,255,255,.3); }
+  .badge-Pimpinan      { background: rgba(26,122,74,.88);  color:#fff; }
+  .badge-Sekretariat   { background: rgba(59,130,246,.88); color:#fff; }
+  .badge-Keuangan      { background: rgba(245,158,11,.9);  color:#fff; }
+  .badge-Pelayanan     { background: rgba(139,92,246,.88); color:#fff; }
+  .badge-Kesejahteraan { background: rgba(236,72,153,.88); color:#fff; }
+  .badge-Pendidikan    { background: rgba(14,165,233,.88); color:#fff; }
+  .card-body { padding: 1.1rem 1.2rem 1rem; flex: 1; display: flex; flex-direction: column; }
+  .member-name { font-size: .98rem; font-weight: 700; color: #111827; letter-spacing: -.01em; margin-bottom: .15rem; line-height: 1.35; }
+  .member-position { font-family: 'DM Sans',sans-serif; font-size: .82rem; font-weight: 500; color: var(--green-primary); margin-bottom: .75rem; }
+  .meta-list { display: flex; flex-direction: column; gap: .38rem; margin-bottom: .85rem; flex: 1; }
+  .meta-item { display: flex; align-items: center; gap: .45rem; font-family: 'DM Sans',sans-serif; font-size: .8rem; color: #6b7280; }
+  .meta-item svg { flex-shrink: 0; color: #9ca3af; }
+  .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: .75rem; border-top: 1px solid #f3f4f6; margin-top: auto; }
+  .awards-badge { font-family: 'DM Sans',sans-serif; font-size: .76rem; color: #9ca3af; display: flex; align-items: center; gap: .3rem; }
+  .lihat-profil { font-family: 'Plus Jakarta Sans',sans-serif; font-size: .8rem; font-weight: 700; color: var(--green-primary); display: flex; align-items: center; gap: .25rem; text-decoration: none; transition: gap .18s ease; }
+  .lihat-profil:hover { gap: .45rem; }
+  .no-results { grid-column: 1/-1; text-align: center; padding: 3rem 1rem; color: #9ca3af; font-family: 'DM Sans',sans-serif; }
+  [x-cloak] { display: none !important; }
+</style>
+
+{# ─────────────────────────────────────────────────────────────────────────────
+   PERBAIKAN: hapus s.usaha dan s.penghargaan (field lama yang sudah dihapus
+   dari model). Ganti dengan:
+   - jumlah_penghargaan → pakai property jumlah_penghargaan (hitung via relasi)
+   - nama_usaha_pertama → ambil UMKM pertama jika ada, untuk preview di kartu
+   ───────────────────────────────────────────────────────────────────────────── #}
+<script>
+const STAFFS_DATA = [
+  {% for s in staffs %}
+  {
+    slug:               "{{ s.slug }}",
+    nama:               "{{ s.nama_lengkap|escapejs }}",
+    jabatan:            "{{ s.jabatan|escapejs }}",
+    kategori:           "{{ s.kategori }}",
+    telepon:            "{{ s.telepon|escapejs }}",
+    periode:            "{{ s.periode|escapejs }}",
+    inisial:            "{{ s.inisial }}",
+    foto:               "{% if s.foto %}{{ s.foto.url }}{% endif %}",
+    detail_url:         "{% url 'core:detail_member' s.slug %}",
+    jumlah_penghargaan: {{ s.jumlah_penghargaan }},
+    nama_usaha:         "{% with u=s.umkm_list.first %}{% if u %}{{ u.nama_usaha|escapejs }}{% endif %}{% endwith %}"
+  }{% if not forloop.last %},{% endif %}
+  {% endfor %}
+];
+</script>
+
+<div class="membership-page"
+  x-data="{
+    search: '',
+    activeFilter: 'Semua',
+    filters: ['Semua', {% for val, label in kategori_choices %}'{{ val }}'{% if not forloop.last %}, {% endif %}{% endfor %}],
+    allMembers: STAFFS_DATA,
+    get filtered() {
+      return this.allMembers.filter(m => {
+        const q = this.search.toLowerCase();
+        const matchSearch = q === '' ||
+          m.nama.toLowerCase().includes(q) ||
+          m.jabatan.toLowerCase().includes(q);
+        const matchFilter = this.activeFilter === 'Semua' || m.kategori === this.activeFilter;
+        return matchSearch && matchFilter;
+      });
+    },
+    badgeClass(cat) { return 'badge-' + cat; }
+  }">
+
+  <!-- ── Page Header ── -->
+  <div class="page-header">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <h1>Direktori Perangkat Desa</h1>
+      <p>Kenali perangkat desa yang siap melayani Anda</p>
+    </div>
+  </div>
+
+  <div class="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-7">
+
+    <!-- ── Search + Filter Bar ── -->
+    <div class="bg-white rounded-2xl shadow-sm border border-gray-100 p-4 mb-7 flex flex-col sm:flex-row gap-3 items-stretch sm:items-center">
+      <div class="search-container flex-1 min-w-0">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+        </svg>
+        <input type="text" class="search-input" placeholder="Cari nama atau jabatan..." x-model="search" />
+      </div>
+      <div class="flex gap-2 items-center flex-wrap sm:flex-nowrap overflow-x-auto pb-1">
+        <template x-for="f in filters" :key="f">
+          <button class="filter-btn" :class="{ 'active': activeFilter === f }" @click="activeFilter = f" x-text="f"></button>
+        </template>
+      </div>
+    </div>
+
+    <!-- ── Result Count ── -->
+    <div class="flex items-center justify-between mb-4">
+      <span class="text-sm font-medium text-gray-400" style="font-family:'DM Sans',sans-serif;">
+        Menampilkan <strong x-text="filtered.length" class="text-gray-600"></strong> perangkat desa
+        <span x-show="activeFilter !== 'Semua'">
+          dalam kategori <strong x-text="activeFilter" class="text-gray-600"></strong>
+        </span>
+      </span>
+    </div>
+
+    <!-- ── Cards Grid ── -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+
+      <!-- Empty state -->
+      <div class="no-results" x-show="filtered.length === 0" x-cloak>
+        <div class="text-4xl mb-3">🔍</div>
+        <p class="font-semibold text-gray-500 mb-1">Tidak ada hasil ditemukan</p>
+        <p class="text-sm">Coba ubah kata kunci atau pilih kategori lain</p>
+      </div>
+
+      <!-- Card loop -->
+      <template x-for="m in filtered" :key="m.slug">
+        <div class="member-card">
+
+          <!-- Image -->
+          <div class="card-image-wrapper">
+            <template x-if="m.foto">
+              <img :src="m.foto" :alt="m.nama" />
+            </template>
+            <template x-if="!m.foto">
+              <div class="placeholder-avatar" x-text="m.inisial"></div>
+            </template>
+            <span class="category-badge" :class="badgeClass(m.kategori)" x-text="m.kategori"></span>
+          </div>
+
+          <!-- Body -->
+          <div class="card-body">
+            <div class="member-name" x-text="m.nama"></div>
+            <div class="member-position" x-text="m.jabatan"></div>
+
+            <ul class="meta-list">
+              <!-- Telepon -->
+              <li class="meta-item" x-show="m.telepon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.4 12.15a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.51 1.5h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6.09 6.09l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <span x-text="m.telepon"></span>
+              </li>
+              <!-- Periode -->
+              <li class="meta-item">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                <span x-text="m.periode"></span>
+              </li>
+              <!-- Nama UMKM (jika ada) -->
+              <li class="meta-item" x-show="m.nama_usaha">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+                <span x-text="m.nama_usaha" class="text-emerald-600 font-medium"></span>
+              </li>
+            </ul>
+
+            <!-- Footer -->
+            <div class="card-footer">
+              <span class="awards-badge" x-show="m.jumlah_penghargaan > 0">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+                <span x-text="m.jumlah_penghargaan + ' penghargaan'"></span>
+              </span>
+              <span x-show="m.jumlah_penghargaan === 0"></span>
+
+              <a :href="m.detail_url" class="lihat-profil">
+                Lihat Profil
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+              </a>
+            </div>
+          </div>
+
+        </div>
+      </template>
+
+    </div><!-- /grid -->
+  </div><!-- /main -->
+</div><!-- /page -->
+
+{% endblock %}

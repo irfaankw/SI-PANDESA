@@ -1,0 +1,340 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --green-primary: #1a7a4a;
+    --green-dark:    #155f3a;
+    --green-light:   #e8f5ee;
+  }
+
+  .detail-page {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: #f4f6f8;
+    min-height: 100vh;
+    padding: 1.75rem 0 4rem;
+  }
+
+  /* ── Back link ── */
+  .back-link {
+    display: inline-flex; align-items: center; gap: .4rem;
+    font-size: .82rem; font-weight: 600; color: #6b7280;
+    text-decoration: none; margin-bottom: 1.5rem;
+    transition: color .15s;
+  }
+  .back-link:hover { color: var(--green-primary); }
+
+  /* ── Layout: left sidebar + right content ── */
+  .profile-layout {
+    display: grid;
+    grid-template-columns: 260px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+  @media (max-width: 768px) {
+    .profile-layout { grid-template-columns: 1fr; }
+  }
+
+  /* ── LEFT: Identity Card ── */
+  .identity-card {
+    background: #fff;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 8px 24px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,.04);
+  }
+
+  .id-photo {
+    width: 100%; aspect-ratio: 3/3.5;
+    object-fit: cover; object-position: top center;
+    display: block;
+  }
+  .id-photo-placeholder {
+    width: 100%; aspect-ratio: 3/3.5;
+    background: linear-gradient(135deg,#d1fae5 0%,#6ee7b7 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 3.5rem; font-weight: 800; color: #065f46;
+  }
+
+  .id-body { padding: 1.25rem 1.2rem 1.5rem; }
+
+  .id-name {
+    font-size: 1.1rem; font-weight: 800; color: #111827;
+    letter-spacing: -.02em; line-height: 1.3; margin-bottom: .25rem;
+  }
+  .id-jabatan {
+    font-family: 'DM Sans', sans-serif; font-size: .82rem;
+    font-weight: 600; color: var(--green-primary); margin-bottom: .75rem;
+  }
+
+  /* Kategori pill */
+  .kategori-pill {
+    display: inline-block; padding: .28rem .9rem;
+    border-radius: 20px; font-size: .72rem; font-weight: 700;
+    letter-spacing: .03em; margin-bottom: 1rem;
+  }
+  .pill-Pimpinan      { background: #d1fae5; color: #065f46; }
+  .pill-Sekretariat   { background: #dbeafe; color: #1d4ed8; }
+  .pill-Keuangan      { background: #fef3c7; color: #92400e; }
+  .pill-Pelayanan     { background: #ede9fe; color: #6d28d9; }
+  .pill-Kesejahteraan { background: #fce7f3; color: #9d174d; }
+  .pill-Pendidikan    { background: #e0f2fe; color: #0369a1; }
+
+  /* Contact rows */
+  .id-meta { display: flex; flex-direction: column; gap: .65rem; }
+  .id-meta-item {
+    display: flex; align-items: flex-start; gap: .65rem;
+    font-family: 'DM Sans', sans-serif; font-size: .82rem; color: #374151;
+    line-height: 1.45;
+  }
+  .id-meta-item .icon-wrap {
+    width: 28px; height: 28px; border-radius: 8px;
+    background: var(--green-light); flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    color: var(--green-primary); margin-top: .05rem;
+  }
+  .id-meta-item a { color: #374151; text-decoration: none; }
+  .id-meta-item a:hover { color: var(--green-primary); }
+
+  /* ── RIGHT: Content sections ── */
+  .content-col { display: flex; flex-direction: column; gap: 1.25rem; }
+
+  .section-card {
+    background: #fff; border-radius: 20px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 8px 24px rgba(0,0,0,0.06);
+    border: 1px solid rgba(0,0,0,.04);
+    padding: 1.5rem 1.75rem;
+  }
+
+  .section-heading {
+    display: flex; align-items: center; gap: .55rem;
+    font-size: .95rem; font-weight: 800; color: #111827;
+    margin-bottom: 1rem; padding-bottom: .75rem;
+    border-bottom: 1.5px solid #f3f4f6;
+  }
+  .section-heading .icon {
+    width: 32px; height: 32px; border-radius: 9px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1rem;
+  }
+  .icon-bio   { background: #e0f2fe; }
+  .icon-award { background: #fef9c3; }
+  .icon-umkm  { background: #ede9fe; }
+
+  /* Bio */
+  .bio-text {
+    font-family: 'DM Sans', sans-serif;
+    font-size: .9rem; color: #4b5563; line-height: 1.8;
+  }
+
+  /* Penghargaan list */
+  .award-list { display: flex; flex-direction: column; gap: .55rem; }
+  .award-item {
+    display: flex; align-items: center; gap: .65rem;
+    font-family: 'DM Sans', sans-serif; font-size: .88rem; color: #374151;
+  }
+  .award-dot {
+    width: 9px; height: 9px; border-radius: 50%;
+    background: #f59e0b; flex-shrink: 0;
+  }
+  .award-tahun {
+    margin-left: auto; font-size: .76rem; color: #9ca3af;
+    font-weight: 600; white-space: nowrap;
+  }
+
+  /* UMKM card */
+  .umkm-card {
+    border: 1.5px solid #f3f4f6; border-radius: 14px;
+    padding: 1rem 1.1rem; margin-bottom: .75rem;
+  }
+  .umkm-card:last-child { margin-bottom: 0; }
+
+  .umkm-header {
+    display: flex; align-items: flex-start; justify-content: space-between;
+    margin-bottom: .35rem;
+  }
+  .umkm-name {
+    font-size: .95rem; font-weight: 700; color: #111827;
+  }
+  .umkm-status {
+    font-size: .7rem; font-weight: 700; padding: .22rem .7rem;
+    border-radius: 20px; white-space: nowrap;
+  }
+  .umkm-status.aktif    { background: #d1fae5; color: #065f46; }
+  .umkm-status.nonaktif { background: #f3f4f6; color: #9ca3af; }
+
+  .umkm-kategori {
+    font-family: 'DM Sans', sans-serif;
+    font-size: .78rem; color: var(--green-primary);
+    font-weight: 500; margin-bottom: .75rem;
+  }
+
+  .produk-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
+  .produk-tag {
+    display: inline-block; padding: .22rem .7rem;
+    border: 1.5px solid #e5e7eb; border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: .76rem; color: #4b5563; background: #fafafa;
+  }
+
+  /* Empty state */
+  .empty-state {
+    font-family: 'DM Sans', sans-serif;
+    font-size: .85rem; color: #9ca3af; text-align: center;
+    padding: 1rem 0;
+  }
+</style>
+
+<div class="detail-page">
+  <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+
+    <!-- Back link -->
+    <a href="{% url 'core:membership' %}" class="back-link">
+      <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      Kembali ke Direktori
+    </a>
+
+    <!-- Main layout -->
+    <div class="profile-layout">
+
+      <!-- ── LEFT: Identity Card ───────────────────────────────────────── -->
+      <div class="identity-card">
+
+        {% if staff.foto %}
+          <img src="{{ staff.foto.url }}" alt="{{ staff.nama_lengkap }}" class="id-photo" />
+        {% else %}
+          <div class="id-photo-placeholder">{{ staff.inisial }}</div>
+        {% endif %}
+
+        <div class="id-body">
+          <div class="id-name">{{ staff.nama_lengkap }}</div>
+          <div class="id-jabatan">{{ staff.jabatan }}</div>
+          <span class="kategori-pill pill-{{ staff.kategori }}">{{ staff.kategori }}</span>
+
+          <div class="id-meta">
+
+            {% if staff.telepon %}
+            <div class="id-meta-item">
+              <div class="icon-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.4 12.15a19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 3.51 1.5h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 9a16 16 0 0 0 6.09 6.09l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+              </div>
+              <a href="tel:{{ staff.telepon }}">{{ staff.telepon }}</a>
+            </div>
+            {% endif %}
+
+            {% if staff.email %}
+            <div class="id-meta-item">
+              <div class="icon-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+              </div>
+              <a href="mailto:{{ staff.email }}">{{ staff.email }}</a>
+            </div>
+            {% endif %}
+
+            {% if staff.alamat %}
+            <div class="id-meta-item">
+              <div class="icon-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              </div>
+              <span>{{ staff.alamat }}</span>
+            </div>
+            {% endif %}
+
+            <div class="id-meta-item">
+              <div class="icon-wrap">
+                <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
+              </div>
+              <span>{{ staff.periode }}</span>
+            </div>
+
+          </div><!-- /id-meta -->
+        </div><!-- /id-body -->
+      </div><!-- /identity-card -->
+
+      <!-- ── RIGHT: Content sections ──────────────────────────────────── -->
+      <div class="content-col">
+
+        <!-- Biografi -->
+        {% if staff.bio %}
+        <div class="section-card">
+          <div class="section-heading">
+            <div class="icon icon-bio">👤</div>
+            Biografi
+          </div>
+          <p class="bio-text">{{ staff.bio|linebreaksbr }}</p>
+        </div>
+        {% endif %}
+
+        <!-- Pencapaian & Penghargaan -->
+        <div class="section-card">
+          <div class="section-heading">
+            <div class="icon icon-award">🏅</div>
+            Pencapaian &amp; Penghargaan
+          </div>
+
+          {% with penghargaan=staff.penghargaan_list.all %}
+            {% if penghargaan %}
+            <div class="award-list">
+              {% for p in penghargaan %}
+              <div class="award-item">
+                <div class="award-dot"></div>
+                <span>{{ p.judul }}</span>
+                <span class="award-tahun">{{ p.tahun }}</span>
+              </div>
+              {% endfor %}
+            </div>
+            {% else %}
+            <p class="empty-state">Belum ada penghargaan yang ditambahkan.</p>
+            {% endif %}
+          {% endwith %}
+        </div>
+
+        <!-- UMKM yang Dikelola -->
+        <div class="section-card">
+          <div class="section-heading">
+            <div class="icon icon-umkm">🏪</div>
+            UMKM yang Dikelola
+          </div>
+
+          {% with umkm_list=staff.umkm_list.all %}
+            {% if umkm_list %}
+              {% for u in umkm_list %}
+              <div class="umkm-card">
+                <div class="umkm-header">
+                  <div class="umkm-name">{{ u.nama_usaha }}</div>
+                  {% if u.masih_aktif %}
+                    <span class="umkm-status aktif">Aktif</span>
+                  {% else %}
+                    <span class="umkm-status nonaktif">Tidak Aktif</span>
+                  {% endif %}
+                </div>
+                <div class="umkm-kategori">{{ u.kategori_usaha }}</div>
+                {% if u.produk_list %}
+                <div class="produk-tags">
+                  {% for produk in u.produk_list %}
+                  <span class="produk-tag">{{ produk }}</span>
+                  {% endfor %}
+                </div>
+                {% endif %}
+              </div>
+              {% endfor %}
+            {% else %}
+            <p class="empty-state">Belum ada UMKM yang ditambahkan.</p>
+            {% endif %}
+          {% endwith %}
+        </div>
+
+      </div><!-- /content-col -->
+    </div><!-- /profile-layout -->
+  </div><!-- /container -->
+</div><!-- /detail-page -->
+
+{% endblock %}
