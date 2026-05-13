@@ -1,0 +1,67 @@
+{% load static %}
+
+<footer class="bg-gray-900 text-white pt-8 pb-0">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
+      <!-- Grid utama: mobile 2 kolom, desktop 3 kolom -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-10 pb-8">
+
+        <!-- Kolom 1: Brand — full width di mobile -->
+        <div class="col-span-2 md:col-span-1">
+          <div class="flex items-center gap-2.5 mb-3">
+            <img src="{% static 'assets/global/Logo-Desa-Sungai-Meriam.png' %}" alt="Logo" class="h-8 w-8 object-contain opacity-90"/>
+            <div>
+              <p class="text-[10px] text-gray-400">Desa Sungai Meriam</p>
+              <p class="text-xs font-semibold text-white">Kabupaten Kutai Kartanegara</p>
+            </div>
+          </div>
+          <p class="text-gray-400 text-xs leading-relaxed">
+            Platform digital terintegrasi untuk pelayanan administrasi Desa Sungai Meriam berbasis AI.
+          </p>
+        </div>
+
+        <!-- Kolom 2: Navigasi Cepat -->
+        <div>
+          <h4 class="text-xs font-semibold text-white mb-3 uppercase tracking-wide">Navigasi</h4>
+          <div class="flex flex-col gap-1.5">
+            <a href="{% url 'core:index' %}" class="text-gray-400 hover:text-white text-xs transition-colors">Beranda</a>
+            <a href="{% url 'core:village_profile' %}" class="text-gray-400 hover:text-white text-xs transition-colors">Profil Desa</a>
+            <a href="{% url 'news:news_list' %}" class="text-gray-400 hover:text-white text-xs transition-colors">Pengumuman</a>
+            <a href="{% url 'core:membership' %}" class="text-gray-400 hover:text-white text-xs transition-colors">Keanggotaan</a>
+            <a href="{% url 'market:market_home' %}" class="text-gray-400 hover:text-white text-xs transition-colors">Belanja</a>
+          </div>
+        </div>
+
+        <!-- Kolom 3: Kontak -->
+        <div>
+          <h4 class="text-xs font-semibold text-white mb-3 uppercase tracking-wide">Kontak</h4>
+          <ul class="space-y-1.5 text-xs">
+            <li class="flex items-start gap-1.5 text-gray-400">
+              <span class="mt-px shrink-0">📍</span>
+              <span>Kec. Anggana, Kab. Kutai Kartanegara</span>
+            </li>
+            <li class="flex items-center gap-1.5 text-gray-400">
+              <span>📞</span> (0541) 123-4567
+            </li>
+            <li class="flex items-center gap-1.5 text-gray-400">
+              <span>✉️</span> desasungaimeriam@kukar.go.id
+            </li>
+            <li class="flex items-center gap-1.5 text-gray-400">
+              <span>🕐</span> Sen–Jum: 08.00–16.00 WITA
+            </li>
+          </ul>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Copyright bar -->
+    <div class="border-t border-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-col md:flex-row items-center justify-between gap-1">
+        <p class="text-gray-500 text-[10px]">
+          © 2025 SI-PANDESA – Desa Sungai Meriam, Kab. Kutai Kartanegara. Hak cipta dilindungi.
+        </p>
+        <p class="text-gray-500 text-[10px]">Ditenagai oleh MinDi AI 🤖</p>
+      </div>
+    </div>
+</footer>

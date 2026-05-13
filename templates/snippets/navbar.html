@@ -3,7 +3,8 @@
 {% with request.resolver_match.view_name as current_view %}
 
 <div x-data="{ open: false, layananOpen: false }"
-     @resize.window="if (window.innerWidth >= 1024) open = false">
+     @resize.window="if (window.innerWidth >= 1024) open = false"
+     class="sticky top-0 z-50">
 
     {% include "snippets/navbar_desktop.html" %}
     {% include "snippets/navbar_mobile.html" %}

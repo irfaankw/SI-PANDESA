@@ -53,13 +53,6 @@
   .no-results { grid-column: 1/-1; text-align: center; padding: 3rem 1rem; color: #9ca3af; font-family: 'DM Sans',sans-serif; }
   [x-cloak] { display: none !important; }
 </style>
-
-{# ─────────────────────────────────────────────────────────────────────────────
-   PERBAIKAN: hapus s.usaha dan s.penghargaan (field lama yang sudah dihapus
-   dari model). Ganti dengan:
-   - jumlah_penghargaan → pakai property jumlah_penghargaan (hitung via relasi)
-   - nama_usaha_pertama → ambil UMKM pertama jika ada, untuk preview di kartu
-   ───────────────────────────────────────────────────────────────────────────── #}
 <script>
 const STAFFS_DATA = [
   {% for s in staffs %}
