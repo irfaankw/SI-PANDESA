@@ -29,8 +29,20 @@
     html { scroll-behavior: smooth; }
 
     /* ===== HERO CAROUSEL ===== */
-    .carousel-slide { display: none; }
-    .carousel-slide.active { display: block; }
+    .carousel-slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transition: opacity 1400ms ease-in-out, visibility 1400ms ease-in-out;
+    }
+    .carousel-slide.active {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      z-index: 1;
+    }
 
     /* Carousel dots */
     .dot { width: 10px; height: 10px; border-radius: 9999px; background: rgba(255,255,255,0.4); transition: all 0.3s; cursor: pointer; }
@@ -41,16 +53,6 @@
   </style>
 </head>
 <body class="bg-white font-sans text-gray-900 antialiased">
-       <!-- Hamburger Mobile -->
-        <button class="md:hidden p-2 text-gray-500 hover:text-primary" onclick="toggleMobileMenu()">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/>
-          </svg>
-        </button>
-      </div>
-    </div>
-  </nav>
-
 
   <!-- ============================================================
        HERO CAROUSEL
@@ -59,7 +61,7 @@
   <section class="relative w-full overflow-hidden" id="hero">
 
     <!-- Badge Transparansi Publik -->
-    <div class="absolute top-4 left-1/2 -translate-x-1/2 z-20">
+    <div class="absolute top-4 left-8 md:left-16 lg:left-24 z-20">
       <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium rounded-full border border-gray-200 shadow-sm">
         <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
@@ -69,11 +71,13 @@
     </div>
 
     <!-- Slides wrapper -->
-    <div class="relative" id="carouselWrapper">
+    <div class="relative h-[90vh] min-h-[560px]" id="carouselWrapper">
 
-      <!-- ===== SLIDE 1 — tambahkan background-image di sini ===== -->
-      <div class="carousel-slide active relative w-full h-[90vh] min-h-[560px] bg-gray-800 bg-cover bg-center"
-           style="background-image: url('{% static 'images/hero1.jpg' %}');">
+      <!-- ===== SLIDE 1 — village video background ===== -->
+      <div class="carousel-slide active relative w-full h-[90vh] min-h-[560px] bg-gray-800 overflow-hidden">
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
+          <source src="{% static 'assets/videos/village.mp4' %}" type="video/mp4">
+        </video>
         <!-- Overlay gelap -->
         <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
         <!-- Konten -->
@@ -96,9 +100,11 @@
         </div>
       </div>
 
-      <!-- ===== SLIDE 2 — tambahkan background-image di sini ===== -->
-      <div class="carousel-slide relative w-full h-[90vh] min-h-[560px] bg-gray-800 bg-cover bg-center"
-           style="background-image: url('{% static 'images/hero2.jpg' %}');">
+      <!-- ===== SLIDE 2 — bridge video background ===== -->
+      <div class="carousel-slide relative w-full h-[90vh] min-h-[560px] bg-gray-800 overflow-hidden">
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
+          <source src="{% static 'assets/videos/Bridge.mp4' %}" type="video/mp4">
+        </video>
         <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
         <div class="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-3xl">
           <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">
@@ -119,9 +125,11 @@
         </div>
       </div>
 
-      <!-- ===== SLIDE 3 — tambahkan background-image di sini ===== -->
-      <div class="carousel-slide relative w-full h-[90vh] min-h-[560px] bg-gray-800 bg-cover bg-center"
-           style="background-image: url('{% static 'images/hero3.jpg' %}');">
+      <!-- ===== SLIDE 3 — river video background ===== -->
+      <div class="carousel-slide relative w-full h-[90vh] min-h-[560px] bg-gray-800 overflow-hidden">
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
+          <source src="{% static 'assets/videos/River.mp4' %}" type="video/mp4">
+        </video>
         <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
         <div class="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-3xl">
           <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">
@@ -142,9 +150,11 @@
         </div>
       </div>
 
-      <!-- ===== SLIDE 4 — tambahkan background-image di sini ===== -->
-      <div class="carousel-slide relative w-full h-[90vh] min-h-[560px] bg-gray-800 bg-cover bg-center"
-           style="background-image: url('{% static 'images/hero4.jpg' %}');">
+      <!-- ===== SLIDE 4 — waterfall video background ===== -->
+      <div class="carousel-slide relative w-full h-[90vh] min-h-[560px] bg-gray-800 overflow-hidden">
+        <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover">
+          <source src="{% static 'assets/videos/WaterFall.mp4' %}" type="video/mp4">
+        </video>
         <div class="absolute inset-0 bg-gradient-to-r from-black/60 via-black/30 to-transparent"></div>
         <div class="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-3xl">
           <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">
@@ -491,75 +501,6 @@
     </div>
   </section>
 
-
-  <!-- ============================================================
-       FOOTER
-       ============================================================ -->
-  <footer class="bg-gray-900 text-white pt-12 pb-0">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-10 pb-10">
-
-        <!-- Kolom 1: Brand -->
-        <div>
-          <div class="flex items-center gap-3 mb-4">
-            <img src="{% static 'images/logo.png' %}" alt="Logo" class="h-9 w-9 object-contain opacity-90"/>
-            <div>
-              <p class="text-xs text-gray-400">Desa Sungai Meriam</p>
-              <p class="text-sm font-semibold text-white">Kabupaten Kutai Kartanegara</p>
-            </div>
-          </div>
-          <p class="text-gray-400 text-sm leading-relaxed">
-            Platform digital terintegrasi untuk pelayanan administrasi Desa Sungai Meriam berbasis AI.
-          </p>
-        </div>
-
-        <!-- Kolom 2: Navigasi Cepat -->
-        <div>
-          <h4 class="text-sm font-semibold text-white mb-5">Navigasi Cepat</h4>
-          <div class="grid grid-cols-2 gap-x-6 gap-y-2">
-            <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Beranda</a>
-            <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Profil Desa</a>
-            <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Pengumuman</a>
-            <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Keanggotaan</a>
-            <a href="#" class="text-gray-400 hover:text-white text-sm transition-colors">Belanja</a>
-          </div>
-        </div>
-
-        <!-- Kolom 3: Kontak -->
-        <div>
-          <h4 class="text-sm font-semibold text-white mb-5">Kontak Desa</h4>
-          <ul class="space-y-3 text-sm">
-            <li class="flex items-start gap-2 text-gray-400">
-              <span class="mt-0.5">📍</span>
-              Jl. Raya Sungai Meriam, Kec. Anggana, Kab. Kutai Kartanegara
-            </li>
-            <li class="flex items-center gap-2 text-gray-400">
-              <span>📞</span> (0541) 123-4567
-            </li>
-            <li class="flex items-center gap-2 text-gray-400">
-              <span>✉️</span> desasungaimeriam@kukar.go.id
-            </li>
-            <li class="flex items-center gap-2 text-gray-400">
-              <span>🕐</span> Sen–Jum: 08.00–16.00 WITA
-            </li>
-          </ul>
-        </div>
-
-      </div>
-    </div>
-
-    <!-- Copyright bar -->
-    <div class="border-t border-gray-800">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex flex-col md:flex-row items-center justify-between gap-2">
-        <p class="text-gray-500 text-xs">
-          © 2025 SI-PANDESA – Desa Sungai Meriam, Kab. Kutai Kartanegara. Hak cipta dilindungi.
-        </p>
-        <p class="text-gray-500 text-xs">Ditenagai oleh MinDi AI 🤖</p>
-      </div>
-    </div>
-  </footer>
-
-
   <!-- ============================================================
        JAVASCRIPT — Carousel & Mobile Menu
        ============================================================ -->
@@ -571,11 +512,23 @@
     let autoPlayInterval;
 
     function showSlide(n) {
-      slides[currentSlide].classList.remove('active');
-      dots[currentSlide].classList.remove('active');
+      const previousSlide = currentSlide;
+      const previousVideo = slides[previousSlide].querySelector('video');
+
+      slides[previousSlide].classList.remove('active');
+      dots[previousSlide].classList.remove('active');
       currentSlide = (n + slides.length) % slides.length;
       slides[currentSlide].classList.add('active');
       dots[currentSlide].classList.add('active');
+
+      const activeVideo = slides[currentSlide].querySelector('video');
+      if (activeVideo) {
+        activeVideo.play().catch(() => {});
+      }
+
+      if (previousVideo && previousVideo !== activeVideo) {
+        setTimeout(() => previousVideo.pause(), 900);
+      }
     }
 
     function changeSlide(dir) {
