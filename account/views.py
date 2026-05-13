@@ -23,6 +23,8 @@ def _clean_referer(request, modal_tab):
     return f"{clean}?auth_modal={modal_tab}"
 
 def _get_or_create_profile(user):
+    if user.is_staff or user.is_superuser:
+        return None
     profile, _ = UserProfile.objects.get_or_create(user=user)
     return profile
 
@@ -51,8 +53,8 @@ def login_view(request):
     user = authenticate(request, username=user_obj.username, password=password)
     if user is not None:
         login(request, user)
-        _get_or_create_profile(user)          # pastikan profil selalu ada
-        # Pesan sambutan — ditampilkan sebagai bubble di beranda
+        if not (user.is_staff or user.is_superuser):
+            _get_or_create_profile(user)        
         messages.success(request, f'Selamat datang kembali, {user.first_name or user.username}!')
         parsed_next = urlparse(next_url)
         clean_next  = urlunparse(parsed_next._replace(query='', fragment='')) or '/'
@@ -105,7 +107,12 @@ def logout_view(request):
 
 @login_required(login_url='/?auth_modal=login')
 def profile_view(request):
+    if request.user.is_staff or request.user.is_superuser:
+        messages.info(request, "Anda login sebagai Admin. Halaman profil hanya untuk warga.")
+        return redirect('/admin/')
     profile     = _get_or_create_profile(request.user)
+    if not profile:
+        return redirect('core:index')
     is_verified = profile.is_verified
     if request.method == 'POST':
         action = request.POST.get('action', 'biodata')
