@@ -236,7 +236,7 @@
     </button>
 
     <!-- Dots Indikator -->
-    <div class="absolute bottom-24 left-1/2 -translate-x-1/2 z-30 flex items-center gap-2" id="carouselDots">
+    <div class="absolute bottom-24 left-1/2 z-30 flex items-center gap-2" id="carouselDots">
       <button type="button" class="dot active" onclick="goToSlide(0)" aria-label="Slide 1"></button>
       <button type="button" class="dot" onclick="goToSlide(1)" aria-label="Slide 2"></button>
       <button type="button" class="dot" onclick="goToSlide(2)" aria-label="Slide 3"></button>
@@ -563,6 +563,7 @@
       currentSlide = (n + slides.length) % slides.length;
       slides[currentSlide].classList.add('active');
       dots[currentSlide].classList.add('active');
+      updateDotsPosition();
 
       const activeVideo = slides[currentSlide].querySelector('video');
       if (activeVideo) {
@@ -588,6 +589,17 @@
 
     function startAutoPlay() {
       autoPlayInterval = setInterval(() => showSlide(currentSlide + 1), 5000);
+    }
+
+    function updateDotsPosition() {
+      const carouselDots = document.getElementById('carouselDots');
+      const dotWidths = Array.from(dots).map((_, index) => index === currentSlide ? 32 : 10);
+      const gap = 8;
+      const secondDotCenter = dotWidths[0] + gap + (dotWidths[1] / 2);
+      const thirdDotCenter = dotWidths[0] + gap + dotWidths[1] + gap + (dotWidths[2] / 2);
+      const centerPoint = (secondDotCenter + thirdDotCenter) / 2;
+
+      carouselDots.style.transform = `translateX(-${centerPoint}px)`;
     }
 
     // Init
