@@ -1,7 +1,431 @@
-{% extends "base.html" %}
+{% extends 'base.html' %}
+{% load static %}
 
 {% block content %}
 
-<h1>PROFILE DESA</h1>
+<!-- ============================================================
+     HERO SECTION
+============================================================ -->
+<section class="relative w-full h-72 md:h-96 overflow-hidden">
+  <div class="absolute inset-0 bg-gray-600">
+    <video autoplay muted loop playsinline class="w-full h-full object-cover">
+      <source src="{% static 'assets/videos/River.mp4' %}" type="video/mp4">
+    </video>
+    <div class="absolute inset-0 bg-black/50"></div>
+  </div>
+  <div class="relative z-10 flex flex-col justify-end h-full px-8 md:px-16 pb-10">
+    <div class="flex items-center gap-2 text-sm text-gray-300 mb-3">
+      <span>Beranda</span>
+      <span class="text-gray-400">›</span>
+      <span class="text-green-400">Profil Desa</span>
+    </div>
+    <h1 class="text-3xl md:text-5xl font-bold text-white leading-tight">
+      Profil Desa Sungai Meriam
+    </h1>
+    <p class="mt-2 text-gray-300 text-sm md:text-base">
+      Kecamatan Anggana, Kabupaten Kutai Kartanegara, Kalimantan Timur
+    </p>
+  </div>
+</section>
 
-{% endblock content %}
+<!-- ============================================================
+     MAIN CONTENT
+============================================================ -->
+<div class="bg-gray-50 min-h-screen">
+  <div class="max-w-6xl mx-auto px-4 md:px-8 py-10">
+
+    <!-- TAB SWITCHER -->
+    <div class="flex gap-2 mb-8 bg-white rounded-2xl p-1.5 w-fit shadow-sm border border-gray-100">
+      <button onclick="showTab('visimisi')" id="tab-visimisi"
+        class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 bg-green-600 text-white shadow">
+        Visi &amp; Misi
+      </button>
+      <button onclick="showTab('sejarah')" id="tab-sejarah"
+        class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 text-gray-500 hover:text-gray-700">
+        Sejarah
+      </button>
+      <button onclick="showTab('demografi')" id="tab-demografi"
+        class="tab-btn px-5 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 text-gray-500 hover:text-gray-700">
+        Demografi
+      </button>
+    </div>
+
+    <!-- ======================== TAB 1: VISI & MISI ======================== -->
+    <div id="content-visimisi" class="tab-content">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+
+        <!-- Visi Desa -->
+        <div class="bg-green-600 rounded-2xl p-7 text-white flex flex-col">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 rounded-xl bg-white/20 flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+              </svg>
+            </div>
+            <h2 class="text-xl font-bold">Visi Desa</h2>
+          </div>
+          <p class="text-white/90 text-base leading-relaxed font-medium flex-1">
+            "{{ visi|default:'Terwujudnya Desa Sungai Meriam yang Maju, Mandiri, Berdaya Saing, dan Berkarakter Berbasis Kearifan Lokal pada Tahun 2030' }}"
+          </p>
+          <div class="mt-6 pt-5 border-t border-white/20">
+            <p class="text-white/70 text-xs mb-1">Kepala Desa Sungai Meriam</p>
+            <p class="text-white font-bold text-base">{{ kepala_desa|default:'H. Ahmad Fauzi, S.IP' }}</p>
+          </div>
+        </div>
+
+        <!-- Misi Desa -->
+        <div class="bg-white rounded-2xl p-7 shadow-sm border border-gray-100">
+          <div class="flex items-center gap-3 mb-5">
+            <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" stroke-width="2"/>
+                <circle cx="12" cy="12" r="6" stroke-width="2"/>
+                <circle cx="12" cy="12" r="2" stroke-width="2"/>
+              </svg>
+            </div>
+            <h2 class="text-xl font-bold text-gray-800">Misi Desa</h2>
+          </div>
+          <ul class="space-y-3">
+            {% for misi in misi_list %}
+            <li class="flex items-start gap-3">
+              <span class="flex-shrink-0 w-6 h-6 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center mt-0.5">{{ forloop.counter }}</span>
+              <p class="text-gray-700 text-sm leading-relaxed">{{ misi }}</p>
+            </li>
+            {% empty %}
+            <li class="flex items-start gap-3">
+              <span class="flex-shrink-0 w-6 h-6 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center mt-0.5">1</span>
+              <p class="text-gray-700 text-sm leading-relaxed">Meningkatkan kualitas pelayanan publik berbasis teknologi digital dan AI.</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="flex-shrink-0 w-6 h-6 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center mt-0.5">2</span>
+              <p class="text-gray-700 text-sm leading-relaxed">Mengembangkan potensi UMKM lokal melalui akses pasar yang lebih luas.</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="flex-shrink-0 w-6 h-6 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center mt-0.5">3</span>
+              <p class="text-gray-700 text-sm leading-relaxed">Mewujudkan infrastruktur desa yang merata dan berkelanjutan.</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="flex-shrink-0 w-6 h-6 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center mt-0.5">4</span>
+              <p class="text-gray-700 text-sm leading-relaxed">Meningkatkan derajat kesehatan masyarakat melalui layanan terpadu.</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="flex-shrink-0 w-6 h-6 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center mt-0.5">5</span>
+              <p class="text-gray-700 text-sm leading-relaxed">Melestarikan budaya dan kearifan lokal Desa Sungai Meriam.</p>
+            </li>
+            <li class="flex items-start gap-3">
+              <span class="flex-shrink-0 w-6 h-6 rounded-full bg-green-600 text-white text-xs font-bold flex items-center justify-center mt-0.5">6</span>
+              <p class="text-gray-700 text-sm leading-relaxed">Membangun tata kelola pemerintahan yang transparan dan akuntabel.</p>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+      </div>
+
+      <!-- Peta Wilayah -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-green-50 flex items-center justify-center">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="font-bold text-gray-800 text-sm">Peta Wilayah Desa Sungai Meriam</p>
+              <p class="text-xs text-gray-500">Kecamatan Anggana, Kabupaten Kutai Kartanegara</p>
+            </div>
+          </div>
+          <div class="map-layer-switcher flex gap-1" data-map-target="map">
+            <button type="button" data-map-layer="Satelit"
+              class="map-layer-btn px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">Satelit</button>
+            <button type="button" data-map-layer="Terrain" aria-pressed="true"
+              class="map-layer-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-green-600 text-white shadow-sm transition-colors">Terrain</button>
+            <button type="button" data-map-layer="Jalan"
+              class="map-layer-btn px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">Jalan</button>
+          </div>
+        </div>
+        <!-- Map container — sambungkan API nanti -->
+        <div id="map" class="w-full h-80 bg-green-700 flex items-center justify-center">
+          <div class="text-center text-green-200">
+            <svg class="mx-auto mb-2 w-8 h-8 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6-3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+            </svg>
+            <p class="map-layer-label text-sm opacity-60">Mode Terrain - peta akan disambungkan dengan API</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-between px-6 py-2.5 border-t border-gray-100">
+          <p class="text-xs text-gray-400">📍 Koordinat: {{ koordinat|default:'-0.4948° LS, 117.1527° BT' }}</p>
+          <p class="text-xs text-gray-400">© SI-PANDESA 2025 | Data Peta Desa</p>
+        </div>
+      </div>
+    </div><!-- end tab visimisi -->
+
+
+    <!-- ======================== TAB 2: SEJARAH ======================== -->
+    <div id="content-sejarah" class="tab-content hidden">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+        <!-- Kiri: Foto + Narasi -->
+        <div class="space-y-5">
+          <div class="w-full h-64 rounded-2xl overflow-hidden bg-gray-200">
+            <img
+              src="{% static 'images/sejarah-desa.jpg' %}"
+              alt="Foto Sejarah Desa"
+              class="w-full h-full object-cover"
+              onerror="this.style.display='none'"
+            />
+          </div>
+          <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div class="flex items-center gap-3 mb-4">
+              <div class="w-9 h-9 rounded-xl bg-yellow-50 flex items-center justify-center flex-shrink-0">
+                <svg class="w-5 h-5 text-yellow-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <h3 class="font-bold text-gray-800 text-base">Sejarah Singkat</h3>
+            </div>
+            <div class="text-gray-600 text-sm leading-relaxed space-y-3">
+              {{ sejarah_singkat|default:'<p>Desa Sungai Meriam didirikan oleh para tokoh masyarakat setempat. Nama "Sungai Meriam" berasal dari sejarah panjang wilayah ini yang erat kaitannya dengan perkembangan Kabupaten Kutai Kartanegara.</p><p>Selama bertahun-tahun perjalanannya, Desa Sungai Meriam telah berkembang pesat dari sebuah desa tradisional menjadi desa yang modern dengan tetap menjaga nilai-nilai budaya leluhur.</p>'|safe }}
+            </div>
+          </div>
+        </div>
+
+        <!-- Kanan: Timeline -->
+        <div>
+          <div class="flex items-center gap-2 mb-5">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+            <h3 class="font-bold text-gray-800 text-lg">Tonggak Sejarah Desa</h3>
+          </div>
+          <div class="relative">
+            <div class="absolute left-4 top-4 bottom-4 w-0.5 bg-green-200 z-0"></div>
+            <div class="space-y-4">
+              {% for event in timeline_events %}
+              <div class="flex gap-4">
+                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-600 flex items-center justify-center z-10 relative">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/>
+                  </svg>
+                </div>
+                <div class="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                  <p class="font-bold text-green-700 text-sm mb-1">{{ event.tahun }}</p>
+                  <p class="text-gray-600 text-sm leading-relaxed">{{ event.keterangan }}</p>
+                </div>
+              </div>
+              {% empty %}
+              {% for tl in timeline_fallback %}
+              <div class="flex gap-4">
+                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-600 flex items-center justify-center z-10 relative">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                  <p class="font-bold text-green-700 text-sm mb-1">{{ tl.tahun }}</p>
+                  <p class="text-gray-600 text-sm leading-relaxed">{{ tl.keterangan }}</p>
+                </div>
+              </div>
+              {% empty %}
+              {% for item in "123456"|make_list %}
+              <div class="flex gap-4">
+                <div class="flex-shrink-0 w-8 h-8 rounded-full bg-green-600 flex items-center justify-center z-10 relative">
+                  <svg class="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"/></svg>
+                </div>
+                <div class="flex-1 bg-white rounded-xl p-4 shadow-sm border border-gray-100">
+                  {% if forloop.counter == 1 %}
+                  <p class="font-bold text-green-700 text-sm mb-1">1945</p>
+                  <p class="text-gray-600 text-sm leading-relaxed">Desa resmi berdiri sebagai bagian dari Republik Indonesia yang baru merdeka.</p>
+                  {% elif forloop.counter == 2 %}
+                  <p class="font-bold text-green-700 text-sm mb-1">1970</p>
+                  <p class="text-gray-600 text-sm leading-relaxed">Pembangunan jalan penghubung utama desa sepanjang puluhan kilometer.</p>
+                  {% elif forloop.counter == 3 %}
+                  <p class="font-bold text-green-700 text-sm mb-1">1995</p>
+                  <p class="text-gray-600 text-sm leading-relaxed">Desa meraih penghargaan Desa Terbaik tingkat Kabupaten Kutai Kartanegara.</p>
+                  {% elif forloop.counter == 4 %}
+                  <p class="font-bold text-green-700 text-sm mb-1">2010</p>
+                  <p class="text-gray-600 text-sm leading-relaxed">Pendirian Pusat Kesehatan Masyarakat (Puskesmas) pertama di desa.</p>
+                  {% elif forloop.counter == 5 %}
+                  <p class="font-bold text-green-700 text-sm mb-1">2020</p>
+                  <p class="text-gray-600 text-sm leading-relaxed">Digitalisasi layanan desa pertama kali diperkenalkan di Kalimantan Timur.</p>
+                  {% elif forloop.counter == 6 %}
+                  <p class="font-bold text-green-700 text-sm mb-1">2025</p>
+                  <p class="text-gray-600 text-sm leading-relaxed">Peluncuran platform SI-PANDESA berbasis AI untuk modernisasi pelayanan desa.</p>
+                  {% endif %}
+                </div>
+              </div>
+              {% endfor %}
+              {% endfor %}
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><!-- end tab sejarah -->
+
+
+    <!-- ======================== TAB 3: DEMOGRAFI ======================== -->
+    <div id="content-demografi" class="tab-content hidden">
+
+      <!-- 6 Stat Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+          </div>
+          <p class="text-2xl font-extrabold text-gray-900">{{ total_penduduk|default:'3.847' }} jiwa</p>
+          <p class="text-sm text-gray-500 mt-1">Total Penduduk</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+          </div>
+          <p class="text-2xl font-extrabold text-gray-900">{{ jumlah_kk|default:'1.124' }} KK</p>
+          <p class="text-sm text-gray-500 mt-1">Kepala Keluarga</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+            </svg>
+          </div>
+          <p class="text-2xl font-extrabold text-gray-900">{{ umkm_aktif|default:'87' }} unit</p>
+          <p class="text-sm text-gray-500 mt-1">UMKM Aktif</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+            </svg>
+          </div>
+          <p class="text-2xl font-extrabold text-gray-900">{{ luas_wilayah|default:'42,5' }} Ha</p>
+          <p class="text-sm text-gray-500 mt-1">Luas Wilayah</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+            </svg>
+          </div>
+          <p class="text-2xl font-extrabold text-gray-900">{{ lahan_pertanian|default:'18,3' }} Ha</p>
+          <p class="text-sm text-gray-500 mt-1">Lahan Pertanian</p>
+        </div>
+        <div class="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
+          <div class="w-10 h-10 rounded-xl bg-green-50 flex items-center justify-center mb-4">
+            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+            </svg>
+          </div>
+          <p class="text-2xl font-extrabold text-gray-900">{{ jumlah_penghargaan|default:'12' }} prestasi</p>
+          <p class="text-sm text-gray-500 mt-1">Penghargaan</p>
+        </div>
+      </div>
+
+      <!-- Peta Wilayah -->
+      <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
+          <div class="flex items-center gap-3">
+            <div class="w-9 h-9 rounded-xl bg-green-50 flex items-center justify-center">
+              <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+              </svg>
+            </div>
+            <div>
+              <p class="font-bold text-gray-800 text-sm">Peta Wilayah Desa Sungai Meriam</p>
+              <p class="text-xs text-gray-500">Kecamatan Anggana, Kabupaten Kutai Kartanegara</p>
+            </div>
+          </div>
+          <div class="map-layer-switcher flex gap-1" data-map-target="map-demografi">
+            <button type="button" data-map-layer="Satelit"
+              class="map-layer-btn px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">Satelit</button>
+            <button type="button" data-map-layer="Terrain" aria-pressed="true"
+              class="map-layer-btn px-3 py-1.5 text-xs font-semibold rounded-lg bg-green-600 text-white shadow-sm transition-colors">Terrain</button>
+            <button type="button" data-map-layer="Jalan"
+              class="map-layer-btn px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">Jalan</button>
+          </div>
+        </div>
+        <div id="map-demografi" class="w-full h-80 bg-green-700 flex items-center justify-center">
+          <div class="text-center text-green-200">
+            <svg class="mx-auto mb-2 w-8 h-8 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6-3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
+            </svg>
+            <p class="map-layer-label text-sm opacity-60">Mode Terrain - peta akan disambungkan dengan API</p>
+          </div>
+        </div>
+        <div class="flex items-center justify-between px-6 py-2.5 border-t border-gray-100">
+          <p class="text-xs text-gray-400">📍 Koordinat: {{ koordinat|default:'-0.4948° LS, 117.1527° BT' }}</p>
+          <p class="text-xs text-gray-400">© SI-PANDESA 2025 | Data Peta Desa</p>
+        </div>
+      </div>
+
+    </div><!-- end tab demografi -->
+
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+  function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(function(el) {
+      el.classList.add('hidden');
+    });
+    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+      btn.classList.remove('bg-green-600', 'text-white', 'shadow');
+      btn.classList.add('text-gray-500');
+    });
+    document.getElementById('content-' + tabName).classList.remove('hidden');
+    var activeBtn = document.getElementById('tab-' + tabName);
+    activeBtn.classList.remove('text-gray-500');
+    activeBtn.classList.add('bg-green-600', 'text-white', 'shadow');
+  }
+
+  function setMapLayer(switcher, activeButton) {
+    switcher.querySelectorAll('.map-layer-btn').forEach(function(btn) {
+      btn.classList.remove('bg-green-600', 'text-white', 'shadow-sm');
+      btn.classList.add('border', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
+      btn.setAttribute('aria-pressed', 'false');
+    });
+
+    activeButton.classList.remove('border', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
+    activeButton.classList.add('bg-green-600', 'text-white', 'shadow-sm');
+    activeButton.setAttribute('aria-pressed', 'true');
+
+    var mapId = switcher.getAttribute('data-map-target');
+    var mapEl = document.getElementById(mapId);
+    var label = mapEl ? mapEl.querySelector('.map-layer-label') : null;
+
+    if (label) {
+      label.textContent = 'Mode ' + activeButton.dataset.mapLayer + ' - peta akan disambungkan dengan API';
+    }
+  }
+
+  document.querySelectorAll('.map-layer-switcher').forEach(function(switcher) {
+    switcher.querySelectorAll('.map-layer-btn').forEach(function(button) {
+      button.addEventListener('click', function() {
+        setMapLayer(switcher, button);
+      });
+    });
+  });
+</script>
+
+{% endblock %}
