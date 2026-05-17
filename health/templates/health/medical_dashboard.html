@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50"
+     x-data="{
+        diagnosisModal: false,
+        selectedQueue: { pk: null, nama: '', poli: '', nomor: '' },
+        openDiagnosis(pk, nama, poli, nomor) {
+            this.selectedQueue = { pk, nama, poli, nomor };
+            this.diagnosisModal = true;
+            document.body.style.overflow = 'hidden';
+        },
+        closeDiagnosis() {
+            this.diagnosisModal = false;
+            document.body.style.overflow = '';
+        }
+     }">
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+
+        {# ── Header ── #}
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">Dashboard Nakes</h1>
+                <p class="text-sm text-slate-400 mt-0.5">Puskesmas Desa Sungai Meriam · Manajemen Antrean Harian</p>
+            </div>
+            <div class="flex items-center gap-2 text-sm text-slate-500">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                </svg>
+                <span>{{ filter_date }}</span>
+            </div>
+        </div>
+
+        {# ── Filter Bar ── #}
+        <div class="rounded-2xl bg-white border border-slate-100 shadow-sm px-5 py-4 mb-6">
+            <form method="GET" class="flex flex-wrap items-end gap-3">
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-slate-400">Tanggal</label>
+                    <input type="date" name="tanggal"
+                           value="{{ filter_date }}"
+                           class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700
+                                  focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent
+                                  transition-all duration-200">
+                </div>
+                <div>
+                    <label class="mb-1 block text-xs font-semibold text-slate-400">Poli</label>
+                    <select name="poli"
+                            class="rounded-xl border border-slate-200 px-3 py-2 text-sm text-slate-700
+                                   focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent
+                                   transition-all duration-200 appearance-none pr-8">
+                        <option value="">Semua Poli</option>
+                        {% for val, label in poli_choices %}
+                        <option value="{{ val }}" {% if poli_filter == val %}selected{% endif %}>{{ label }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <button type="submit"
+                        class="rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2
+                               text-sm font-semibold text-white transition-colors duration-200">
+                    Filter
+                </button>
+            </form>
+        </div>
+
+        {# ── Django Messages ── #}
+        {% if messages %}
+        {% for msg in messages %}
+        <div class="mb-4 flex items-center gap-3 rounded-xl px-4 py-3 text-sm
+                    {% if msg.tags == 'success' %}bg-emerald-50 border border-emerald-200 text-emerald-700
+                    {% else %}bg-red-50 border border-red-200 text-red-700{% endif %}">
+            {{ msg }}
+        </div>
+        {% endfor %}
+        {% endif %}
+
+        {# ── Tabel Antrean ── #}
+        <div class="rounded-2xl bg-white border border-slate-100 shadow-sm overflow-hidden">
+
+            {% if queues %}
+            <div class="overflow-x-auto">
+                <table class="w-full text-sm">
+                    <thead>
+                        <tr class="border-b border-slate-100 bg-slate-50">
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-400">No</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-400">Nama Pasien</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-400">NIK</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-400">Poli</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-400">Estimasi</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-400">Keluhan</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-400">Status</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold uppercase tracking-widest text-slate-400">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-50">
+                        {% for q in queues %}
+                        {# ── Tidak ada x-data di sini — modal dikelola parent ── #}
+                        <tr class="hover:bg-slate-50/60 transition-colors duration-150">
+                            <td class="px-4 py-3.5">
+                                <span class="inline-flex items-center justify-center h-8 w-8 rounded-lg
+                                             bg-emerald-50 text-emerald-700 font-bold text-sm">
+                                    {{ q.nomor_antrean_display }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3.5">
+                                <p class="font-semibold text-slate-800">{{ q.nama_pasien }}</p>
+                                <p class="text-xs text-slate-400">{{ q.no_hp }}</p>
+                            </td>
+                            <td class="px-4 py-3.5 text-slate-600 font-mono text-xs">{{ q.nik }}</td>
+                            <td class="px-4 py-3.5">
+                                <span class="inline-flex items-center rounded-lg bg-emerald-50 px-2 py-1
+                                             text-xs font-semibold text-emerald-700">
+                                    {{ q.get_poli_display }}
+                                </span>
+                            </td>
+                            <td class="px-4 py-3.5 text-slate-600 text-xs">
+                                {{ q.estimasi_mulai|time:"H:i" }} – {{ q.estimasi_selesai|time:"H:i" }}
+                            </td>
+                            <td class="px-4 py-3.5 text-slate-600 max-w-[180px]">
+                                <p class="truncate text-xs" title="{{ q.keluhan }}">{{ q.keluhan }}</p>
+                            </td>
+                            <td class="px-4 py-3.5">
+                                {% if q.status == 'selesai' %}
+                                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-1
+                                            text-xs font-semibold text-emerald-700">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Selesai
+                                </span>
+                                {% elif q.status == 'hadir' %}
+                                <span class="inline-flex items-center gap-1 rounded-full bg-blue-100 px-2.5 py-1
+                                            text-xs font-semibold text-blue-700">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-blue-500 animate-pulse"></span> Hadir
+                                </span>
+                                {% elif q.is_expired %}
+                                <span class="inline-flex items-center gap-1 rounded-full bg-red-100 px-2.5 py-1
+                                            text-xs font-semibold text-red-700">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-red-400"></span> Expired
+                                </span>
+                                {% else %}
+                                <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-1
+                                            text-xs font-semibold text-amber-700">
+                                    <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span> Menunggu
+                                </span>
+                                {% endif %}
+                            </td>
+                            <td class="px-4 py-3.5">
+                                {% if q.status == 'hadir' %}
+                                {# ── Tombol Input Diagnosa — panggil openDiagnosis() di parent x-data ── #}
+                                <button @click="openDiagnosis(
+                                            {{ q.pk }},
+                                            '{{ q.nama_pasien|escapejs }}',
+                                            '{{ q.get_poli_display|escapejs }}',
+                                            '{{ q.nomor_antrean_display }}'
+                                        )"
+                                        class="inline-flex items-center gap-1.5 rounded-xl
+                                               bg-emerald-600 hover:bg-emerald-700
+                                               px-3 py-1.5 text-xs font-semibold text-white
+                                               transition-colors duration-150">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3">
+                                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                                    </svg>
+                                    Input Diagnosa
+                                </button>
+
+                                {% elif q.status == 'menunggu' and not q.is_expired %}
+                                <span class="inline-flex items-center gap-1.5 rounded-xl bg-amber-50 border border-amber-200
+                                            px-3 py-1.5 text-xs font-medium text-amber-600">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                                    Belum Check-in
+                                </span>
+
+                                {% elif q.status == 'selesai' %}
+                                <div class="text-xs text-slate-400">
+                                    <p class="font-medium text-slate-600">{{ q.diagnosa|truncatechars:25 }}</p>
+                                    {% if q.ditangani_oleh %}
+                                    <p class="mt-0.5">{{ q.ditangani_oleh.get_full_name|default:q.ditangani_oleh.username }}</p>
+                                    {% endif %}
+                                </div>
+
+                                {% else %}
+                                <span class="text-xs text-slate-300">—</span>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {# Summary footer #}
+            <div class="border-t border-slate-100 bg-slate-50 px-5 py-3 flex items-center justify-between">
+                <p class="text-xs text-slate-400">
+                    Total: <strong class="text-slate-700">{{ queues.count }}</strong> antrean
+                    {% if poli_filter %} · Poli: <strong class="text-slate-700">{{ poli_filter|title }}</strong>{% endif %}
+                </p>
+                <p class="text-xs text-slate-400">{{ filter_date }}</p>
+            </div>
+
+            {% else %}
+            <div class="flex flex-col items-center justify-center py-20 text-center">
+                <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-400">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-8 w-8">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </div>
+                <p class="text-sm font-semibold text-slate-500">Tidak ada antrean</p>
+                <p class="text-xs text-slate-400 mt-1">Belum ada pendaftaran untuk tanggal & filter yang dipilih.</p>
+            </div>
+            {% endif %}
+
+        </div>
+    </div>
+
+    <div x-show="diagnosisModal"
+         x-cloak
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-150"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0"
+         class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+         style="background:rgba(15,23,42,0.55); backdrop-filter:blur(3px);">
+
+        <div @click.stop
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0 scale-95 translate-y-2"
+             x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100 scale-100"
+             x-transition:leave-end="opacity-0 scale-95"
+             class="w-full max-w-md rounded-2xl bg-white shadow-2xl overflow-hidden">
+
+            {# Header Modal #}
+            <div class="bg-emerald-600 px-6 py-4 flex items-center justify-between">
+                <div>
+                    <h3 class="text-base font-bold text-white">Input Diagnosa</h3>
+                    <p class="text-xs text-emerald-100 mt-0.5">
+                        Pasien: <span class="font-semibold" x-text="selectedQueue.nama"></span>
+                        — <span x-text="selectedQueue.poli"></span>
+                        · No. <span x-text="selectedQueue.nomor"></span>
+                    </p>
+                </div>
+                <button @click="closeDiagnosis()"
+                        class="flex h-8 w-8 items-center justify-center rounded-lg bg-white/20 hover:bg-white/30 transition-colors duration-150">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" class="h-4 w-4">
+                        <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+
+            {# Form Body #}
+            <div class="p-6">
+                {# Form action di-set dinamis via :action #}
+                <form method="POST"
+                      :action="`{% url 'health:medical_input' 0 %}`.replace('/0/', '/' + selectedQueue.pk + '/')">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-500">
+                            Diagnosa <span class="text-red-400">*</span>
+                        </label>
+                        <input type="text" name="diagnosa" required
+                               placeholder="Contoh: ISPA Ringan, Hipertensi..."
+                               class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200
+                                      focus:outline-none focus:ring-2 focus:ring-emerald-400
+                                      focus:border-transparent transition-all duration-200">
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-500">Resep Obat</label>
+                        <textarea name="resep_obat" rows="2"
+                                  placeholder="Contoh: Amoxicillin 500mg, Paracetamol 500mg..."
+                                  class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200
+                                         focus:outline-none focus:ring-2 focus:ring-emerald-400
+                                         focus:border-transparent transition-all duration-200 resize-none"></textarea>
+                    </div>
+
+                    <div class="mb-6">
+                        <label class="mb-1.5 block text-xs font-semibold text-slate-500">Catatan Tambahan</label>
+                        <textarea name="catatan_nakes" rows="2"
+                                  placeholder="Catatan dokter (opsional)"
+                                  class="w-full px-3 py-2.5 text-sm rounded-xl border border-slate-200
+                                         focus:outline-none focus:ring-2 focus:ring-emerald-400
+                                         focus:border-transparent transition-all duration-200 resize-none"></textarea>
+                    </div>
+
+                    <div class="flex gap-3">
+                        <button type="submit"
+                                class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl
+                                       bg-emerald-600 hover:bg-emerald-700
+                                       px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                                <polyline points="17 21 17 13 7 13 7 21"/>
+                                <polyline points="7 3 7 8 15 8"/>
+                            </svg>
+                            Simpan & Selesaikan
+                        </button>
+                        <button type="button" @click="closeDiagnosis()"
+                                class="flex-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50
+                                       px-4 py-2.5 text-sm font-semibold text-slate-600 transition-colors duration-200">
+                            Batal
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {# /MODAL INPUT DIAGNOSA #}
+
+</div>
+{% endblock content %}

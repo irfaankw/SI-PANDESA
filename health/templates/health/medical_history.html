@@ -1,0 +1,246 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50">
+
+    {# ── Breadcrumb ── #}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <nav class="flex items-center gap-1.5 text-xs text-slate-400">
+            <a href="{% url 'core:index' %}" class="hover:text-emerald-600 transition-colors">Beranda</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3"><polyline points="9 18 15 12 9 6"/></svg>
+            <a href="{% url 'account:profile' %}" class="hover:text-emerald-600 transition-colors">Profil</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="text-slate-700 font-medium">Riwayat Berobat</span>
+        </nav>
+    </div>
+
+    {# ── Alert: profil belum lengkap ── #}
+    {% if profile_incomplete %}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 mb-4">
+        <div class="flex items-start gap-3 rounded-xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-700">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 mt-0.5">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+            </svg>
+            <span><strong>Lengkapi data diri Anda</strong> (NIK, Alamat, RT/RW) untuk dapat menggunakan layanan surat digital.</span>
+        </div>
+    </div>
+    {% endif %}
+
+    {# ── Layout Utama ── #}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div class="flex flex-col lg:flex-row gap-6 items-start">
+
+            {# ══════════════════════════════════════════ #}
+            {# SIDEBAR KIRI                               #}
+            {# ══════════════════════════════════════════ #}
+            <aside class="w-full lg:w-64 shrink-0 flex flex-col gap-4">
+
+                {# ── Card Avatar (dark) ── #}
+                <div class="rounded-2xl p-5 flex flex-col items-center gap-3 text-center shadow-sm"
+                     style="background: rgba(0,0,0,0.45);">
+                    <div class="relative group">
+                        <div class="h-20 w-20 rounded-full overflow-hidden flex items-center justify-center"
+                             style="background: rgba(255,255,255,0.15);
+                                    box-shadow: 0 0 0 3px rgba(255,255,255,0.25), 0 0 0 6px rgba(255,255,255,0.08);">
+                            {% if profile.avatar %}
+                                <img src="{{ profile.avatar.url }}" alt="Foto {{ user.first_name }}" class="h-full w-full object-cover">
+                            {% else %}
+                                <span class="text-2xl font-bold text-white select-none">
+                                    {{ profile.initials|default:user.first_name|first|upper }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <div>
+                        <p class="text-base font-bold text-white">{{ user.get_full_name|default:user.username }}</p>
+                        <p class="text-xs mt-0.5 mb-2" style="color: rgba(255,255,255,0.65);">{{ user.email }}</p>
+                        {% if is_verified %}
+                        <div class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+                             style="background: rgba(209,250,229,0.9); color: #065f46;">
+                            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span> Verified
+                        </div>
+                        {% else %}
+                        <div class="inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold"
+                             style="background: rgba(254,226,226,0.9); color: #991b1b;">
+                            <span class="h-1.5 w-1.5 rounded-full bg-red-400"></span> Pending
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% if profile.nik or profile.no_hp or profile.rt %}
+                    <div class="w-full flex flex-col gap-1.5 pt-3 text-left"
+                         style="border-top: 1px solid rgba(255,255,255,0.15);">
+                        {% if profile.nik %}
+                        <div class="flex items-center gap-2 text-xs" style="color: rgba(255,255,255,0.75);">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 shrink-0">
+                                <rect x="2" y="4" width="20" height="16" rx="2"/><path d="M7 15s.5-4 5-4 5 4 5 4"/><circle cx="12" cy="8" r="2"/>
+                            </svg>
+                            NIK: {{ profile.nik }}
+                        </div>
+                        {% endif %}
+                        {% if profile.no_hp %}
+                        <div class="flex items-center gap-2 text-xs" style="color: rgba(255,255,255,0.75);">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 shrink-0">
+                                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.4 2 2 0 0 1 3.6 1.22h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.82a16 16 0 0 0 6 6l.86-.86a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 21.73 16z"/>
+                            </svg>
+                            {{ profile.no_hp }}
+                        </div>
+                        {% endif %}
+                        {% if profile.rt and profile.rw %}
+                        <div class="flex items-center gap-2 text-xs" style="color: rgba(255,255,255,0.75);">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 shrink-0">
+                                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                            </svg>
+                            RT {{ profile.rt }}/RW {{ profile.rw }}{% if profile.dusun %}, {{ profile.dusun }}{% endif %}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                {# ── Menu Navigasi Profil ── #}
+                <div class="rounded-2xl bg-white border border-slate-100 p-2 flex flex-col gap-0.5">
+                    <a href="{% url 'account:profile' %}"
+                       class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium
+                              text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
+                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                        </svg>
+                        Biodata
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 ml-auto text-slate-300"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                    <a href="{% url 'service:mail_index' %}"
+                       class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium
+                              text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        Arsip Surat
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 ml-auto text-slate-300"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                    {# Riwayat Berobat — AKTIF #}
+                    <a href="{% url 'health:medical_history' %}"
+                       class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium
+                              bg-emerald-50 text-emerald-700 transition-colors duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-emerald-600">
+                            <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                        </svg>
+                        Riwayat Berobat
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 ml-auto"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                    <div class="my-1 border-t border-slate-100"></div>
+                    <form method="POST" action="{% url 'account:logout' %}">
+                        {% csrf_token %}
+                        <button type="submit"
+                                class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium
+                                       text-red-500 hover:bg-red-50 hover:text-red-600 transition-colors duration-150">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0">
+                                <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                <polyline points="16 17 21 12 16 7"/>
+                                <line x1="21" y1="12" x2="9" y2="12"/>
+                            </svg>
+                            Keluar
+                        </button>
+                    </form>
+                </div>
+
+                {# ── Ringkasan ── #}
+                <div class="rounded-2xl bg-white border border-slate-100 p-4">
+                    <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">Ringkasan</p>
+                    <div class="flex flex-col gap-2">
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="flex items-center gap-2 text-slate-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                </svg>
+                                Total Kunjungan
+                            </span>
+                            <span class="font-bold text-emerald-600">{{ completed_visits.count }}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="flex items-center gap-2 text-slate-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
+                                </svg>
+                                Total Surat
+                            </span>
+                            <span class="font-bold text-slate-800">0</span>
+                        </div>
+                    </div>
+                </div>
+
+            </aside>
+            {# /SIDEBAR KIRI #}
+
+            {# ══════════════════════════════════════════ #}
+            {# KONTEN UTAMA — DAFTAR RIWAYAT              #}
+            {# ══════════════════════════════════════════ #}
+            <main class="flex-1 min-w-0" x-data="{ searchQuery: '' }">
+
+                <div class="rounded-2xl bg-white border border-slate-100 shadow-sm p-6 overflow-hidden">
+
+                    {# ── Header dengan tombol + Buat Janji ── #}
+                    <div class="flex items-start justify-between gap-4 mb-2">
+                        <div>
+                            <h1 class="text-xl font-bold text-slate-800">Riwayat Berobat</h1>
+                            <p class="text-sm text-slate-400 mt-0.5">Rekam medis kunjungan yang telah selesai</p>
+                        </div>
+
+                        {# Kanan: badge jumlah + tombol buat janji #}
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="inline-flex items-center justify-center rounded-full
+                                         bg-emerald-100 px-3 py-1 text-xs font-bold text-emerald-700">
+                                {{ completed_visits.count }} kunjungan
+                            </span>
+                            <a href="{% url 'health:appointment' %}"
+                               class="inline-flex items-center gap-1.5 rounded-xl
+                                      bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800
+                                      px-3 py-2 text-xs font-semibold text-white
+                                      shadow-sm shadow-emerald-400/20
+                                      transition-all duration-200 hover:-translate-y-px hover:shadow-md">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                Buat Janji
+                            </a>
+                        </div>
+                    </div>
+
+                    {% if completed_visits %}
+                        {% include 'health/includes/history_list.html' %}
+                    {% else %}
+                        <div class="flex flex-col items-center justify-center py-16 text-center">
+                            <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-8 w-8 text-slate-400">
+                                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                </svg>
+                            </div>
+                            <p class="text-base font-semibold text-slate-600 mb-1">Belum ada riwayat kunjungan</p>
+                            <p class="text-sm text-slate-400 max-w-xs">Riwayat muncul setelah dokter menginput hasil pemeriksaan.</p>
+                            <a href="{% url 'health:appointment' %}"
+                               class="mt-5 inline-flex items-center gap-2 rounded-xl
+                                      bg-emerald-600 hover:bg-emerald-700
+                                      px-5 py-2.5 text-sm font-semibold text-white
+                                      transition-all duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                    <line x1="12" y1="5" x2="12" y2="19"/>
+                                    <line x1="5" y1="12" x2="19" y2="12"/>
+                                </svg>
+                                Buat Janji Sekarang
+                            </a>
+                        </div>
+                    {% endif %}
+
+                </div>
+            </main>
+
+        </div>
+    </div>
+</div>
+{% endblock content %}

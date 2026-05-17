@@ -1,0 +1,129 @@
+{% load static %}
+
+<aside class="w-full lg:w-64 shrink-0">
+    <div class="rounded-2xl overflow-hidden shadow-sm border border-slate-100">
+
+        {# ── Header Sidebar ── #}
+        <div class="bg-emerald-700 px-5 py-4">
+            <p class="text-[13px] font-bold text-white tracking-wide">Layanan Desa</p>
+            <p class="text-[11px] text-emerald-200 mt-0.5">Pilih jenis layanan</p>
+        </div>
+
+        {# ── Menu Items ── #}
+        <nav class="bg-white p-2 flex flex-col gap-0.5">
+
+            {# Surat Digital #}
+            <a href="{% url 'service:mail_index' %}"
+               class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200
+                      {% if active_tab == 'surat' %}
+                          bg-emerald-50 text-emerald-700
+                      {% else %}
+                          text-slate-600 hover:bg-slate-50 hover:text-slate-800
+                      {% endif %}">
+                <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors duration-200
+                             {% if active_tab == 'surat' %}bg-emerald-600 text-white{% else %}bg-slate-100 text-slate-500{% endif %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                </span>
+                Surat Digital
+                {% if active_tab == 'surat' %}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5 ml-auto text-emerald-500">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+                {% endif %}
+            </a>
+
+            {# Kesehatan #}
+            <a href="{% url 'health:appointment' %}"
+               class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200
+                      {% if active_tab == 'kesehatan' %}
+                          bg-emerald-50 text-emerald-700
+                      {% else %}
+                          text-slate-600 hover:bg-slate-50 hover:text-slate-800
+                      {% endif %}">
+                <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors duration-200
+                             {% if active_tab == 'kesehatan' %}bg-emerald-600 text-white{% else %}bg-slate-100 text-slate-500{% endif %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
+                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                    </svg>
+                </span>
+                Kesehatan
+                {% if active_tab == 'kesehatan' %}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5 ml-auto text-emerald-500">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+                {% endif %}
+            </a>
+
+            {# Pengaduan #}
+            <a href="#"
+               class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200
+                      {% if active_tab == 'pengaduan' %}
+                          bg-emerald-50 text-emerald-700
+                      {% else %}
+                          text-slate-600 hover:bg-slate-50 hover:text-slate-800
+                      {% endif %}">
+                <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors duration-200
+                             {% if active_tab == 'pengaduan' %}bg-emerald-600 text-white{% else %}bg-slate-100 text-slate-500{% endif %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                    </svg>
+                </span>
+                Pengaduan
+                {% if active_tab == 'pengaduan' %}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5 ml-auto text-emerald-500">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+                {% endif %}
+            </a>
+
+            {# Kesejahteraan #}
+            <a href="#"
+               class="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200
+                      {% if active_tab == 'kesejahteraan' %}
+                          bg-emerald-50 text-emerald-700
+                      {% else %}
+                          text-slate-600 hover:bg-slate-50 hover:text-slate-800
+                      {% endif %}">
+                <span class="flex h-7 w-7 shrink-0 items-center justify-center rounded-lg transition-colors duration-200
+                             {% if active_tab == 'kesejahteraan' %}bg-emerald-600 text-white{% else %}bg-slate-100 text-slate-500{% endif %}">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
+                        <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                        <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                    </svg>
+                </span>
+                Kesejahteraan
+                {% if active_tab == 'kesejahteraan' %}
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5 ml-auto text-emerald-500">
+                    <polyline points="9 18 15 12 9 6"/>
+                </svg>
+                {% endif %}
+            </a>
+
+        </nav>
+
+        {# ── Lacak Pengajuan ── #}
+        <div class="bg-white border-t border-slate-100 px-4 py-4">
+            <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-2">Lacak Pengajuan</p>
+            <div class="flex gap-2">
+                <input type="text"
+                       placeholder="Nomor pengajuan"
+                       class="flex-1 min-w-0 rounded-xl border border-slate-200 px-3 py-2
+                              text-sm text-slate-700 placeholder-slate-300
+                              focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent
+                              transition-all duration-200">
+                <button class="shrink-0 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800
+                               px-3 py-2 text-sm font-semibold text-white
+                               transition-all duration-200 shadow-sm shadow-emerald-400/20">
+                    Cek
+                </button>
+            </div>
+        </div>
+
+    </div>
+</aside>

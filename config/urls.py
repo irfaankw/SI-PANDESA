@@ -11,9 +11,10 @@ urlpatterns = [
     path('auth/', include('account.urls', namespace='account')),
 
     # Features
-    path('market/', include('market.urls', namespace='market')),
-    path('news/', include('news.urls', namespace='news')),
-    path('service/', include('service.urls', namespace='service')),
+    path('pasar/', include('market.urls', namespace='market')),
+    path('berita/', include('news.urls', namespace='news')),
+    path('layanan/surat/', include('service.urls', namespace='service')),
+    path('layanan/kesehatan/', include('health.urls',  namespace='health')),
 
     # Core
     path('', include('core.urls', namespace='core')),

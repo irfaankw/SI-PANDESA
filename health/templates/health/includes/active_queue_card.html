@@ -1,0 +1,117 @@
+{# ── ACTIVE QUEUE CARD ── #}
+
+<div class="rounded-2xl bg-white border border-slate-100 shadow-sm overflow-hidden">
+
+    {# ── Header Emerald ── #}
+    <div class="bg-emerald-600 px-6 pt-6 pb-8 text-center relative overflow-hidden">
+        <div class="absolute -top-8 -right-8 h-32 w-32 rounded-full bg-emerald-500/30"></div>
+        <div class="absolute -bottom-6 -left-6 h-20 w-20 rounded-full bg-emerald-500/20"></div>
+        <div class="relative z-10">
+            {% if active_queue.status == 'hadir' %}
+            <div class="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white/25 px-3 py-1 text-xs font-bold text-white">
+                <span class="h-1.5 w-1.5 rounded-full bg-white animate-pulse"></span>
+                Sudah Hadir — Menunggu Dipanggil
+            </div>
+            {% else %}
+            <div class="mb-3 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1 text-xs font-bold text-white">
+                <span class="h-1.5 w-1.5 rounded-full bg-amber-300 animate-pulse"></span>
+                Antrean Aktif
+            </div>
+            {% endif %}
+
+            <p class="text-xs font-semibold uppercase tracking-widest text-emerald-100 mb-1">NOMOR ANTREAN</p>
+            <p class="text-7xl font-black text-white tracking-tight leading-none">
+                {{ active_queue.nomor_antrean_display }}
+            </p>
+            <p class="mt-2 text-sm font-medium text-emerald-100">{{ active_queue.get_poli_display }}</p>
+        </div>
+    </div>
+
+    {# ── Info Detail ── #}
+    <div class="px-6 py-5">
+        <div class="grid grid-cols-2 gap-y-4 gap-x-6 mb-5">
+            <div>
+                <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Nama Pasien</p>
+                <p class="text-sm font-semibold text-slate-800">{{ active_queue.nama_pasien }}</p>
+            </div>
+            <div>
+                <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Tanggal</p>
+                <p class="text-sm font-semibold text-slate-800">{{ active_queue.tanggal_kunjungan|date:"d F Y" }}</p>
+            </div>
+            <div>
+                <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Estimasi Waktu</p>
+                <p class="text-sm font-semibold text-slate-800">
+                    {{ active_queue.estimasi_mulai|time:"H:i" }} – {{ active_queue.estimasi_selesai|time:"H:i" }} WITA
+                </p>
+            </div>
+            <div>
+                <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Status</p>
+                {% if active_queue.status == 'hadir' %}
+                <span class="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3 w-3"><polyline points="20 6 9 17 4 12"/></svg>
+                    Hadir
+                </span>
+                {% else %}
+                <span class="inline-flex items-center gap-1 rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-semibold text-amber-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3 w-3"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    Menunggu
+                </span>
+                {% endif %}
+            </div>
+            <div class="col-span-2">
+                <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Lokasi</p>
+                <p class="text-sm font-semibold text-slate-800">Puskesmas Desa Sungai Meriam</p>
+            </div>
+        </div>
+
+        {# ── QR Code ── #}
+        <div class="flex flex-col items-center py-4 border-y border-slate-100">
+            <p class="text-[10px] text-slate-400 mb-3 uppercase tracking-widest font-medium">Tunjukkan QR code ini saat tiba</p>
+            {% if active_queue_qr %}
+            <img src="data:image/png;base64,{{ active_queue_qr }}"
+                 alt="QR Code Antrean {{ active_queue.nomor_antrean_display }}"
+                 class="h-36 w-36 rounded-xl border border-slate-100 shadow-sm">
+            {% endif %}
+            <p class="mt-3 text-[10px] text-slate-400 font-mono">{{ active_queue.kode_unik }}</p>
+        </div>
+
+        {# ── Tombol Aksi ── #}
+        <div class="mt-5 flex gap-3">
+            {# Tombol Simpan Tiket — memanggil savePDFFromCard() dengan data Django context #}
+            {% with tgl=active_queue.tanggal_kunjungan|date:"d F Y" est_mulai=active_queue.estimasi_mulai|time:"H:i" est_selesai=active_queue.estimasi_selesai|time:"H:i" %}
+            <button @click="savePDFFromCard(
+                        '{{ active_queue.nomor_antrean_display }}',
+                        '{{ active_queue.nama_pasien|escapejs }}',
+                        '{{ active_queue.get_poli_display|escapejs }}',
+                        '{{ tgl|escapejs }}',
+                        '{{ est_mulai }} – {{ est_selesai }} WITA',
+                        'Puskesmas Desa Sungai Meriam',
+                        '{{ active_queue_qr }}'
+                    )"
+                    class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl
+                           bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800
+                           px-4 py-2.5 text-sm font-semibold text-white
+                           transition-all duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/>
+                    <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Simpan Tiket
+            </button>
+            {% endwith %}
+        </div>
+
+        {# ── Info Limit ── #}
+        <div class="mt-4 rounded-xl bg-amber-50 border border-amber-100 px-4 py-3 text-xs text-amber-700 flex items-start gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 mt-0.5">
+                <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+            </svg>
+            <span>
+                Anda memiliki <strong>1 antrean aktif</strong>. Pendaftaran antrean baru hanya bisa dilakukan
+                setelah antrean ini selesai.
+            </span>
+        </div>
+    </div>
+
+</div>

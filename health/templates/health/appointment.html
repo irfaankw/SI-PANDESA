@@ -1,0 +1,479 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50">
+
+    {# ── Breadcrumb ── #}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <nav class="flex items-center gap-1.5 text-xs text-slate-400">
+            <a href="{% url 'core:index' %}" class="hover:text-emerald-600 transition-colors">Beranda</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3"><polyline points="9 18 15 12 9 6"/></svg>
+            <span>Layanan</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="text-slate-700 font-medium">Kesehatan</span>
+        </nav>
+    </div>
+
+    {# ── Layout ── #}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div class="flex flex-col lg:flex-row gap-6 items-start">
+
+            {% include 'snippets/sidebar_service.html' %}
+
+            <main class="flex-1 min-w-0" x-data="appointmentForm()" x-init="init()">
+
+                {# KONDISI 1: Antrean aktif (menunggu / hadir) #}
+                {% if active_queue %}
+                    {% include 'health/includes/active_queue_card.html' %}
+
+                {# KONDISI 2: Sudah selesai diperiksa hari ini #}
+                {% elif today_completed_queue %}
+                    <div class="rounded-2xl overflow-hidden shadow-sm border border-emerald-100">
+
+                        {# Header gradient hijau #}
+                        <div class="relative bg-gradient-to-br from-emerald-600 via-emerald-500 to-teal-500
+                                    px-8 pt-10 pb-14 text-center overflow-hidden">
+                            <div class="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10"></div>
+                            <div class="absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-white/10"></div>
+                            <div class="absolute top-1/2 left-1/4 h-20 w-20 rounded-full bg-white/5"></div>
+                            <div class="relative z-10">
+                                <div class="mx-auto mb-5 flex h-20 w-20 items-center justify-center
+                                            rounded-2xl bg-white/20 backdrop-blur-sm ring-4 ring-white/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="white" stroke-width="2.5" stroke-linecap="round" class="h-10 w-10">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                                        <polyline points="22 4 12 14.01 9 11.01"/>
+                                    </svg>
+                                </div>
+                                <p class="text-xs font-bold uppercase tracking-[0.2em] text-emerald-100 mb-2">
+                                    Pemeriksaan Selesai
+                                </p>
+                                <h2 class="text-2xl font-black text-white mb-3 leading-tight">
+                                    Terima kasih sudah melakukan pemeriksaan hari ini
+                                    di {{ today_completed_queue.get_poli_display }}.
+                                </h2>
+                                <p class="text-sm text-emerald-100 max-w-sm mx-auto leading-relaxed">
+                                    Semoga lekas sembuh,
+                                    <strong class="text-white">{{ request.user.get_full_name|default:request.user.username }}!</strong>
+                                    Jaga kesehatan selalu.
+                                </p>
+                            </div>
+                        </div>
+
+                        {# Body putih #}
+                        <div class="bg-white px-8 pb-8 -mt-6 relative z-10">
+                            <div class="rounded-2xl bg-white border border-slate-100 shadow-md px-6 py-5 mb-6 -mt-8">
+                                <p class="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 mb-4">
+                                    Ringkasan Kunjungan Hari Ini
+                                </p>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 mb-1">Poli</p>
+                                        <p class="text-sm font-bold text-slate-800">{{ today_completed_queue.get_poli_display }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 mb-1">No. Antrean</p>
+                                        <p class="text-sm font-bold text-slate-800">{{ today_completed_queue.nomor_antrean_display }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 mb-1">Tanggal</p>
+                                        <p class="text-sm font-bold text-slate-800">{{ today_completed_queue.tanggal_kunjungan|date:"d F Y" }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 mb-1">Waktu Estimasi</p>
+                                        <p class="text-sm font-bold text-slate-800">
+                                            {{ today_completed_queue.estimasi_mulai|time:"H:i" }} –
+                                            {{ today_completed_queue.estimasi_selesai|time:"H:i" }} WITA
+                                        </p>
+                                    </div>
+                                    {% if today_completed_queue.diagnosa %}
+                                    <div class="col-span-2 pt-3 border-t border-slate-100">
+                                        <p class="text-[10px] text-slate-400 mb-1">Diagnosa</p>
+                                        <p class="text-sm font-bold text-emerald-700">{{ today_completed_queue.diagnosa }}</p>
+                                    </div>
+                                    {% endif %}
+                                    {% if today_completed_queue.resep_obat %}
+                                    <div class="col-span-2">
+                                        <p class="text-[10px] text-slate-400 mb-1">Resep Obat</p>
+                                        <p class="text-sm text-slate-700">{{ today_completed_queue.resep_obat }}</p>
+                                    </div>
+                                    {% endif %}
+                                    {% if today_completed_queue.ditangani_oleh %}
+                                    <div class="col-span-2">
+                                        <p class="text-[10px] text-slate-400 mb-1">Ditangani Oleh</p>
+                                        <p class="text-sm font-semibold text-slate-700">
+                                            {{ today_completed_queue.ditangani_oleh.get_full_name|default:today_completed_queue.ditangani_oleh.username }}
+                                        </p>
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 rounded-xl bg-amber-50 border border-amber-100
+                                        px-4 py-3 text-xs text-amber-700">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 mt-0.5">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                                <span>
+                                    Pendaftaran antrean baru akan <strong>terbuka kembali besok</strong>.
+                                    Sistem reset otomatis setiap hari pukul 00:00 WITA.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                {# KONDISI 3: Tiket hangus (expired) hari ini #}
+                {% elif today_expired_queue %}
+                    <div class="rounded-2xl overflow-hidden shadow-sm border border-red-100">
+
+                        {# Header gradient merah/amber #}
+                        <div class="relative bg-gradient-to-br from-red-500 via-orange-500 to-amber-500
+                                    px-8 pt-10 pb-14 text-center overflow-hidden">
+                            <div class="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-white/10"></div>
+                            <div class="absolute -bottom-8 -left-8 h-32 w-32 rounded-full bg-white/10"></div>
+                            <div class="relative z-10">
+                                <div class="mx-auto mb-5 flex h-20 w-20 items-center justify-center
+                                            rounded-2xl bg-white/20 backdrop-blur-sm ring-4 ring-white/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                         stroke="white" stroke-width="2.5" stroke-linecap="round" class="h-10 w-10">
+                                        <circle cx="12" cy="12" r="10"/>
+                                        <line x1="12" y1="8" x2="12" y2="12"/>
+                                        <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                    </svg>
+                                </div>
+                                <p class="text-xs font-bold uppercase tracking-[0.2em] text-orange-100 mb-2">
+                                    Tiket Hangus
+                                </p>
+                                <h2 class="text-xl font-black text-white mb-3 leading-tight">
+                                    Mohon Maaf, tiket antrean Anda di
+                                    {{ today_expired_queue.get_poli_display }}
+                                    pada jam
+                                    {{ today_expired_queue.estimasi_mulai|time:"H:i" }}–{{ today_expired_queue.estimasi_selesai|time:"H:i" }} WITA
+                                    telah hangus.
+                                </h2>
+                                <p class="text-sm text-orange-100 max-w-sm mx-auto leading-relaxed">
+                                    Tiket hangus karena telah melewati batas jam operasional Puskesmas
+                                    <strong class="text-white">(14:00 WITA)</strong>.
+                                </p>
+                            </div>
+                        </div>
+
+                        {# Body putih #}
+                        <div class="bg-white px-8 pb-8 -mt-6 relative z-10">
+                            <div class="rounded-2xl bg-white border border-slate-100 shadow-md px-6 py-5 mb-6 -mt-8">
+                                <p class="text-[10px] font-bold uppercase tracking-[0.15em] text-slate-400 mb-4">
+                                    Detail Tiket yang Hangus
+                                </p>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 mb-1">Poli</p>
+                                        <p class="text-sm font-bold text-slate-800">{{ today_expired_queue.get_poli_display }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 mb-1">No. Antrean</p>
+                                        <p class="text-sm font-bold text-slate-800">{{ today_expired_queue.nomor_antrean_display }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 mb-1">Tanggal</p>
+                                        <p class="text-sm font-bold text-slate-800">{{ today_expired_queue.tanggal_kunjungan|date:"d F Y" }}</p>
+                                    </div>
+                                    <div>
+                                        <p class="text-[10px] text-slate-400 mb-1">Estimasi Waktu</p>
+                                        <p class="text-sm font-bold text-red-600">
+                                            {{ today_expired_queue.estimasi_mulai|time:"H:i" }} –
+                                            {{ today_expired_queue.estimasi_selesai|time:"H:i" }} WITA
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="flex items-start gap-3 rounded-xl bg-slate-50 border border-slate-100
+                                        px-4 py-3 text-xs text-slate-600">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                     stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 mt-0.5 text-slate-400">
+                                    <circle cx="12" cy="12" r="10"/>
+                                    <line x1="12" y1="8" x2="12" y2="12"/>
+                                    <line x1="12" y1="16" x2="12.01" y2="16"/>
+                                </svg>
+                                <span>
+                                    Pendaftaran antrean baru akan <strong>terbuka kembali besok</strong>.
+                                    Sistem reset otomatis setiap hari pukul 00:00 WITA.
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                {# KONDISI 4: Belum daftar — tampilkan form #}
+                {% else %}
+                    {% include 'health/includes/registration_form.html' %}
+                {% endif %}
+
+                {# MODAL SUKSES — tetap di dalam scope x-data. #}
+                {# Hanya aktif saat kondisi form (kondisi 4), tapi x-show="modalOpen" menjaganya tersembunyi di kondisi lain. #}
+                <div x-show="modalOpen"
+                     x-cloak
+                     x-transition:enter="transition ease-out duration-200"
+                     x-transition:enter-start="opacity-0"
+                     x-transition:enter-end="opacity-100"
+                     x-transition:leave="transition ease-in duration-150"
+                     x-transition:leave-start="opacity-100"
+                     x-transition:leave-end="opacity-0"
+                     class="fixed inset-0 z-[100] flex items-center justify-center p-4 overflow-y-auto"
+                     style="background:rgba(15,23,42,0.6);backdrop-filter:blur(4px)">
+
+                    <div x-show="modalOpen"
+                         x-transition:enter="transition ease-out duration-250"
+                         x-transition:enter-start="opacity-0 scale-95 translate-y-4"
+                         x-transition:enter-end="opacity-100 scale-100 translate-y-0"
+                         x-transition:leave="transition ease-in duration-150"
+                         x-transition:leave-start="opacity-100 scale-100"
+                         x-transition:leave-end="opacity-0 scale-95"
+                         @click.stop
+                         class="w-full max-w-sm rounded-3xl bg-white shadow-2xl overflow-hidden my-auto">
+
+                        <div class="bg-emerald-600 px-6 pt-6 pb-8 text-center relative overflow-hidden">
+                            <div class="absolute -top-6 -right-6 h-24 w-24 rounded-full bg-emerald-500/40"></div>
+                            <div class="absolute -bottom-4 -left-4 h-16 w-16 rounded-full bg-emerald-500/30"></div>
+                            <div class="relative z-10">
+                                <div class="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-white/20">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" class="h-6 w-6">
+                                        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                    </svg>
+                                </div>
+                                <p class="text-xs font-semibold uppercase tracking-widest text-emerald-100 mb-1">NOMOR ANTREAN</p>
+                                <p class="text-6xl font-black text-white tracking-tight" x-text="ticket.nomor_antrean"></p>
+                                <div class="mt-2 inline-flex items-center gap-1.5 rounded-full bg-white/20 px-3 py-1">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" class="h-3 w-3"><polyline points="20 6 9 17 4 12"/></svg>
+                                    <span class="text-xs font-semibold text-white">Antrean Terkonfirmasi</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="px-6 py-5">
+                            <div class="grid grid-cols-2 gap-4 mb-5">
+                                <div>
+                                    <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Nama</p>
+                                    <p class="text-sm font-semibold text-slate-800" x-text="ticket.nama_pasien"></p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Layanan</p>
+                                    <p class="text-sm font-semibold text-slate-800" x-text="ticket.poli"></p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Tanggal</p>
+                                    <p class="text-sm font-semibold text-slate-800" x-text="ticket.tanggal_display"></p>
+                                </div>
+                                <div>
+                                    <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Estimasi</p>
+                                    <p class="text-sm font-semibold text-slate-800" x-text="ticket.estimasi"></p>
+                                </div>
+                                <div class="col-span-2">
+                                    <p class="text-[10px] font-semibold uppercase tracking-widest text-slate-400 mb-0.5">Lokasi</p>
+                                    <p class="text-sm font-semibold text-slate-800" x-text="ticket.lokasi"></p>
+                                </div>
+                            </div>
+                            <div class="flex flex-col items-center py-4 border-y border-slate-100">
+                                <p class="text-[10px] text-slate-400 mb-3">Tunjukkan QR code ini saat tiba</p>
+                                <img :src="'data:image/png;base64,' + ticket.qr_base64"
+                                     alt="QR Code Antrean"
+                                     class="h-28 w-28 rounded-xl border border-slate-100 shadow-sm">
+                            </div>
+                            <div class="flex gap-3 mt-5">
+                                <button @click="savePDF()"
+                                        class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl
+                                               bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white
+                                               transition-all duration-200">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                                        <polyline points="7 10 12 15 17 10"/>
+                                        <line x1="12" y1="15" x2="12" y2="3"/>
+                                    </svg>
+                                    Simpan Tiket
+                                </button>
+                                <button @click="closeModal()"
+                                        class="flex-1 inline-flex items-center justify-center rounded-xl border border-slate-200
+                                               bg-white hover:bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-600
+                                               transition-all duration-200">
+                                    Tutup
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {# /MODAL #}
+
+            </main>
+
+        </div>
+    </div>
+</div>
+
+<form style="display:none">{% csrf_token %}</form>
+
+<script>
+function appointmentForm() {
+    return {
+        loading:   false,
+        modalOpen: false,
+        minDate:   '{{ min_date }}',
+        maxDate:   '{{ max_date }}',
+
+        form: {
+            nama_pasien:       '{{ prefill_nama|escapejs }}',
+            nik:               '{{ prefill_nik|escapejs }}',
+            no_hp:             '{{ prefill_no_hp|escapejs }}',
+            no_bpjs:           '',
+            keluhan:           '',
+            poli:              '',
+            poli_label:        '',
+            tanggal_kunjungan: '{{ default_date }}',
+        },
+
+        errors: {},
+        ticket: {},
+
+        init() {
+            this.form.tanggal_kunjungan = this.minDate;
+        },
+
+        clearError(field) {
+            delete this.errors[field];
+        },
+
+        isSunday(dateStr) {
+            if (!dateStr) return false;
+            const [y, m, d] = dateStr.split('-').map(Number);
+            return new Date(y, m - 1, d).getDay() === 0;
+        },
+
+        validateDate() {
+            if (this.isSunday(this.form.tanggal_kunjungan)) {
+                this.errors.tanggal_kunjungan = 'Puskesmas tutup hari Minggu. Pilih hari lain.';
+            } else {
+                this.clearError('tanggal_kunjungan');
+            }
+        },
+
+        getCsrf() {
+            return document.querySelector('[name=csrfmiddlewaretoken]')?.value
+                || document.cookie.match(/csrftoken=([^;]+)/)?.[1]
+                || '';
+        },
+
+        async submitForm() {
+            if (this.isSunday(this.form.tanggal_kunjungan)) {
+                this.errors.tanggal_kunjungan = 'Puskesmas tutup hari Minggu. Pilih hari lain.';
+                return;
+            }
+
+            this.loading = true;
+            this.errors  = {};
+
+            const body = new FormData();
+            Object.entries(this.form).forEach(([k, v]) => {
+                if (k !== 'poli_label') body.append(k, v);
+            });
+
+            try {
+                const res  = await fetch('{% url "health:appointment" %}', {
+                    method:  'POST',
+                    headers: { 'X-CSRFToken': this.getCsrf() },
+                    body,
+                });
+                const json = await res.json();
+
+                if (res.ok && json.status === 'success') {
+                    this.ticket    = json.data;
+                    this.modalOpen = true;
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    this.errors = json.errors || {};
+                }
+            } catch {
+                alert('Terjadi kesalahan jaringan. Silakan coba lagi.');
+            } finally {
+                this.loading = false;
+            }
+        },
+
+        closeModal() {
+            this.modalOpen = false;
+            document.body.style.overflow = '';
+            window.location.reload();
+        },
+
+        savePDF() {
+            this._printTicket(
+                this.ticket.nomor_antrean,
+                this.ticket.nama_pasien,
+                this.ticket.poli,
+                this.ticket.tanggal_display,
+                this.ticket.estimasi,
+                this.ticket.lokasi,
+                this.ticket.qr_base64
+            );
+        },
+
+        savePDFFromCard(nomor, nama, poli, tanggal, estimasi, lokasi, qrBase64) {
+            this._printTicket(nomor, nama, poli, tanggal, estimasi, lokasi, qrBase64);
+        },
+
+        _printTicket(nomor, nama, poli, tanggal, estimasi, lokasi, qrBase64) {
+            const win = window.open('', '_blank');
+            win.document.write(`<!DOCTYPE html>
+<html lang="id"><head><meta charset="UTF-8">
+<title>Tiket Antrean ${nomor}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Arial,sans-serif;background:#f8fafc;display:flex;justify-content:center;padding:40px 20px}
+.card{background:#fff;border-radius:20px;width:340px;overflow:hidden;box-shadow:0 8px 30px rgba(0,0,0,.12)}
+.header{background:linear-gradient(135deg,#059669,#047857);padding:28px 24px;text-align:center;color:#fff}
+.lbl{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:rgba(255,255,255,.75);margin-bottom:6px}
+.num{font-size:72px;font-weight:900;line-height:1;letter-spacing:-2px}
+.badge{display:inline-flex;align-items:center;gap:6px;background:rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;font-size:11px;font-weight:600;margin-top:10px}
+.body{padding:20px 24px}
+.row{display:flex;justify-content:space-between;gap:16px;margin-bottom:14px}
+.field{flex:1}.key{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:#94a3b8;margin-bottom:2px}
+.val{font-size:13px;font-weight:700;color:#1e293b}
+.divider{border:none;border-top:1px solid #f1f5f9;margin:16px 0}
+.qr{text-align:center;padding:8px 0 4px}.qr p{font-size:10px;color:#94a3b8;margin-bottom:10px}
+.qr img{width:120px;height:120px;border-radius:10px;border:1px solid #e2e8f0}
+footer{background:#f8fafc;text-align:center;padding:12px;font-size:10px;color:#94a3b8;border-top:1px solid #f1f5f9}
+</style></head><body>
+<div class="card">
+  <div class="header">
+    <div class="lbl">NOMOR ANTREAN</div>
+    <div class="num">${nomor}</div>
+    <div class="badge">✓ Antrean Terkonfirmasi</div>
+  </div>
+  <div class="body">
+    <div class="row">
+      <div class="field"><div class="key">Nama</div><div class="val">${nama}</div></div>
+      <div class="field"><div class="key">Layanan</div><div class="val">${poli}</div></div>
+    </div>
+    <div class="row">
+      <div class="field"><div class="key">Tanggal</div><div class="val">${tanggal}</div></div>
+      <div class="field"><div class="key">Estimasi</div><div class="val">${estimasi}</div></div>
+    </div>
+    <div class="row">
+      <div class="field"><div class="key">Lokasi</div><div class="val">${lokasi}</div></div>
+    </div>
+    <hr class="divider">
+    <div class="qr">
+      <p>Tunjukkan QR code ini saat tiba</p>
+      <img src="data:image/png;base64,${qrBase64}" alt="QR Code">
+    </div>
+  </div>
+  <footer>Desa Sungai Meriam · Kab. Kutai Kartanegara · SIPANDESA</footer>
+</div>
+<script>window.onload=()=>window.print();<\/script>
+</body></html>`);
+            win.document.close();
+        },
+    };
+}
+</script>
+
+{% endblock content %}

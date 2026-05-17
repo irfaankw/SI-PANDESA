@@ -165,64 +165,99 @@
     {# Tombol Masuk & Daftar — full width, selaras, dengan ikon #}
     <div class="mt-auto p-4 border-t border-slate-100 flex flex-col gap-2">
 
-        {% if user.is_authenticated %}
+    {% if user.is_authenticated %}
 
-            {# Info user di mobile #}
-            <div class="flex items-center gap-3 mb-3 px-1">
-                <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full
-                            bg-emerald-600 text-white text-sm font-bold select-none">
-                    {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
-                </span>
-                <div class="min-w-0">
-                    <p class="text-sm font-bold text-slate-800 truncate">
-                        {{ user.get_full_name|default:user.username }}
-                    </p>
-                    <p class="text-xs text-emerald-600 truncate">{{ user.email }}</p>
-                </div>
-            </div>
+    {# Avatar & nama user #}
+    <div class="flex items-center gap-3 mb-3 px-1">
+        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full
+                    bg-emerald-600 text-white text-sm font-bold select-none">
+            {{ user.first_name|first|upper }}{{ user.last_name|first|upper }}
+        </span>
+        <div class="min-w-0">
+            <p class="text-sm font-bold text-slate-800 truncate">
+                {{ user.get_full_name|default:user.username }}
+            </p>
+            <p class="text-xs truncate {% if is_nakes %}text-blue-600{% else %}text-emerald-600{% endif %}">
+                {% if is_nakes %}Tenaga Kesehatan{% else %}{{ user.email }}{% endif %}
+            </p>
+        </div>
+    </div>
 
-            {# Menu profil di mobile #}
-            <div class="flex flex-col gap-0.5 mb-3">
-                <a href="{% url 'account:profile' %}"
-                class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl
-                        text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-colors duration-150">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
-                        <circle cx="12" cy="7" r="4"/>
-                    </svg>
-                    Profil Saya
-                </a>
-                <a href="{% url 'service:service_list' %}"
-                class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl
-                        text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-colors duration-150">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
-                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                        <polyline points="14 2 14 8 20 8"/>
-                    </svg>
-                    Arsip Surat
-                </a>
-            </div>
+    {# Menu berdasarkan role #}
+    <div class="flex flex-col gap-0.5 mb-3">
+        {% if is_nakes %}
+            <a href="{% url 'health:medical_dashboard' %}"
+            class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl
+                    text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-blue-500">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                </svg>
+                Dashboard Nakes
+            </a>
+            <a href="{% url 'health:medical_dashboard' %}"
+            class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl
+                    text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-blue-500">
+                    <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                    <rect x="3" y="14" width="7" height="7"/>
+                    <polyline points="14 17 16 19 20 15"/>
+                </svg>
+                Verifikasi Antrean
+            </a>
+        {% else %}
+            <a href="{% url 'account:profile' %}"
+            class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl
+                    text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                    <circle cx="12" cy="7" r="4"/>
+                </svg>
+                Profil Saya
+            </a>
+            <a href="{% url 'service:mail_index' %}"
+            class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl
+                    text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                Arsip Surat
+            </a>
+            <a href="{% url 'health:medical_history' %}"
+            class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl
+                    text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
+                    <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+                Riwayat Berobat
+            </a>
+        {% endif %}
+    </div>
 
-            {# Tombol Keluar — merah #}
-            <form method="POST" action="{% url 'account:logout' %}">
-                {% csrf_token %}
-                <button type="submit"
-                        class="flex w-full items-center justify-center gap-2 rounded-full
-                            border border-red-200 bg-red-50 hover:bg-red-100
-                            py-2.5 text-sm font-semibold text-red-500 hover:text-red-600
-                            transition-all duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0">
-                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                        <polyline points="16 17 21 12 16 7"/>
-                        <line x1="21" y1="12" x2="9" y2="12"/>
-                    </svg>
-                    Keluar
-                </button>
-            </form>
-
+        {# Tombol Keluar #}
+        <form method="POST" action="{% url 'account:logout' %}">
+            {% csrf_token %}
+            <button type="submit"
+                    class="flex w-full items-center justify-center gap-2 rounded-full
+                        border border-red-200 bg-red-50 hover:bg-red-100
+                        py-2.5 text-sm font-semibold text-red-500 hover:text-red-600
+                        transition-all duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                    stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                    <polyline points="16 17 21 12 16 7"/>
+                    <line x1="21" y1="12" x2="9" y2="12"/>
+                </svg>
+                Keluar
+            </button>
+        </form>
+        
         {% else %}
 
             {# Belum login — tombol Masuk & Daftar #}

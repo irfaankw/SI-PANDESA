@@ -1,0 +1,206 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50">
+
+    {# ── Breadcrumb ── #}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <nav class="flex items-center gap-1.5 text-xs text-slate-400">
+            <a href="{% url 'core:index' %}" class="hover:text-emerald-600 transition-colors">Beranda</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="text-slate-500">Layanan</span>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="text-slate-700 font-medium">Surat Digital</span>
+        </nav>
+    </div>
+
+    {# ── Layout Utama ── #}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div class="flex flex-col lg:flex-row gap-6 items-start">
+
+            {# ── Sidebar ── #}
+            {% include 'snippets/sidebar_service.html' %}
+
+            {# ── Konten Utama ── #}
+            <main class="flex-1 min-w-0">
+                <div class="rounded-2xl bg-white border border-slate-100 shadow-sm p-6">
+
+                    {# Header #}
+                    <div class="mb-6">
+                        <h1 class="text-xl font-bold text-slate-800">Pilih Jenis Surat</h1>
+                        <p class="text-sm text-slate-400 mt-1">Pilih jenis surat yang ingin Anda ajukan secara online</p>
+                    </div>
+
+                    {# ── Grid 7 Kartu Surat ── #}
+                    <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-4">
+
+                        {# 1. Surat Pindah #}
+                        <a href="#"
+                           class="surat-card group relative flex flex-col items-start gap-3 rounded-2xl border border-slate-100
+                                  bg-white p-4 cursor-pointer
+                                  transition-all duration-300 ease-out
+                                  hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-50
+                                  hover:-translate-y-1 hover:scale-[1.02]">
+                            <span class="flex h-11 w-11 items-center justify-center rounded-xl
+                                         bg-orange-50 text-2xl
+                                         transition-all duration-300 group-hover:scale-110">
+                                🏠
+                            </span>
+                            <div>
+                                <p class="text-[14px] font-semibold text-slate-700 group-hover:text-emerald-700 transition-colors duration-200">Surat Pindah</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Perpindahan domisili</p>
+                            </div>
+                            <span class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5 text-emerald-500">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </span>
+                        </a>
+
+                        {# 2. Surat Domisili #}
+                        <a href="#"
+                           class="surat-card group relative flex flex-col items-start gap-3 rounded-2xl border border-slate-100
+                                  bg-white p-4 cursor-pointer
+                                  transition-all duration-300 ease-out
+                                  hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-50
+                                  hover:-translate-y-1 hover:scale-[1.02]">
+                            <span class="flex h-11 w-11 items-center justify-center rounded-xl
+                                         bg-pink-50 text-2xl
+                                         transition-all duration-300 group-hover:scale-110">
+                                📍
+                            </span>
+                            <div>
+                                <p class="text-[14px] font-semibold text-slate-700 group-hover:text-emerald-700 transition-colors duration-200">Surat Domisili</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Keterangan tempat tinggal</p>
+                            </div>
+                            <span class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5 text-emerald-500">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </span>
+                        </a>
+
+                        {# 3. Surat Kematian #}
+                        <a href="#"
+                           class="surat-card group relative flex flex-col items-start gap-3 rounded-2xl border border-slate-100
+                                  bg-white p-4 cursor-pointer
+                                  transition-all duration-300 ease-out
+                                  hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-50
+                                  hover:-translate-y-1 hover:scale-[1.02]">
+                            <span class="flex h-11 w-11 items-center justify-center rounded-xl
+                                         bg-slate-100 text-2xl
+                                         transition-all duration-300 group-hover:scale-110">
+                                📋
+                            </span>
+                            <div>
+                                <p class="text-[14px] font-semibold text-slate-700 group-hover:text-emerald-700 transition-colors duration-200">Surat Kematian</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Keterangan kematian</p>
+                            </div>
+                            <span class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5 text-emerald-500">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </span>
+                        </a>
+
+                        {# 4. Surat Kelahiran #}
+                        <a href="#"
+                           class="surat-card group relative flex flex-col items-start gap-3 rounded-2xl border border-slate-100
+                                  bg-white p-4 cursor-pointer
+                                  transition-all duration-300 ease-out
+                                  hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-50
+                                  hover:-translate-y-1 hover:scale-[1.02]">
+                            <span class="flex h-11 w-11 items-center justify-center rounded-xl
+                                         bg-yellow-50 text-2xl
+                                         transition-all duration-300 group-hover:scale-110">
+                                👶
+                            </span>
+                            <div>
+                                <p class="text-[14px] font-semibold text-slate-700 group-hover:text-emerald-700 transition-colors duration-200">Surat Kelahiran</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Keterangan kelahiran</p>
+                            </div>
+                            <span class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5 text-emerald-500">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </span>
+                        </a>
+
+                        {# 5. Surat Tidak Mampu #}
+                        <a href="#"
+                           class="surat-card group relative flex flex-col items-start gap-3 rounded-2xl border border-slate-100
+                                  bg-white p-4 cursor-pointer
+                                  transition-all duration-300 ease-out
+                                  hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-50
+                                  hover:-translate-y-1 hover:scale-[1.02]">
+                            <span class="flex h-11 w-11 items-center justify-center rounded-xl
+                                         bg-amber-50 text-2xl
+                                         transition-all duration-300 group-hover:scale-110">
+                                💛
+                            </span>
+                            <div>
+                                <p class="text-[14px] font-semibold text-slate-700 group-hover:text-emerald-700 transition-colors duration-200">Surat Tidak Mampu</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Keterangan tidak mampu</p>
+                            </div>
+                            <span class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5 text-emerald-500">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </span>
+                        </a>
+
+                        {# 6. Surat Keterangan Usaha #}
+                        <a href="#"
+                           class="surat-card group relative flex flex-col items-start gap-3 rounded-2xl border border-slate-100
+                                  bg-white p-4 cursor-pointer
+                                  transition-all duration-300 ease-out
+                                  hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-50
+                                  hover:-translate-y-1 hover:scale-[1.02]">
+                            <span class="flex h-11 w-11 items-center justify-center rounded-xl
+                                         bg-blue-50 text-2xl
+                                         transition-all duration-300 group-hover:scale-110">
+                                🏪
+                            </span>
+                            <div>
+                                <p class="text-[14px] font-semibold text-slate-700 group-hover:text-emerald-700 transition-colors duration-200">Surat Ket. Usaha</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Keterangan usaha / UMKM</p>
+                            </div>
+                            <span class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5 text-emerald-500">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </span>
+                        </a>
+
+                        {# 7. Surat Pengantar #}
+                        <a href="#"
+                           class="surat-card group relative flex flex-col items-start gap-3 rounded-2xl border border-slate-100
+                                  bg-white p-4 cursor-pointer
+                                  transition-all duration-300 ease-out
+                                  hover:border-emerald-200 hover:shadow-lg hover:shadow-emerald-50
+                                  hover:-translate-y-1 hover:scale-[1.02]">
+                            <span class="flex h-11 w-11 items-center justify-center rounded-xl
+                                         bg-purple-50 text-2xl
+                                         transition-all duration-300 group-hover:scale-110">
+                                📄
+                            </span>
+                            <div>
+                                <p class="text-[14px] font-semibold text-slate-700 group-hover:text-emerald-700 transition-colors duration-200">Surat Pengantar</p>
+                                <p class="text-[11px] text-slate-400 mt-0.5 leading-relaxed">Pengantar administrasi</p>
+                            </div>
+                            <span class="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5 text-emerald-500">
+                                    <polyline points="9 18 15 12 9 6"/>
+                                </svg>
+                            </span>
+                        </a>
+
+                    </div>{# /grid #}
+                </div>
+            </main>
+
+        </div>
+    </div>
+</div>
+{% endblock content %}

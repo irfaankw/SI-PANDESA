@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "news.apps.NewsConfig",
     "service.apps.ServiceConfig",
     "account.apps.AccountConfig",
+    "health.apps.HealthConfig",
     "storages",
 ]
 
@@ -62,6 +63,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "core.context_processors.user_role",
             ],
         },
     },
@@ -110,13 +112,13 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = "en-us"
+LANGUAGE_CODE = "id"
 
-TIME_ZONE = "UTC"
+TIME_ZONE = "Asia/Makassar" # Dari UTC → Asia/Makassar (WITA, UTC+8), agar timezone.now() dan timezone.localtime() sdh dlm WITA,
 
 USE_I18N = True
 
-USE_TZ = True
+USE_TZ = True 
 
 
 # Static files (CSS, JavaScript, Images)
@@ -156,7 +158,7 @@ STORAGES = {
     },
 }
 
-MEDIA_URL            = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
+MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field

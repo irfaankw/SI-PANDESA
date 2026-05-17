@@ -53,7 +53,7 @@
                 <div class="relative">
                     <button @click="layananOpen = !layananOpen" type="button"
                             class="flex items-center gap-1.5 px-3 py-2.5 text-[15px] font-medium rounded-xl transition-all duration-200 select-none
-                                    {% if current_view in 'service:service_list,health:health,complaint:complaint,welfare:welfare' %}text-emerald-700 bg-emerald-50{% else %}text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/70{% endif %}">
+                                    {% if current_view in 'service:mail_index,health:appointment,complaint:complaint,welfare:welfare' %}text-emerald-700 bg-emerald-50{% else %}text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/70{% endif %}">
                         <span :class="layananOpen ? 'bg-emerald-600 text-white' : 'bg-emerald-50 text-emerald-600 group-hover:bg-emerald-100'"
                                 class="inline-flex items-center justify-center h-4 w-4 rounded-md transition-all duration-200">
                             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="h-3 w-3 shrink-0">
@@ -84,7 +84,7 @@
                         </p>
 
                         {# Sub-Menu: Surat Digital #}
-                        <a href="/" @click="layananOpen = false"
+                        <a href="{% url 'service:mail_index' %}" @click="layananOpen = false"
                             class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 hover:bg-emerald-50 group/item">
                             <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 transition-colors duration-200 group-hover/item:bg-emerald-600 group-hover/item:text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
@@ -102,7 +102,7 @@
                         </a>
 
                         {# Sub-Menu: Layanan Kesehatan #}
-                        <a href="#" @click="layananOpen = false"
+                        <a href="{% url 'health:appointment' %}" @click="layananOpen = false"
                             class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 hover:bg-emerald-50 group/item">
                             <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 transition-colors duration-200 group-hover/item:bg-emerald-600 group-hover/item:text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
@@ -222,7 +222,7 @@
                                 </svg>
                             </button>
 
-                            {# Dropdown Card #}
+                            {# Dropdown Card — Kondisional berdasarkan role #}
                             <div x-show="userOpen"
                                 x-cloak
                                 x-transition:enter="transition ease-out duration-200"
@@ -234,21 +234,42 @@
                                 class="absolute right-0 top-[calc(100%+8px)] z-50 w-56 rounded-2xl bg-white
                                         shadow-xl shadow-slate-200/60 border border-slate-100 p-1.5 origin-top-right">
 
-                                {# Info User #}
-                                <div class="px-3 py-2.5 mb-1 border-b border-slate-100">
-                                    <p class="text-[13px] font-bold text-slate-800 truncate">
-                                        {{ user.get_full_name|default:user.username }}
-                                    </p>
-                                    <p class="text-[11px] text-emerald-600 truncate">
-                                        {{ user.email }}
-                                    </p>
+                            {# Info User #}
+                            <div class="px-3 py-2.5 mb-1 border-b border-slate-100">
+                                <p class="text-[13px] font-bold text-slate-800 truncate">
+                                    {{ user.get_full_name|default:user.username }}
+                                </p>
+                                <p class="text-[11px] truncate {% if is_nakes %}text-blue-600{% else %}text-emerald-600{% endif %}">
+                                    {% if is_nakes %}Tenaga Kesehatan{% else %}{{ user.email }}{% endif %}
+                                </p>
+                            </div>
+                            {% if is_nakes %}
+                                <a href="{% url 'health:medical_dashboard' %}"
+                                class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl
+                                        text-slate-600 hover:bg-blue-50 hover:text-blue-700 transition-colors duration-150">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-blue-500">
+                                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                                        <rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>
+                                    </svg>
+                                    Dashboard Nakes
+                                </a>
+                                {# Verifikasi via kamera HP — tidak perlu link #}
+                                <div class="flex items-center gap-2.5 px-3 py-2 text-xs font-medium rounded-xl
+                                            text-slate-400 bg-slate-50 cursor-default">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-300">
+                                        <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                                        <rect x="3" y="14" width="7" height="7"/>
+                                        <polyline points="14 17 16 19 20 15"/>
+                                    </svg>
+                                    Verifikasi pasien via Scan QR
                                 </div>
-
-                                {# Profil Saya #}
+                            {% else %}
+                                {# ── MENU WARGA ── #}
                                 <a href="{% url 'account:profile' %}" @click="userOpen = false"
                                 class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-[14px] font-medium
-                                        text-slate-600 hover:bg-slate-100 hover:text-slate-800
-                                        transition-colors duration-150
+                                        text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-colors duration-150
                                         {% if current_view == 'account:profile' %}bg-slate-100 text-slate-800{% endif %}">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                         stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
@@ -257,13 +278,10 @@
                                     </svg>
                                     Profil Saya
                                 </a>
-
-                                {# Arsip Surat #}
-                                <a href="{% url 'service:service_list' %}" @click="userOpen = false"
+                                <a href="{% url 'service:mail_index' %}" @click="userOpen = false"
                                 class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-[14px] font-medium
-                                        text-slate-600 hover:bg-slate-100 hover:text-slate-800
-                                        transition-colors duration-150
-                                        {% if current_view == 'service:service_list' %}bg-slate-100 text-slate-800{% endif %}">
+                                        text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-colors duration-150
+                                        {% if current_view == 'service:mail_index' %}bg-slate-100 text-slate-800{% endif %}">
                                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
                                         stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
                                         <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -271,29 +289,36 @@
                                     </svg>
                                     Arsip Surat
                                 </a>
+                                <a href="{% url 'health:medical_history' %}" @click="userOpen = false"
+                                class="flex items-center gap-2.5 rounded-xl px-3 py-2 text-[14px] font-medium
+                                        text-slate-600 hover:bg-slate-100 hover:text-slate-800 transition-colors duration-150
+                                        {% if current_view == 'health:medical_history' %}bg-slate-100 text-slate-800{% endif %}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
+                                        <path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    </svg>
+                                    Riwayat Berobat
+                                </a>
+                            {% endif %}
 
-                                {# Divider #}
-                                <div class="my-1 border-t border-slate-100"></div>
-
-                                {# Keluar #}
-                                <form method="POST" action="{% url 'account:logout' %}">
-                                    {% csrf_token %}
-                                    <button type="submit"
-                                            class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2
-                                                text-[14px] font-medium text-red-500
-                                                hover:bg-red-50 hover:text-red-600
-                                                transition-colors duration-150">
-                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                            stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0">
-                                            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
-                                            <polyline points="16 17 21 12 16 7"/>
-                                            <line x1="21" y1="12" x2="9" y2="12"/>
-                                        </svg>
-                                        Keluar
-                                    </button>
-                                </form>
-
-                            </div>{# /dropdown card #}
+                            {# Divider + Keluar — selalu tampil #}
+                            <div class="my-1 border-t border-slate-100"></div>
+                            <form method="POST" action="{% url 'account:logout' %}">
+                                {% csrf_token %}
+                                <button type="submit"
+                                        class="flex w-full items-center gap-2.5 rounded-xl px-3 py-2
+                                            text-[14px] font-medium text-red-500
+                                            hover:bg-red-50 hover:text-red-600 transition-colors duration-150">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
+                                        stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0">
+                                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                                        <polyline points="16 17 21 12 16 7"/>
+                                        <line x1="21" y1="12" x2="9" y2="12"/>
+                                    </svg>
+                                    Keluar
+                                </button>
+                            </form>
+                            </div>
                         </div>{# /relative wrapper avatar #}
 
                     {% else %}
