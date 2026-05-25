@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "service.apps.ServiceConfig",
     "account.apps.AccountConfig",
     "health.apps.HealthConfig",
+    "welfare.apps.WelfareConfig",
     "storages",
 ]
 
