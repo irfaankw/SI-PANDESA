@@ -72,6 +72,8 @@
     {% include 'snippets/footer.html' %}
     {% include 'snippets/auth_modal.html' %}
 
+    {% include "snippets/ai/chatbot_widget.html" %}
+    
     {% if request.GET.auth_modal %}
     <script>
         document.addEventListener('alpine:init', () => {

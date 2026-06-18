@@ -19,5 +19,13 @@ urls.py (config):
         # path('complaint/', include('complaint.urls', namespace='complaint')),
     ])),
 
-navba_mobile routingnya blm disesuaikan.
+navba_mobile routingnya blm disesuaikan.    
 buat file template sidebar profile user (lebih modular)
+buat admin ketika keluar dari admin panel langsung terlogout dan redirect ke home. dibuakan untuk admin contoh:
+------------------------------------
+context_prosessor.txt (core)
+is_nakes
+is_admin
+------------------------------------
+
+Sisi Frontend (UX Fix): Tambahkan Loading State / Spinner pada tombol submit setelah diklik (dan matikan tombolnya agar user tidak klik dua kali). Jadi, meskipun prosesnya butuh waktu 10-20 detik karena masalah upload, user tahu bahwa sistem sedang bekerja dan tidak menganggap aplikasinya freeze atau rusak.

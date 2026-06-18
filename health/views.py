@@ -295,7 +295,7 @@ def confirm_attendance_view(request, pk):
     if queue.status == 'menunggu':
         queue.status = 'hadir'
         queue.save(update_fields=['status', 'updated_at'])
-        messages.success(request, f'Kehadiran {queue.nama_pasien} berhasil dikonfirmasi.')
+        # messages.success(request, f'Kehadiran {queue.nama_pasien} berhasil dikonfirmasi.')
     return redirect('health:qr_checkin', kode=queue.kode_unik)
 
 
