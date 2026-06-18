@@ -130,7 +130,7 @@
                         </a>
 
                         {# Sub-Menu: Kesejahteraan Warga #}
-                        <a href="#" @click="layananOpen = false"
+                        <a href="{% url 'welfare:kesejahteraan' %}" @click="layananOpen = false"
                             class="flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 hover:bg-emerald-50 group/item">
                             <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 transition-colors duration-200 group-hover/item:bg-emerald-600 group-hover/item:text-white">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4">
@@ -172,7 +172,7 @@
                 </a>
 
                 {# Belanja #}
-                <a href="{% url 'market:market_home' %}"
+                <a href="{% url 'market:market_belanja' %}"
                     class="flex items-center gap-1.5 px-3 py-2.5 text-[15px] font-medium rounded-xl transition-all duration-200
                             {% if current_view == 'market:market' %}text-emerald-700 bg-emerald-50{% else %}text-slate-600 hover:text-emerald-700 hover:bg-emerald-50/70{% endif %}">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-3.5 w-3.5 shrink-0">

@@ -15,6 +15,7 @@ urlpatterns = [
     path('berita/', include('news.urls', namespace='news')),
     path('layanan/surat/', include('service.urls', namespace='service')),
     path('layanan/kesehatan/', include('health.urls',  namespace='health')),
+    path('layanan/kesejahteraan/', include('welfare.urls',  namespace='welfare')),
 
     # Core
     path('', include('core.urls', namespace='core')),
