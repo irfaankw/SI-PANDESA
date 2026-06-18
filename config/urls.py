@@ -16,6 +16,7 @@ urlpatterns = [
     path('berita/', include('news.urls', namespace='news')),
     path('layanan/surat/', include('service.urls', namespace='service')),
     path('layanan/kesehatan/', include('health.urls',  namespace='health')),
+    path('layanan/kesejahteraan/', include('welfare.urls',  namespace='welfare')),
 
     # Verifikasi QR publik — URL pendek dan bersih
     path('layanan/verifikasi/<str:ref>/', service_views.verify_letter_view, name='verify_letter'),
