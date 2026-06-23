@@ -3,6 +3,9 @@
 
 {% block content %}
 
+<!-- Leaflet CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
 <!-- ============================================================
      HERO SECTION
 ============================================================ -->
@@ -124,7 +127,7 @@
         </div>
       </div>
 
-      <!-- Peta Wilayah -->
+      <!-- Peta Wilayah - Tab Visi & Misi -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div class="flex items-center gap-3">
@@ -149,19 +152,27 @@
               class="map-layer-btn px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">Jalan</button>
           </div>
         </div>
-        <!-- Map container — sambungkan API nanti -->
-        <div id="map" class="w-full h-80 bg-green-700 flex items-center justify-center">
-          <div class="text-center text-green-200">
-            <svg class="mx-auto mb-2 w-8 h-8 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6-3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-            </svg>
-            <p class="map-layer-label text-sm opacity-60">Mode Terrain - peta akan disambungkan dengan API</p>
-          </div>
-        </div>
+
+        <!-- Map container Leaflet -->
+        <div id="map" class="w-full h-80"></div>
+
         <div class="flex items-center justify-between px-6 py-2.5 border-t border-gray-100">
-          <p class="text-xs text-gray-400">📍 Koordinat: {{ koordinat|default:'-0.4948° LS, 117.1527° BT' }}</p>
-          <p class="text-xs text-gray-400">© SI-PANDESA 2025 | Data Peta Desa</p>
+          <p class="text-xs text-gray-400">📍 Koordinat: {{ koordinat|default:'-0.5717643° LS, 117.2640432° BT' }}</p>
+          <div class="flex items-center gap-3">
+            <a
+              href="https://www.google.com/maps?q=-0.5717643,117.2640432"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-1.5 text-xs font-semibold text-green-600 hover:text-green-700 transition-colors"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+              Buka di Google Maps
+            </a>
+            <p class="text-xs text-gray-400">© SI-PANDESA 2025 | Data Peta Desa</p>
+          </div>
         </div>
       </div>
     </div><!-- end tab visimisi -->
@@ -336,7 +347,7 @@
         </div>
       </div>
 
-      <!-- Peta Wilayah -->
+      <!-- Peta Wilayah - Tab Demografi -->
       <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
         <div class="flex items-center justify-between px-6 py-4 border-b border-gray-100">
           <div class="flex items-center gap-3">
@@ -361,18 +372,27 @@
               class="map-layer-btn px-3 py-1.5 text-xs font-semibold rounded-lg border border-gray-200 text-gray-600 hover:bg-gray-50 transition-colors">Jalan</button>
           </div>
         </div>
-        <div id="map-demografi" class="w-full h-80 bg-green-700 flex items-center justify-center">
-          <div class="text-center text-green-200">
-            <svg class="mx-auto mb-2 w-8 h-8 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
-                d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6-3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7"/>
-            </svg>
-            <p class="map-layer-label text-sm opacity-60">Mode Terrain - peta akan disambungkan dengan API</p>
-          </div>
-        </div>
+
+        <!-- Map container Leaflet -->
+        <div id="map-demografi" class="w-full h-80"></div>
+
         <div class="flex items-center justify-between px-6 py-2.5 border-t border-gray-100">
-          <p class="text-xs text-gray-400">📍 Koordinat: {{ koordinat|default:'-0.4948° LS, 117.1527° BT' }}</p>
-          <p class="text-xs text-gray-400">© SI-PANDESA 2025 | Data Peta Desa</p>
+          <p class="text-xs text-gray-400">📍 Koordinat: {{ koordinat|default:'-0.5717643° LS, 117.2640432° BT' }}</p>
+          <div class="flex items-center gap-3">
+            <a
+              href="https://www.google.com/maps?q=-0.5717643,117.2640432"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="flex items-center gap-1.5 text-xs font-semibold text-green-600 hover:text-green-700 transition-colors"
+            >
+              <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                  d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
+              </svg>
+              Buka di Google Maps
+            </a>
+            <p class="text-xs text-gray-400">© SI-PANDESA 2025 | Data Peta Desa</p>
+          </div>
         </div>
       </div>
 
@@ -382,49 +402,128 @@
 </div>
 
 <!-- ============================================================
-     JAVASCRIPT
+     JAVASCRIPT — Leaflet + Tab Switcher + Layer Switcher
 ============================================================ -->
+<!-- Leaflet JS (load sebelum script kita) -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
 <script>
-  function showTab(tabName) {
-    document.querySelectorAll('.tab-content').forEach(function(el) {
-      el.classList.add('hidden');
+  // ── KOORDINAT DESA SUNGAI MERIAM ──────────────────────────────
+  const LAT = -0.5717643;
+  const LNG = 117.2640432;
+  const GMAPS_URL = 'https://www.google.com/maps?q=' + LAT + ',' + LNG;
+
+  // ── TILE LAYERS ───────────────────────────────────────────────
+  // Setiap instance peta butuh layer-nya sendiri, jadi kita pakai fungsi factory
+  function makeLayer(mode) {
+    if (mode === 'Satelit') {
+      return L.tileLayer(
+        'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',
+        { attribution: '© Esri World Imagery', maxZoom: 19 }
+      );
+    } else if (mode === 'Terrain') {
+      return L.tileLayer(
+        'https://{s}.tile.opentopomap.org/{z}/{x}/{y}.png',
+        { attribution: '© OpenTopoMap', maxZoom: 17 }
+      );
+    } else {
+      // Jalan — OpenStreetMap
+      return L.tileLayer(
+        'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+        { attribution: '© OpenStreetMap contributors', maxZoom: 19 }
+      );
+    }
+  }
+
+  // Simpan instance peta & layer aktifnya
+  const maps = {};  // maps['map'] dan maps['map-demografi']
+
+  // ── INIT PETA ─────────────────────────────────────────────────
+  function initMap(containerId) {
+    if (maps[containerId]) return;  // Jangan init dua kali
+
+    const activeLayer = makeLayer('Terrain');
+    const mapInstance = L.map(containerId, {
+      center: [LAT, LNG],
+      zoom: 14,
+      layers: [activeLayer]
     });
-    document.querySelectorAll('.tab-btn').forEach(function(btn) {
+
+    // Marker dengan popup + link Google Maps
+    L.marker([LAT, LNG])
+      .addTo(mapInstance)
+      .bindPopup(
+        '<div style="text-align:center;min-width:160px">' +
+        '<b style="font-size:13px">Desa Sungai Meriam</b><br>' +
+        '<span style="font-size:11px;color:#6b7280">Kec. Anggana, Kab. Kukar</span><br><br>' +
+        '<a href="' + GMAPS_URL + '" target="_blank" ' +
+        'style="display:inline-block;background:#16a34a;color:#fff;font-size:11px;' +
+        'font-weight:600;padding:4px 10px;border-radius:6px;text-decoration:none;">' +
+        '🗺️ Buka di Google Maps</a>' +
+        '</div>'
+      )
+      .openPopup();
+
+    maps[containerId] = { instance: mapInstance, layer: activeLayer };
+  }
+
+  // ── TAB SWITCHER ──────────────────────────────────────────────
+  function showTab(tabName) {
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+    document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.classList.remove('bg-green-600', 'text-white', 'shadow');
       btn.classList.add('text-gray-500');
     });
+
     document.getElementById('content-' + tabName).classList.remove('hidden');
-    var activeBtn = document.getElementById('tab-' + tabName);
+    const activeBtn = document.getElementById('tab-' + tabName);
     activeBtn.classList.remove('text-gray-500');
     activeBtn.classList.add('bg-green-600', 'text-white', 'shadow');
+
+    // Init peta sesuai tab, lalu invalidateSize agar tidak blank
+    if (tabName === 'visimisi') {
+      initMap('map');
+      setTimeout(() => maps['map'] && maps['map'].instance.invalidateSize(), 100);
+    }
+    if (tabName === 'demografi') {
+      initMap('map-demografi');
+      setTimeout(() => maps['map-demografi'] && maps['map-demografi'].instance.invalidateSize(), 100);
+    }
   }
 
+  // ── LAYER SWITCHER ────────────────────────────────────────────
   function setMapLayer(switcher, activeButton) {
-    switcher.querySelectorAll('.map-layer-btn').forEach(function(btn) {
+    // Update styling tombol
+    switcher.querySelectorAll('.map-layer-btn').forEach(btn => {
       btn.classList.remove('bg-green-600', 'text-white', 'shadow-sm');
       btn.classList.add('border', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
       btn.setAttribute('aria-pressed', 'false');
     });
-
     activeButton.classList.remove('border', 'border-gray-200', 'text-gray-600', 'hover:bg-gray-50');
     activeButton.classList.add('bg-green-600', 'text-white', 'shadow-sm');
     activeButton.setAttribute('aria-pressed', 'true');
 
-    var mapId = switcher.getAttribute('data-map-target');
-    var mapEl = document.getElementById(mapId);
-    var label = mapEl ? mapEl.querySelector('.map-layer-label') : null;
+    // Ganti tile layer pada peta yang sesuai
+    const mapId = switcher.getAttribute('data-map-target');
+    const mapObj = maps[mapId];
+    if (!mapObj) return;
 
-    if (label) {
-      label.textContent = 'Mode ' + activeButton.dataset.mapLayer + ' - peta akan disambungkan dengan API';
-    }
+    const newLayer = makeLayer(activeButton.dataset.mapLayer);
+    mapObj.instance.removeLayer(mapObj.layer);
+    newLayer.addTo(mapObj.instance);
+    mapObj.layer = newLayer;
   }
 
-  document.querySelectorAll('.map-layer-switcher').forEach(function(switcher) {
-    switcher.querySelectorAll('.map-layer-btn').forEach(function(button) {
-      button.addEventListener('click', function() {
-        setMapLayer(switcher, button);
-      });
+  // Pasang event listener ke semua tombol layer
+  document.querySelectorAll('.map-layer-switcher').forEach(switcher => {
+    switcher.querySelectorAll('.map-layer-btn').forEach(button => {
+      button.addEventListener('click', () => setMapLayer(switcher, button));
     });
+  });
+
+  // ── AUTO-INIT peta pertama saat halaman load ──────────────────
+  window.addEventListener('load', () => {
+    initMap('map');  // Tab Visi & Misi aktif secara default
   });
 </script>
 
