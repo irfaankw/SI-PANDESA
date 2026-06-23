@@ -18,6 +18,10 @@ static/assets/videos/*.mp4
 
 # --- TOOLS ---
 static/tailwindcss.exe
+staticfiles/tailwindcss.exe
+
+# --- VERCEL / STATIC ---
+staticfiles/assets/videos/
 
 # OS & IDE
 .DS_Store
