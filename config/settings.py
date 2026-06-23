@@ -19,7 +19,12 @@ DEBUG = os.getenv("DEBUG") == "True"
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://rd3d9x6s-800s0.asse.devtunnels.ms',
+    'https://*.vercel.app',
+]
 
 LOGIN_URL = '/?auth_modal=login'
 
