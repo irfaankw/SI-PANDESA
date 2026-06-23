@@ -1,0 +1,199 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50">
+
+    {# Breadcrumb #}
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pt-6 pb-2">
+        <nav class="flex items-center gap-1.5 text-xs text-slate-400">
+            <a href="{% url 'core:index' %}" class="hover:text-emerald-600 transition-colors">Beranda</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3"><polyline points="9 18 15 12 9 6"/></svg>
+            <a href="{% url 'service:mail_index' %}" class="hover:text-emerald-600 transition-colors">Layanan</a>
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3 w-3"><polyline points="9 18 15 12 9 6"/></svg>
+            <span class="text-slate-600 font-medium">Pengaduan</span>
+        </nav>
+    </div>
+
+    <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 pb-12">
+        <div class="flex flex-col lg:flex-row gap-6 items-start">
+
+            {# Sidebar #}
+            {% include "snippets/sidebar_service.html" %}
+
+            {# Konten utama #}
+            <main class="flex-1 min-w-0">
+
+                {# Non-field errors #}
+                {% for error in form.non_field_errors %}
+                <div class="mb-4 flex items-start gap-3 rounded-xl bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 mt-0.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                    {{ error }}
+                </div>
+                {% endfor %}
+
+                {% if is_pending_view %}
+                {# ── STATUS: MENUNGGU VERIFIKASI ── #}
+                <div class="rounded-2xl bg-white border border-slate-100 p-6 shadow-sm">
+                    <div class="flex flex-col items-center text-center py-6">
+                        <div class="h-16 w-16 rounded-full flex items-center justify-center mb-4" style="background-color: #fef9c3;">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" class="h-8 w-8">
+                                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-xl font-bold text-slate-800 mb-1">Pengaduan Sedang Diproses</h2>
+                        <p class="text-sm text-slate-500 mb-4">Tim desa sedang meninjau pengaduan Anda.</p>
+                        <div class="inline-flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-4 py-1.5 text-sm font-semibold text-amber-700 mb-6">
+                            {{ latest_request.reference_number }}
+                        </div>
+
+                        <div class="w-full max-w-md text-left bg-slate-50 rounded-xl p-4 border border-slate-100 mb-6">
+                            <p class="text-xs font-semibold uppercase tracking-widest text-slate-400 mb-3">Detail Pengaduan</p>
+                            <div class="flex flex-col gap-2 text-sm">
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">Judul</span>
+                                    <span class="font-medium text-slate-800 text-right max-w-[60%]">{{ latest_request.judul }}</span>
+                                </div>
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">Kategori</span>
+                                    <span class="font-medium text-slate-800">{{ latest_request.kategori_display_full }}</span>
+                                </div>
+                                {% if latest_request.lokasi %}
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">Lokasi</span>
+                                    <span class="font-medium text-slate-800 text-right max-w-[60%]">{{ latest_request.lokasi }}</span>
+                                </div>
+                                {% endif %}
+                                <div class="flex justify-between">
+                                    <span class="text-slate-500">Tanggal</span>
+                                    <span class="font-medium text-slate-800">{{ latest_request.created_at|date:"d M Y, H:i" }}</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="{% url 'complaint:complaint_history' %}"
+                           class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white hover:bg-slate-50 px-5 py-2.5 text-sm font-semibold text-slate-600 transition-all duration-200">
+                            Lihat Riwayat Pengaduan
+                        </a>
+                    </div>
+                </div>
+
+                {% else %}
+                {# ── FORM PENGADUAN ── #}
+                <div class="rounded-2xl bg-white border border-slate-100 p-6 shadow-sm">
+                    <div class="mb-6">
+                        <h2 class="text-xl font-bold text-slate-800">Form Pengaduan & Aspirasi</h2>
+                        <p class="text-sm text-slate-400 mt-1">Sampaikan pengaduan atau aspirasi Anda kepada pemerintah desa</p>
+                    </div>
+
+                    <form method="POST" enctype="multipart/form-data" novalidate>
+                        {% csrf_token %}
+
+                        {# Nama Pelapor (readonly) #}
+                        <div class="mb-4">
+                            <label class="mb-1.5 block text-sm font-semibold text-slate-600">Nama Pelapor</label>
+                            <input type="text" value="{{ request.user.get_full_name|default:request.user.username }}" readonly
+                                   class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 bg-slate-50 text-slate-400 cursor-not-allowed">
+                        </div>
+
+                        {# Kategori + Lokasi #}
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                            <div x-data="{ showLainnya: false }">
+                                <label class="mb-1.5 block text-sm font-semibold text-slate-600">Kategori</label>
+                                <div class="relative">
+                                    <select name="kategori"
+                                            @change="showLainnya = ($event.target.value === 'lainnya')"
+                                            class="w-full px-4 py-2.5 text-sm rounded-xl border {% if form.kategori.errors %}border-red-400{% else %}border-slate-200{% endif %} focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all duration-200 appearance-none bg-white">
+                                        {% for val, label in form.fields.kategori.choices %}
+                                        <option value="{{ val }}" {% if form.kategori.value == val %}selected{% endif %}>{{ label }}</option>
+                                        {% endfor %}
+                                    </select>
+                                    <span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-slate-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4"><polyline points="6 9 12 15 18 9"/></svg>
+                                    </span>
+                                </div>
+                                {# Input lainnya — muncul kalau pilih "Lainnya" #}
+                                <div x-show="showLainnya" x-cloak class="mt-2">
+                                    <input type="text" name="kategori_lain"
+                                           value="{{ form.kategori_lain.value|default:'' }}"
+                                           placeholder="Sebutkan kategori lainnya"
+                                           class="w-full px-4 py-2.5 text-sm rounded-xl border {% if form.kategori_lain.errors %}border-red-400{% else %}border-slate-200{% endif %} focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all">
+                                    {% for error in form.kategori_lain.errors %}
+                                    <p class="mt-1 text-xs text-red-500">{{ error }}</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="mb-1.5 block text-sm font-semibold text-slate-600">Lokasi Kejadian</label>
+                                <input type="text" name="lokasi"
+                                       value="{{ form.lokasi.value|default:'' }}"
+                                       placeholder="RT/RW, nama jalan, dll."
+                                       class="w-full px-4 py-2.5 text-sm rounded-xl border border-slate-200 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all">
+                            </div>
+                        </div>
+
+                        {# Judul #}
+                        <div class="mb-4">
+                            <label class="mb-1.5 block text-sm font-semibold text-slate-600">Judul Pengaduan</label>
+                            <input type="text" name="judul"
+                                   value="{{ form.judul.value|default:'' }}"
+                                   placeholder="Judul singkat pengaduan Anda"
+                                   class="w-full px-4 py-2.5 text-sm rounded-xl border {% if form.judul.errors %}border-red-400{% else %}border-slate-200{% endif %} focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all">
+                            {% for error in form.judul.errors %}
+                            <p class="mt-1 text-xs text-red-500">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                        {# Deskripsi #}
+                        <div class="mb-4">
+                            <label class="mb-1.5 block text-sm font-semibold text-slate-600">Deskripsi Lengkap</label>
+                            <textarea name="deskripsi" rows="5"
+                                      placeholder="Jelaskan pengaduan atau aspirasi Anda secara detail..."
+                                      class="w-full px-4 py-2.5 text-sm rounded-xl border {% if form.deskripsi.errors %}border-red-400{% else %}border-slate-200{% endif %} focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition-all resize-none">{{ form.deskripsi.value|default:'' }}</textarea>
+                            {% for error in form.deskripsi.errors %}
+                            <p class="mt-1 text-xs text-red-500">{{ error }}</p>
+                            {% endfor %}
+                        </div>
+
+                        {# Upload Bukti #}
+                        <div class="mb-6">
+                            <label class="mb-1.5 block text-sm font-semibold text-slate-600">Upload Bukti / Foto <span class="font-normal text-slate-400">(opsional)</span></label>
+                            <label class="flex flex-col items-center justify-center gap-2 w-full rounded-xl border-2 border-dashed border-slate-200 bg-slate-50 hover:bg-slate-100 hover:border-emerald-300 transition-all duration-200 py-8 cursor-pointer">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-8 w-8 text-slate-400">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+                                </svg>
+                                <span class="text-sm text-slate-500">Klik untuk upload atau drag &amp; drop</span>
+                                <span class="text-xs text-slate-400">JPG, PNG, PDF maks. 10MB</span>
+                                <input type="file" name="bukti_foto" accept="image/jpeg,image/png,application/pdf" class="hidden">
+                            </label>
+                        </div>
+
+                        {# Checkbox persetujuan #}
+                        <div class="mb-6 flex items-start gap-3">
+                            <input type="checkbox" name="setuju" id="setuju"
+                                   class="mt-0.5 h-4 w-4 rounded border-slate-300 text-emerald-600 focus:ring-emerald-500">
+                            <label for="setuju" class="text-sm text-slate-600">
+                                Saya menyatakan bahwa pengaduan ini benar dan dapat dipertanggungjawabkan.
+                            </label>
+                        </div>
+                        {% for error in form.setuju.errors %}
+                        <p class="-mt-4 mb-4 text-xs text-red-500">{{ error }}</p>
+                        {% endfor %}
+
+                        <button type="submit"
+                                class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 px-5 py-3 text-sm font-semibold text-white shadow-sm shadow-emerald-400/20 transition-all duration-200">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                                <line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                            </svg>
+                            Kirim Pengaduan
+                        </button>
+                    </form>
+                </div>
+                {% endif %}
+
+            </main>
+        </div>
+    </div>
+</div>
+{% endblock content %}

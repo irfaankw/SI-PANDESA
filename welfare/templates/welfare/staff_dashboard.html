@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50">
+
+  {# ── HEADER ── #}
+  <div class="bg-white border-b border-slate-100 shadow-sm">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-emerald-100 text-emerald-700">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+            </span>
+            <span class="text-xs font-semibold uppercase tracking-widest text-emerald-600">Manajemen Kesejahteraan</span>
+          </div>
+          <h1 class="text-2xl font-bold text-slate-800">Dashboard Kesejahteraan Warga</h1>
+          <p class="text-sm text-slate-400 mt-0.5">Desa Sungai Meriam · Kelola UMKM dan kesejahteraan warga</p>
+        </div>
+        <div class="flex items-center gap-3">
+          <a href="{% url 'welfare_staff:umkm_list' %}"
+             class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+            Lihat Semua UMKM
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+    {# ── STATS ── #}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm px-6 py-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Total UMKM</p>
+        <p class="text-3xl font-bold text-slate-800">{{ stats.total_umkm }}</p>
+        <p class="text-xs text-slate-400 mt-1">terdaftar</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-amber-200 shadow-sm px-6 py-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-2">Menunggu</p>
+        <p class="text-3xl font-bold text-amber-600">{{ stats.umkm_pending }}</p>
+        <p class="text-xs text-slate-400 mt-1">perlu diverifikasi</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-emerald-200 shadow-sm px-6 py-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-2">Aktif</p>
+        <p class="text-3xl font-bold text-emerald-600">{{ stats.umkm_aktif }}</p>
+        <p class="text-xs text-slate-400 mt-1">UMKM aktif</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm px-6 py-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Nonaktif</p>
+        <p class="text-3xl font-bold text-slate-500">{{ stats.umkm_nonaktif }}</p>
+        <p class="text-xs text-slate-400 mt-1">UMKM nonaktif</p>
+      </div>
+    </div>
+
+    {# ── UMKM PENDING ── #}
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 text-amber-500">
+          <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+        </svg>
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-500">UMKM Menunggu Verifikasi</p>
+        <span class="ml-auto text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-200 rounded-full px-2 py-0.5">{{ umkm_pending|length }}</span>
+      </div>
+
+      {% if umkm_pending %}
+      <div class="divide-y divide-slate-100">
+        {% for umkm in umkm_pending %}
+        <a href="{% url 'welfare_staff:umkm_detail' umkm.pk %}"
+           class="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 transition-colors duration-150 group">
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 text-sm font-bold select-none">
+            {{ umkm.pemilik.first_name|first|upper }}{{ umkm.pemilik.last_name|first|upper }}
+          </span>
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-semibold text-slate-800 truncate group-hover:text-emerald-700">{{ umkm.nama_usaha }}</p>
+            <p class="text-xs text-slate-400 mt-0.5">{{ umkm.nama_pemilik }} · {{ umkm.created_at|date:"d M Y" }}</p>
+          </div>
+          <span class="text-xs font-mono text-slate-400 shrink-0 hidden sm:block">{{ umkm.nomor_pengajuan }}</span>
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-semibold text-amber-700 shrink-0">
+            <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>Menunggu
+          </span>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 text-slate-300 shrink-0 group-hover:text-emerald-500 transition-colors">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="flex flex-col items-center justify-center py-12 text-center">
+        <span class="flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-300 mb-3">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-6 w-6"><polyline points="20 6 9 17 4 12"/></svg>
+        </span>
+        <p class="text-sm font-semibold text-slate-400">Semua UMKM sudah diverifikasi</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock content %}

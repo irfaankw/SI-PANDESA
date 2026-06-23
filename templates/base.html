@@ -5,8 +5,22 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ title }}</title>
+    <link rel="icon" type="image/png" href="{% static 'assets/official/Logo-Desa-Sungai-Meriam.png' %}">
     <link rel="stylesheet" href="{% static 'dist/style.css' %}">
     <link rel="stylesheet" href="{% static 'dist/navbar.css' %}">
+    <style>
+        @keyframes tuing {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            20% { transform: rotate(-15deg) scale(1.1); }
+            40% { transform: rotate(10deg) scale(1.1); }
+            60% { transform: rotate(-5deg) scale(1.05); }
+            80% { transform: rotate(3deg) scale(1.05); }
+        }
+        .animate-tuing {
+            animation: tuing 1.5s ease-in-out infinite;
+            animation-delay: 2s;
+        }
+    </style>
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.store('auth', {
@@ -72,16 +86,6 @@
     {% include 'snippets/footer.html' %}
     {% include 'snippets/auth_modal.html' %}
 
-    {% include "snippets/ai/chatbot_widget.html" %}
-    
-    {% if request.GET.auth_modal %}
-    <script>
-        document.addEventListener('alpine:init', () => {
-            // Tunggu store siap lalu buka modal sesuai tab yang diminta
-            Alpine.store('auth').tab = '{{ request.GET.auth_modal }}';
-            Alpine.store('auth').open = true;
-        });
-    </script>
-    {% endif %}
+    {% include "snippets/ai/chatbot_widget.html" %}    
 </body>
 </html>

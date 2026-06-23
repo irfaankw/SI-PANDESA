@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50">
+
+  {# ── HEADER ── #}
+  <div class="bg-white border-b border-slate-100 shadow-sm">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="inline-flex items-center justify-center h-8 w-8 rounded-lg bg-emerald-100 text-emerald-700">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </span>
+            <span class="text-xs font-semibold uppercase tracking-widest text-emerald-600">Manajemen Pengaduan</span>
+          </div>
+          <h1 class="text-2xl font-bold text-slate-800">Dashboard Pengaduan Warga</h1>
+          <p class="text-sm text-slate-400 mt-0.5">Desa Sungai Meriam · Kelola semua laporan pengaduan warga</p>
+        </div>
+        <div class="text-sm text-slate-400 flex items-center gap-1.5">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          {% now "d F Y" %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+    {# ── STATS ── #}
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm px-6 py-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Total Pengaduan</p>
+        <p class="text-3xl font-bold text-slate-800">{{ stats.total }}</p>
+        <p class="text-xs text-slate-400 mt-1">semua laporan</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-amber-200 shadow-sm px-6 py-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-amber-500 mb-2">Menunggu</p>
+        <p class="text-3xl font-bold text-amber-600">{{ stats.pending }}</p>
+        <p class="text-xs text-slate-400 mt-1">perlu diproses</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-emerald-200 shadow-sm px-6 py-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-emerald-600 mb-2">Diterima</p>
+        <p class="text-3xl font-bold text-emerald-600">{{ stats.diproses }}</p>
+        <p class="text-xs text-slate-400 mt-1">sedang ditangani</p>
+      </div>
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm px-6 py-5">
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-400 mb-2">Selesai</p>
+        <p class="text-3xl font-bold text-slate-600">{{ stats.selesai }}</p>
+        <p class="text-xs text-slate-400 mt-1">pengaduan selesai</p>
+      </div>
+    </div>
+
+    {# ── FILTER & SEARCH ── #}
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm px-6 py-5">
+      <form method="GET" class="flex flex-col sm:flex-row gap-3">
+        <div class="relative flex-1">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400">
+            <circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <input type="text" name="q" value="{{ search_q }}" placeholder="Cari nama pelapor atau judul…"
+                 class="w-full rounded-xl border border-slate-200 bg-slate-50 pl-10 pr-4 py-2.5 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent transition">
+        </div>
+        <select name="status" onchange="this.form.submit()"
+                class="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2.5 text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-emerald-400 transition">
+          <option value="all" {% if status_filter == 'all' %}selected{% endif %}>Semua Status</option>
+          <option value="pending"  {% if status_filter == 'pending' %}selected{% endif %}>Menunggu</option>
+          <option value="approved" {% if status_filter == 'approved' %}selected{% endif %}>Diterima</option>
+          <option value="rejected" {% if status_filter == 'rejected' %}selected{% endif %}>Ditolak</option>
+        </select>
+        <button type="submit" class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-5 py-2.5 text-sm font-semibold text-white transition">
+          Cari
+        </button>
+      </form>
+    </div>
+
+    {# ── TABEL PENGADUAN ── #}
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 text-slate-500">
+          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+        </svg>
+        <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Daftar Pengaduan</p>
+        <span class="ml-auto text-xs font-semibold text-slate-400 bg-slate-200 rounded-full px-2 py-0.5">{{ complaints|length }}</span>
+      </div>
+
+      {% if complaints %}
+      <div class="divide-y divide-slate-100">
+        {% for complaint in complaints %}
+        <a href="{% url 'complaint_staff:detail' complaint.pk %}"
+           class="flex items-center gap-4 px-6 py-4 hover:bg-slate-50 transition-colors duration-150 group">
+          {# Avatar #}
+          <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-emerald-700 text-sm font-bold select-none">
+            {{ complaint.user.first_name|first|upper }}{{ complaint.user.last_name|first|upper }}
+          </span>
+          {# Info #}
+          <div class="min-w-0 flex-1">
+            <p class="text-sm font-semibold text-slate-800 truncate group-hover:text-emerald-700">{{ complaint.judul }}</p>
+            <p class="text-xs text-slate-400 mt-0.5">
+              {{ complaint.user.get_full_name|default:complaint.user.username }} ·
+              {{ complaint.get_kategori_display }} ·
+              {{ complaint.created_at|date:"d M Y" }}
+            </p>
+          </div>
+          {# Ref #}
+          <span class="hidden sm:block text-xs font-mono text-slate-400 shrink-0">{{ complaint.reference_number }}</span>
+          {# Status #}
+          {% if complaint.status == 'pending' %}
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border border-amber-200 px-3 py-1 text-xs font-semibold text-amber-700 shrink-0">
+            <span class="h-1.5 w-1.5 rounded-full bg-amber-400 animate-pulse"></span>Menunggu
+          </span>
+          {% elif complaint.status == 'approved' %}
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border border-emerald-200 px-3 py-1 text-xs font-semibold text-emerald-700 shrink-0">
+            <span class="h-1.5 w-1.5 rounded-full bg-emerald-500"></span>Diterima
+          </span>
+          {% else %}
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 border border-red-200 px-3 py-1 text-xs font-semibold text-red-600 shrink-0">
+            <span class="h-1.5 w-1.5 rounded-full bg-red-400"></span>Ditolak
+          </span>
+          {% endif %}
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 text-slate-300 shrink-0 group-hover:text-emerald-500 transition-colors">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </a>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="flex flex-col items-center justify-center py-16 text-center">
+        <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-300 mb-4">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-7 w-7">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </span>
+        <p class="text-sm font-semibold text-slate-400">Tidak ada pengaduan ditemukan</p>
+        <p class="text-xs text-slate-300 mt-1">Coba ubah filter atau kata kunci pencarian</p>
+      </div>
+      {% endif %}
+    </div>
+
+  </div>
+</div>
+{% endblock content %}

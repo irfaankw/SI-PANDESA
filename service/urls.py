@@ -5,6 +5,7 @@ app_name = 'service'
 urlpatterns = [
     # ── Index layanan surat ───────────────────────────────────
     path('', views.digital_mail_index, name='mail_index'),
+    path('arsip/', views.letter_archive_view, name='letter_archive'),
 
     # ── Surat Pindah ──────────────────────────────────────────
     path('surat-pindah/', views.move_letter_view, name='move_letter'),

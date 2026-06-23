@@ -17,10 +17,11 @@ SECRET_KEY = os.getenv("SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv("DEBUG") == "True"
 
-AI_TOKEN = os.getenv("AI_TOKEN")
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
 ALLOWED_HOSTS = []
 
+LOGIN_URL = '/?auth_modal=login'
 
 # Application definition
 
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     "service.apps.ServiceConfig",
     "account.apps.AccountConfig",
     "health.apps.HealthConfig",
+    "complaint.apps.ComplaintConfig",
     "welfare.apps.WelfareConfig",
     "storages",
 ]
@@ -65,6 +67,7 @@ TEMPLATES = [
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
                 "core.context_processors.user_role",
+                'service.context_processors.ringkasan_sidebar',
             ],
         },
     },

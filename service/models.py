@@ -8,7 +8,6 @@ from django.core.validators import MaxValueValidator
 
 from .utils.qr_generator import build_qr_code_file
 
-
 # ─────────────────────────────────────────────────────────────
 # Upload path helpers — generik, dipakai semua jenis surat
 # ─────────────────────────────────────────────────────────────
@@ -21,7 +20,6 @@ def letter_upload_path(instance, filename):
 def letter_qr_upload_path(instance, filename):
     """service/<LETTER_SLUG>/qr/user_<id>/<filename>"""
     return f"service/{instance.LETTER_SLUG}/qr/user_{instance.user_id}/{filename}"
-
 
 # ─────────────────────────────────────────────────────────────
 # Abstract Base — scaffold yang sama untuk SEMUA surat digital
@@ -111,6 +109,28 @@ class BaseLetterRequest(models.Model):
         # Update kolom qr_code langsung ke DB tanpa trigger save() lagi
         self.__class__.objects.filter(pk=self.pk).update(qr_code=self.qr_code.name)
 
+    # ── Supporting Documents ──────────────────────────────────
+    def get_supporting_documents(self):
+        FIELD_CONFIG = {
+            'file_ktp':          ('KTP-el Pemohon',        'ktp'),
+            'file_kk':           ('Kartu Keluarga',         'kk'),
+            'file_pengantar':    ('Surat Pengantar RT/RW',  'doc'),
+            'file_ktp_almarhum': ('KTP Almarhum/ah',        'ktp'),
+            'file_surat_dokter': ('Surat Ket. Dokter/RS',   'doc'),
+            'file_ktp_ayah':     ('KTP-el Ayah',            'ktp'),
+            'file_ktp_ibu':      ('KTP-el Ibu',             'ktp'),
+            'file_surat_rs':     ('Surat Ket. RS/Bidan',    'doc'),
+            'file_foto_usaha':   ('Foto Usaha',             'foto'),
+            'file_pendukung':    ('Dokumen Pendukung',       'doc'),
+        }
+        docs = []
+        for field_name, (label, icon) in FIELD_CONFIG.items():
+            if hasattr(self, field_name):
+                file = getattr(self, field_name)
+                if file:
+                    docs.append({'label': label, 'url': file.url, 'icon': icon})
+        return docs
+
     # ── Properties ────────────────────────────────────────────
     @property
     def is_pending(self):
@@ -127,7 +147,6 @@ class BaseLetterRequest(models.Model):
     @property
     def is_expired(self):
         return bool(self.berlaku_hingga and self.berlaku_hingga < timezone.now().date())
-
 
 # ─────────────────────────────────────────────────────────────
 # Surat Pindah
@@ -157,7 +176,17 @@ class MoveLetterRequest(BaseLetterRequest):
     class Meta(BaseLetterRequest.Meta):
         verbose_name        = 'Pengajuan Surat Pindah'
         verbose_name_plural = 'Pengajuan Surat Pindah'
-
+    
+    def get_dashboard_fields(self):
+        return [
+            ('Alasan Pindah',         self.keperluan),
+            ('Jumlah Anggota Ikut',   self.jumlah_anggota),
+            ('Alamat Tujuan',         self.alamat_tujuan or '—'),
+            ('Kelurahan/Desa',        self.kelurahan or '—'),
+            ('Kecamatan',             self.kecamatan or '—'),
+            ('Kota/Kabupaten',        self.kota_kabupaten or '—'),
+            ('Provinsi',              self.provinsi or '—'),
+        ]
 
 # ─────────────────────────────────────────────────────────────
 # Surat Domisili
@@ -197,6 +226,14 @@ class DomicileLetterRequest(BaseLetterRequest):
     class Meta(BaseLetterRequest.Meta):
         verbose_name        = 'Pengajuan Surat Domisili'
         verbose_name_plural = 'Pengajuan Surat Domisili'
+
+    def get_dashboard_fields(self):
+        return [
+            ('Keperluan',             self.keperluan),
+            ('Ditujukan Kepada',      self.tujuan_instansi),
+            ('Status Tempat Tinggal', self.get_status_tempat_tinggal_display()),
+            ('Lama Tinggal',          self.lama_tinggal_display),
+        ]
 
     @property
     def lama_tinggal_display(self):
@@ -248,6 +285,19 @@ class DeathLetterRequest(BaseLetterRequest):
         verbose_name        = 'Pengajuan Surat Kematian'
         verbose_name_plural = 'Pengajuan Surat Kematian'
 
+    def get_dashboard_fields(self):
+        return [
+            ('Nama Almarhum/ah',   self.nama_almarhum),
+            ('NIK Almarhum/ah',    self.nik_almarhum),
+            ('Jenis Kelamin',      self.get_jenis_kelamin_display()),
+            ('Tempat Lahir',       self.tempat_lahir),
+            ('Tanggal Lahir',      self.tanggal_lahir),
+            ('Tanggal Kematian',   self.tanggal_kematian),
+            ('Tempat Kematian',    self.tempat_kematian),
+            ('Penyebab Kematian',  self.penyebab_kematian or '—'),
+            ('Hubungan Pelapor',   self.hubungan_pelapor),
+        ]
+
 # ─────────────────────────────────────────────────────────────
 # Surat Kelahiran
 # ─────────────────────────────────────────────────────────────
@@ -291,6 +341,19 @@ class BirthLetterRequest(BaseLetterRequest):
         verbose_name        = 'Pengajuan Surat Kelahiran'
         verbose_name_plural = 'Pengajuan Surat Kelahiran'
 
+    def get_dashboard_fields(self):
+        return [
+            ('Nama Bayi',            self.nama_bayi),
+            ('Jenis Kelamin Bayi',   self.get_jenis_kelamin_bayi_display()),
+            ('Tanggal Lahir Bayi',   self.tanggal_lahir_bayi),
+            ('Tempat Lahir Bayi',    self.tempat_lahir_bayi),
+            ('Anak Ke-',             self.anak_ke),
+            ('Nama Ayah',            self.nama_ayah),
+            ('NIK Ayah',             self.nik_ayah),
+            ('Nama Ibu',             self.nama_ibu),
+            ('NIK Ibu',              self.nik_ibu),
+        ]
+
 # ─────────────────────────────────────────────────────────────
 # Surat Tidak Mampu
 # ─────────────────────────────────────────────────────────────
@@ -327,6 +390,14 @@ class PovertyLetterRequest(BaseLetterRequest):
         verbose_name        = 'Pengajuan Surat Tidak Mampu'
         verbose_name_plural = 'Pengajuan Surat Tidak Mampu'
 
+    def get_dashboard_fields(self):
+        return [
+            ('Keperluan',          self.keperluan_display_full),
+            ('Ditujukan Kepada',   self.tujuan_instansi),
+            ('Penghasilan/Bulan',  f"Rp {self.penghasilan:,}".replace(',', '.')),
+            ('Jumlah Tanggungan',  self.jumlah_tanggungan),
+        ]
+
     @property
     def keperluan_display_full(self):
         """Tampilkan keperluan_lain jika pilihan adalah 'lainnya'."""
@@ -334,6 +405,10 @@ class PovertyLetterRequest(BaseLetterRequest):
             return self.keperluan_lain
         return self.get_keperluan_display()
     
+# ─────────────────────────────────────────────────────────────
+# Surat Keterangan Usaha
+# ─────────────────────────────────────────────────────────────
+
 class BusinessLetterRequest(BaseLetterRequest):
     LETTER_SLUG = 'business_letter'
     MASA_BERLAKU_BULAN = 12  # Surat usaha berlaku 1 tahun
@@ -384,6 +459,17 @@ class BusinessLetterRequest(BaseLetterRequest):
     class Meta(BaseLetterRequest.Meta):
         verbose_name        = 'Pengajuan Surat Keterangan Usaha'
         verbose_name_plural = 'Pengajuan Surat Keterangan Usaha'
+
+    def get_dashboard_fields(self):
+        return [
+            ('Nama Usaha',          self.nama_usaha),
+            ('Jenis Usaha',         self.jenis_usaha_display_full),
+            ('Alamat Usaha',        self.alamat_usaha),
+            ('Lama Usaha (Tahun)', self.lama_usaha_tahun),
+            ('Omset/Bulan',         f"Rp {self.omset_perbulan:,}".replace(',', '.')),
+            ('Keperluan',           self.keperluan_display_full),
+            ('Ditujukan Kepada',    self.tujuan_instansi),
+        ]
  
     @property
     def jenis_usaha_display_full(self):
@@ -396,6 +482,10 @@ class BusinessLetterRequest(BaseLetterRequest):
         if self.keperluan == 'lainnya' and self.keperluan_lain:
             return self.keperluan_lain
         return self.get_keperluan_display()
+
+# ─────────────────────────────────────────────────────────────
+# Surat Pengantar
+# ─────────────────────────────────────────────────────────────
 
 class IntroLetterRequest(BaseLetterRequest):
     LETTER_SLUG = 'intro_letter'
@@ -430,6 +520,13 @@ class IntroLetterRequest(BaseLetterRequest):
     class Meta(BaseLetterRequest.Meta):
         verbose_name        = 'Pengajuan Surat Pengantar'
         verbose_name_plural = 'Pengajuan Surat Pengantar'
+
+    def get_dashboard_fields(self):
+        return [
+            ('Keperluan',              self.keperluan_display_full),
+            ('Ditujukan Kepada',       self.tujuan_instansi),
+            ('Keterangan Tambahan',    self.keterangan_tambahan or '—'),
+        ]
 
     @property
     def keperluan_display_full(self):

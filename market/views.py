@@ -1,4 +1,5 @@
 from django.shortcuts import render, get_object_or_404
+from django.db.models import Q
 from welfare.models import Produk, UMKM
 
 
@@ -15,7 +16,8 @@ def belanja_view(request):
         produk_qs = produk_qs.filter(kategori=kategori_aktif)
 
     if query:
-        produk_qs = produk_qs.filter(nama__icontains=query)
+        produk_qs = produk_qs.filter(
+            Q(nama__icontains=query) | Q(tags__icontains=query))
 
     total_produk     = Produk.objects.filter(aktif=True, umkm__status='aktif').count()
     total_umkm       = UMKM.objects.filter(status='aktif').count()
