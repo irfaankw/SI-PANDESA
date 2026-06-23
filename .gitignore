@@ -12,14 +12,12 @@ env/
 venv/
 ENV/
 
-# --- MEDIA (Semua file upload masuk sini) ---
+# --- MEDIA ---
 media/
-staticfiles/
 static/assets/videos/*.mp4
 
 # --- TOOLS ---
 static/tailwindcss.exe
-static/dist/
 
 # OS & IDE
 .DS_Store
