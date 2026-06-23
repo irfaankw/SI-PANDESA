@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from .models import StafDesa, KategoriStaf
-from news.models import Pengumuman   # ← TAMBAHKAN INI
+from news.models import Pengumuman   
+from gallery.models import GaleriPhoto
 
 
 def home(request):
@@ -12,9 +13,12 @@ def home(request):
         '-is_penting', '-tanggal_dibuat'
     )[:3]
 
+    galeri_preview = GaleriPhoto.objects.filter(ditampilkan=True).prefetch_related('tags')[:5] 
+
     context = {
         'title': 'Website Resmi Desa Sungai Meriam',
-        'berita_terkini': berita_terkini,   # ← TAMBAHKAN INI
+        'berita_terkini': berita_terkini,  
+        'galeri_preview': galeri_preview, 
     }
     return render(request, template, context)
 

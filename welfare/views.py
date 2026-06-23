@@ -61,14 +61,21 @@ def kesejahteraan_view(request):
 
 @login_required
 def kelola_toko_view(request):
-    umkm    = get_object_or_404(UMKM, pemilik=request.user)
-    produk_list = umkm.produk.all()
+    # Menggunakan try-except blocks standar Django agar aman jika objek tidak ditemukan
+    try:
+        # Menggunakan .objects.get() dengan benar melewati ORM Django
+        umkm = UMKM.objects.get(pemilik=request.user)
+        produk_list = umkm.produk.all()
+    except UMKM.DoesNotExist:
+        # Jika user belum mendaftar UMKM, set nilainya ke None agar dibaca kondisi {% if not umkm %} di template
+        umkm = None
+        produk_list = []
+
     return render(request, 'welfare/kelola_toko.html', {
-        'title':       f'Kelola Toko — {umkm.nama_usaha}',
-        'umkm':        umkm,
+        'title': f'Kelola Toko — {umkm.nama_usaha}' if umkm else 'Kelola Toko',
+        'umkm': umkm,
         'produk_list': produk_list,
     })
-
 
 @login_required
 def tambah_produk_view(request):

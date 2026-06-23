@@ -7,16 +7,15 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Beranda – Desa Sungai Meriam</title>
-  <!-- Tailwind CSS CDN (ganti dengan build file jika pakai django-tailwind) -->
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
       theme: {
         extend: {
           colors: {
-            primary: '#16a34a',       /* green-600 */
-            'primary-dark': '#15803d',/* green-700 */
-            'primary-light': '#22c55e',/* green-500 */
+            primary: '#16a34a',
+            'primary-dark': '#15803d',
+            'primary-light': '#22c55e',
             dark: '#0f172a',
             'dark-nav': '#111827',
           }
@@ -25,7 +24,6 @@
     }
   </script>
   <style>
-    /* Smooth scroll */
     html { scroll-behavior: smooth; }
 
     /* ===== HERO CAROUSEL ===== */
@@ -54,8 +52,6 @@
       height: 100%;
       object-fit: cover;
     }
-
-    /* Carousel dots */
     .dot {
       width: 10px;
       height: 10px;
@@ -69,13 +65,7 @@
       transition: all 0.3s;
     }
     .dot.active { width: 32px; background: #16a34a; }
-    .dot:focus,
-    .dot:active {
-      outline: none;
-      box-shadow: none;
-    }
-
-    /* Stats bar scroll reveal placeholder */
+    .dot:focus, .dot:active { outline: none; box-shadow: none; }
     .stat-divider { width: 1px; background: rgba(255,255,255,0.15); }
   </style>
 </head>
@@ -83,19 +73,15 @@
 
   <!-- ============================================================
        HERO CAROUSEL
-       (Gambar tidak disertakan — tambahkan sendiri di slides)
-       ============================================================ -->
+  ============================================================ -->
   <section class="relative w-full hero-height overflow-hidden" id="hero">
-
-    <!-- Slides wrapper -->
     <div class="relative h-full" id="carouselWrapper">
 
-      <!-- ===== SLIDE 1 — village video background ===== -->
+      <!-- SLIDE 1 -->
       <div class="carousel-slide active relative w-full h-full bg-gray-800 overflow-hidden">
         <video autoplay muted loop playsinline class="hero-media">
           <source src="{% static 'assets/videos/River.mp4' %}" type="video/mp4">
         </video>
-        <!-- Overlay gelap -->
         <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/10"></div>
         <div class="absolute top-[11%] left-8 md:left-16 lg:left-24 z-20">
           <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium rounded-full border border-gray-200 shadow-sm">
@@ -105,29 +91,20 @@
             Transparansi Publik
           </span>
         </div>
-        <!-- Konten -->
         <div class="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-3xl">
-          <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">
-            DESA SUNGAI<br/>MERIAM
-          </h1>
-          <h2 class="text-2xl md:text-3xl font-bold text-primary-light mb-4 leading-snug">
-            Tatakelola Pemerintahan yang<br/>Transparan &amp; Akuntabel
-          </h2>
-          <p class="text-white/80 text-base md:text-lg mb-8 max-w-lg leading-relaxed">
-            Mewujudkan keterbukaan informasi publik bagi seluruh masyarakat.
-          </p>
+          <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">DESA SUNGAI<br/>MERIAM</h1>
+          <h2 class="text-2xl md:text-3xl font-bold text-primary-light mb-4 leading-snug">Tatakelola Pemerintahan yang<br/>Transparan &amp; Akuntabel</h2>
+          <p class="text-white/80 text-base md:text-lg mb-8 max-w-lg leading-relaxed">Mewujudkan keterbukaan informasi publik bagi seluruh masyarakat.</p>
           <a href="#" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl text-sm w-fit transition-colors shadow-lg">
             Lihat Pengumuman
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-            </svg>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
           </a>
         </div>
       </div>
 
-      <!-- ===== SLIDE 2 — farmer image background ===== -->
+      <!-- SLIDE 2 -->
       <div class="carousel-slide relative w-full h-full bg-gray-800 overflow-hidden">
-        <img src="{% static 'assets/global/Farmer.jpg' %}" alt="Petani dan kerbau di area persawahan" class="hero-media object-center">
+        <img src="{% static 'assets/global/Farmer.jpg' %}" alt="Petani" class="hero-media object-center">
         <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/10"></div>
         <div class="absolute top-[11%] left-8 md:left-16 lg:left-24 z-20">
           <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium rounded-full border border-gray-200 shadow-sm">
@@ -138,27 +115,19 @@
           </span>
         </div>
         <div class="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-3xl">
-          <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">
-            POTENSI<br/>PERTANIAN
-          </h1>
-          <h2 class="text-2xl md:text-3xl font-bold text-primary-light mb-4 leading-snug">
-            Pertanian Lokal<br/>Bertumbuh Bersama
-          </h2>
-          <p class="text-white/80 text-base md:text-lg mb-8 max-w-lg leading-relaxed">
-            Menguatkan potensi warga melalui layanan desa yang mudah, cepat, dan terbuka.
-          </p>
+          <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">POTENSI<br/>PERTANIAN</h1>
+          <h2 class="text-2xl md:text-3xl font-bold text-primary-light mb-4 leading-snug">Pertanian Lokal<br/>Bertumbuh Bersama</h2>
+          <p class="text-white/80 text-base md:text-lg mb-8 max-w-lg leading-relaxed">Menguatkan potensi warga melalui layanan desa yang mudah, cepat, dan terbuka.</p>
           <a href="#" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl text-sm w-fit transition-colors shadow-lg">
             Lihat Potensi Desa
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-            </svg>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
           </a>
         </div>
       </div>
 
-      <!-- ===== SLIDE 3 — bamboo image background ===== -->
+      <!-- SLIDE 3 -->
       <div class="carousel-slide relative w-full h-full bg-gray-800 overflow-hidden">
-        <img src="{% static 'assets/global/Bamboo.jpg' %}" alt="Jalan desa yang teduh dengan rumpun bambu" class="hero-media object-center">
+        <img src="{% static 'assets/global/Bamboo.jpg' %}" alt="Bambu" class="hero-media object-center">
         <div class="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/10"></div>
         <div class="absolute top-[11%] left-8 md:left-16 lg:left-24 z-20">
           <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium rounded-full border border-gray-200 shadow-sm">
@@ -169,27 +138,19 @@
           </span>
         </div>
         <div class="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-3xl">
-          <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">
-            RUANG DESA<br/>YANG ASRI
-          </h1>
-          <h2 class="text-2xl md:text-3xl font-bold text-primary-light mb-4 leading-snug">
-            Lingkungan Asri<br/>Pelayanan Terarah
-          </h2>
-          <p class="text-white/80 text-base md:text-lg mb-8 max-w-lg leading-relaxed">
-            Menjaga suasana desa yang nyaman sambil menghadirkan informasi publik yang tertata.
-          </p>
+          <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">RUANG DESA<br/>YANG ASRI</h1>
+          <h2 class="text-2xl md:text-3xl font-bold text-primary-light mb-4 leading-snug">Lingkungan Asri<br/>Pelayanan Terarah</h2>
+          <p class="text-white/80 text-base md:text-lg mb-8 max-w-lg leading-relaxed">Menjaga suasana desa yang nyaman sambil menghadirkan informasi publik yang tertata.</p>
           <a href="#" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl text-sm w-fit transition-colors shadow-lg">
             Lihat Layanan
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-            </svg>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
           </a>
         </div>
       </div>
 
-      <!-- ===== SLIDE 4 — late afternoon image background ===== -->
+      <!-- SLIDE 4 -->
       <div class="carousel-slide relative w-full h-full bg-gray-800 overflow-hidden">
-        <img src="{% static 'assets/global/LateAfternoon.jpg' %}" alt="Pemandangan sore dengan langit jingga dan pantulan air" class="hero-media object-center">
+        <img src="{% static 'assets/global/LateAfternoon.jpg' %}" alt="Sore hari" class="hero-media object-center">
         <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-black/10"></div>
         <div class="absolute top-[11%] left-8 md:left-16 lg:left-24 z-20">
           <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium rounded-full border border-gray-200 shadow-sm">
@@ -200,59 +161,41 @@
           </span>
         </div>
         <div class="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-3xl">
-          <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">
-            SUNGAI MERIAM<br/>MAJU
-          </h1>
-          <h2 class="text-2xl md:text-3xl font-bold text-primary-light mb-4 leading-snug">
-            Bersama Membangun<br/>Desa yang Maju
-          </h2>
-          <p class="text-white/80 text-base md:text-lg mb-8 max-w-lg leading-relaxed">
-            Partisipasi aktif warga dalam setiap program pembangunan desa.
-          </p>
+          <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">SUNGAI MERIAM<br/>MAJU</h1>
+          <h2 class="text-2xl md:text-3xl font-bold text-primary-light mb-4 leading-snug">Bersama Membangun<br/>Desa yang Maju</h2>
+          <p class="text-white/80 text-base md:text-lg mb-8 max-w-lg leading-relaxed">Partisipasi aktif warga dalam setiap program pembangunan desa.</p>
           <a href="#" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl text-sm w-fit transition-colors shadow-lg">
             Ikut Berpartisipasi
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-            </svg>
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
           </a>
         </div>
       </div>
 
-    </div><!-- /carousel wrapper -->
+    </div><!-- /carouselWrapper -->
 
-    <!-- Tombol Prev -->
-    <button onclick="changeSlide(-1)"
-      class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white rounded-full transition-all">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
-      </svg>
+    <!-- Prev -->
+    <button onclick="changeSlide(-1)" class="absolute left-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white rounded-full transition-all">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
     </button>
-    <!-- Tombol Next -->
-    <button onclick="changeSlide(1)"
-      class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white rounded-full transition-all">
-      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-      </svg>
+    <!-- Next -->
+    <button onclick="changeSlide(1)" class="absolute right-4 top-1/2 -translate-y-1/2 z-20 w-10 h-10 flex items-center justify-center bg-white/20 hover:bg-white/40 backdrop-blur-sm text-white rounded-full transition-all">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/></svg>
     </button>
-
-    <!-- Dots Indikator -->
+    <!-- Dots -->
     <div class="absolute bottom-24 left-1/2 z-30 flex items-center gap-2" id="carouselDots">
       <button type="button" class="dot active" onclick="goToSlide(0)" aria-label="Slide 1"></button>
       <button type="button" class="dot" onclick="goToSlide(1)" aria-label="Slide 2"></button>
       <button type="button" class="dot" onclick="goToSlide(2)" aria-label="Slide 3"></button>
       <button type="button" class="dot" onclick="goToSlide(3)" aria-label="Slide 4"></button>
     </div>
-
   </section>
 
 
   <!-- ============================================================
        SECTION: AKSES CEPAT LAYANAN DESA
-       ============================================================ -->
+  ============================================================ -->
   <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
     <div class="max-w-7xl mx-auto">
-
-      <!-- Badge & Heading -->
       <div class="text-center mb-10">
         <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-green-50 text-primary text-xs font-semibold rounded-full border border-green-200 mb-4">
           <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
@@ -264,10 +207,7 @@
         <p class="text-gray-500 text-base max-w-xl mx-auto">Semua kebutuhan pelayanan desa tersedia dalam satu platform yang mudah digunakan.</p>
       </div>
 
-      <!-- Grid Layanan -->
       <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-
-        <!-- Surat Digital -->
         <a href="{% url 'service:mail_index' %}" class="group flex flex-col items-center text-center p-6 bg-gray-50 hover:bg-green-50 border border-gray-100 hover:border-green-200 rounded-2xl transition-all duration-200">
           <div class="w-14 h-14 flex items-center justify-center bg-blue-100 rounded-2xl mb-4 group-hover:scale-110 transition-transform">
             <svg class="w-7 h-7 text-blue-500" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -278,7 +218,6 @@
           <p class="text-gray-400 text-xs">Urus surat online</p>
         </a>
 
-        <!-- Kesehatan -->
         <a href="{% url 'health:appointment' %}" class="group flex flex-col items-center text-center p-6 bg-gray-50 hover:bg-green-50 border border-gray-100 hover:border-green-200 rounded-2xl transition-all duration-200">
           <div class="w-14 h-14 flex items-center justify-center bg-red-100 rounded-2xl mb-4 group-hover:scale-110 transition-transform">
             <svg class="w-7 h-7 text-red-400" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -289,7 +228,6 @@
           <p class="text-gray-400 text-xs">Buat janji dokter</p>
         </a>
 
-        <!-- Pengaduan -->
         <a href="{% url 'complaint:complaint' %}" class="group flex flex-col items-center text-center p-6 bg-gray-50 hover:bg-green-50 border border-gray-100 hover:border-green-200 rounded-2xl transition-all duration-200">
           <div class="w-14 h-14 flex items-center justify-center bg-yellow-100 rounded-2xl mb-4 group-hover:scale-110 transition-transform">
             <svg class="w-7 h-7 text-yellow-500" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -300,7 +238,6 @@
           <p class="text-gray-400 text-xs">Laporkan masalah</p>
         </a>
 
-        <!-- Kesejahteraan -->
         <a href="{% url 'welfare:kesejahteraan' %}" class="group flex flex-col items-center text-center p-6 bg-gray-50 hover:bg-green-50 border border-gray-100 hover:border-green-200 rounded-2xl transition-all duration-200">
           <div class="w-14 h-14 flex items-center justify-center bg-purple-100 rounded-2xl mb-4 group-hover:scale-110 transition-transform">
             <svg class="w-7 h-7 text-purple-500" fill="none" stroke="currentColor" stroke-width="1.8" viewBox="0 0 24 24">
@@ -310,19 +247,16 @@
           <h3 class="font-semibold text-gray-800 text-sm mb-1">Kesejahteraan</h3>
           <p class="text-gray-400 text-xs">Bansos &amp; UMKM</p>
         </a>
-
       </div>
     </div>
   </section>
 
 
-    <!-- ============================================================
-      SECTION: BERITA & PENGUMUMAN TERKINI
-      ============================================================ -->
+  <!-- ============================================================
+       SECTION: BERITA & PENGUMUMAN TERKINI
+  ============================================================ -->
   <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white border-t border-gray-100">
     <div class="max-w-7xl mx-auto">
-
-      <!-- Heading + Lihat Semua -->
       <div class="flex items-end justify-between mb-8">
         <div>
           <h2 class="text-2xl md:text-3xl font-bold text-gray-900">Berita &amp; Pengumuman Terkini</h2>
@@ -330,19 +264,14 @@
         </div>
         <a href="{% url 'news:news_list' %}" class="hidden md:flex items-center gap-1 text-primary hover:text-primary-dark text-sm font-medium transition-colors">
           Lihat Semua
-          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-          </svg>
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
         </a>
       </div>
 
       {% if berita_terkini %}
-      <!-- Grid Berita (3 kolom) -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         {% for item in berita_terkini %}
         <article class="bg-white border border-gray-100 rounded-2xl overflow-hidden hover:shadow-md transition-shadow">
-
-          <!-- Gambar berita -->
           <a href="{% url 'news:news_detail' item.pk %}" class="block w-full h-48 bg-gray-200 overflow-hidden">
             {% if item.gambar %}
             <img src="{{ item.gambar.url }}" alt="{{ item.judul }}" class="w-full h-full object-cover hover:scale-105 transition-transform duration-300"/>
@@ -352,10 +281,8 @@
             </div>
             {% endif %}
           </a>
-
           <div class="p-5">
             <div class="flex items-center gap-3 mb-3">
-              {# Badge kategori — warna disesuaikan dengan jenisnya #}
               <span class="px-3 py-1 text-xs font-semibold rounded-full
                 {% if item.kategori == 'KEGIATAN' %}bg-orange-100 text-orange-600
                 {% elif item.kategori == 'LAYANAN' %}bg-blue-100 text-blue-600
@@ -370,43 +297,32 @@
                 {{ item.tanggal_dibuat|date:"d M Y" }}
               </span>
             </div>
-
             <a href="{% url 'news:news_detail' item.pk %}">
-              <h3 class="font-bold text-gray-900 text-sm mb-2 leading-snug line-clamp-2 hover:text-emerald-600 transition-colors">
-                {{ item.judul }}
-              </h3>
+              <h3 class="font-bold text-gray-900 text-sm mb-2 leading-snug line-clamp-2 hover:text-emerald-600 transition-colors">{{ item.judul }}</h3>
             </a>
-
-            <p class="text-gray-400 text-xs leading-relaxed line-clamp-3">
-              {{ item.isi|truncatewords:20 }}
-            </p>
+            <p class="text-gray-400 text-xs leading-relaxed line-clamp-3">{{ item.isi|truncatewords:20 }}</p>
           </div>
         </article>
         {% endfor %}
       </div>
-
       {% else %}
-      <!-- Empty state -->
       <div class="text-center py-16">
         <div class="text-5xl mb-3">📢</div>
         <p class="text-gray-400 text-sm">Belum ada pengumuman terbaru.</p>
       </div>
       {% endif %}
 
-      <!-- Lihat Semua mobile -->
       <div class="mt-6 text-center md:hidden">
-        <a href="{% url 'news:news_list' %}" class="inline-flex items-center gap-1 text-primary text-sm font-medium">
-          Lihat Semua →
-        </a>
+        <a href="{% url 'news:news_list' %}" class="inline-flex items-center gap-1 text-primary text-sm font-medium">Lihat Semua →</a>
       </div>
     </div>
   </section>
 
 
-    <!-- ============================================================
-      SECTION: GALERI DESA
-      ============================================================ -->
-  <section class="py-16 px-4 sm:px-6 lg:px-8 bg-primary">
+  <!-- ============================================================
+       SECTION: GALERI DESA — dynamic dari database
+  ============================================================ -->
+  <section class="py-16 px-4 sm:px-6 lg:px-8 bg-green-700">
     <div class="max-w-7xl mx-auto">
 
       <!-- Heading -->
@@ -415,78 +331,102 @@
         <p class="text-green-200 text-sm">Menampilkan kegiatan-kegiatan yang berlangsung di Desa.</p>
       </div>
 
-      <!-- Grid Galeri: 1 besar kiri + 2x2 kanan -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+      {% if galeri_preview %}
+      <!-- Grid: foto pertama besar (row-span-2 kiri), sisanya 2x2 kanan -->
+      <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
+        {% for photo in galeri_preview %}
+        <a href="{% url 'core:galeri' %}"
+           class="relative rounded-2xl overflow-hidden group bg-white/10
+                  {% if forloop.first %}col-span-2 md:col-span-1 md:row-span-2 h-56 md:h-auto{% else %}h-36 md:h-44{% endif %}">
 
-        <!-- Gambar besar kiri (rowspan 2) -->
-        <div class="md:row-span-2 bg-white/20 rounded-2xl overflow-hidden h-64 md:h-auto">
-          <img src="{% static 'assets/galeri/GaleriSungaiMeriam1.jpg' %}"
-              alt="Suasana permukiman tepi sungai Desa Sungai Meriam"
-              class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"/>
-        </div>
+          <!-- Foto -->
+          <img
+            src="{{ photo.foto.url }}"
+            alt="{{ photo.judul }}"
+            class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+            loading="lazy"
+          />
 
-        <!-- Kanan atas kiri -->
-        <div class="bg-white/20 rounded-2xl overflow-hidden h-40">
-          <img src="{% static 'assets/galeri/GaleriSungaiMeriam2.jpg' %}"
-              alt="Bangunan aula Desa Sungai Meriam"
-              class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"/>
-        </div>
+          <!-- Overlay gelap saat hover -->
+          <div class="absolute inset-0 bg-black/0 group-hover:bg-black/45 transition-all duration-300"></div>
 
-        <!-- Kanan atas kanan -->
-        <div class="bg-white/20 rounded-2xl overflow-hidden h-40">
-          <img src="{% static 'assets/galeri/GaleriSungaiMeriam3.jpg' %}"
-              alt="Pembangunan pasar Desa Sungai Meriam"
-              class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"/>
-        </div>
-
-        <!-- Kanan bawah kiri -->
-        <div class="bg-white/20 rounded-2xl overflow-hidden h-40">
-          <img src="{% static 'assets/galeri/GaleriSungaiMeriam4.webp' %}"
-              alt="Pemandangan udara Desa Sungai Meriam"
-              class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"/>
-        </div>
-
-        <!-- Kanan bawah kanan -->
-        <div class="bg-white/20 rounded-2xl overflow-hidden h-40">
-          <img src="{% static 'assets/galeri/GaleriSungaiMeriam5.jpg' %}"
-              alt="Area bermain anak Desa Sungai Meriam"
-              class="w-full h-full object-cover hover:scale-105 transition-transform duration-500"/>
-        </div>
-
+          <!-- Info: muncul saat hover -->
+          <div class="absolute bottom-0 left-0 right-0 p-3
+                      opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0
+                      transition-all duration-300">
+            {% with first_tag=photo.tags.all.0 %}
+            {% if first_tag %}
+            <span class="inline-block px-2 py-0.5 rounded-full text-[10px] font-bold mb-1
+              {% if first_tag.warna == 'blue' %}bg-blue-500 text-white
+              {% elif first_tag.warna == 'yellow' %}bg-yellow-400 text-gray-900
+              {% elif first_tag.warna == 'red' %}bg-red-500 text-white
+              {% elif first_tag.warna == 'purple' %}bg-purple-500 text-white
+              {% elif first_tag.warna == 'orange' %}bg-orange-500 text-white
+              {% else %}bg-green-500 text-white{% endif %}">
+              {{ first_tag.nama }}
+            </span>
+            {% endif %}
+            {% endwith %}
+            {% if photo.judul %}
+            <p class="text-white font-semibold text-xs leading-snug line-clamp-2 drop-shadow">{{ photo.judul }}</p>
+            {% endif %}
+            <p class="text-white/70 text-[10px] mt-0.5">{{ photo.bulan_tahun_display }}</p>
+          </div>
+        </a>
+        {% endfor %}
       </div>
+
+      <!-- Tombol lihat galeri lengkap -->
+      <div class="flex justify-center mt-8">
+        <a href="{% url 'core:galeri' %}"
+           class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border-2 border-white/40 text-white text-sm font-semibold hover:bg-white hover:text-green-700 transition-all duration-200">
+          Lihat Galeri Lengkap
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+
+      {% else %}
+      <!-- Fallback jika DB belum ada foto -->
+      <div class="text-center py-12">
+        <p class="text-green-200 text-sm mb-5">Foto galeri belum tersedia. Tambahkan melalui panel admin.</p>
+        <a href="{% url 'core:galeri' %}"
+           class="inline-flex items-center gap-2 px-6 py-2.5 rounded-full border-2 border-white/40 text-white text-sm font-semibold hover:bg-white hover:text-green-700 transition-all duration-200">
+          Lihat Galeri
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+          </svg>
+        </a>
+      </div>
+      {% endif %}
 
     </div>
   </section>
 
+
   <!-- ============================================================
-       JAVASCRIPT — Carousel & Mobile Menu
-       ============================================================ -->
+       JAVASCRIPT — Carousel
+  ============================================================ -->
   <script>
-    // ---- Carousel ----
     let currentSlide = 0;
     const slides = document.querySelectorAll('.carousel-slide');
-    const dots = document.querySelectorAll('.dot');
+    const dots   = document.querySelectorAll('.dot');
     let autoPlayInterval;
 
     function showSlide(n) {
-      const previousSlide = currentSlide;
-      const previousVideo = slides[previousSlide].querySelector('video');
-
-      slides[previousSlide].classList.remove('active');
-      dots[previousSlide].classList.remove('active');
+      const prev = currentSlide;
+      const prevVideo = slides[prev].querySelector('video');
+      slides[prev].classList.remove('active');
+      dots[prev].classList.remove('active');
       currentSlide = (n + slides.length) % slides.length;
       slides[currentSlide].classList.add('active');
       dots[currentSlide].classList.add('active');
       updateDotsPosition();
 
       const activeVideo = slides[currentSlide].querySelector('video');
-      if (activeVideo) {
-        activeVideo.play().catch(() => {});
-      }
-
-      if (previousVideo && previousVideo !== activeVideo) {
-        setTimeout(() => previousVideo.pause(), 900);
-      }
+      if (activeVideo) activeVideo.play().catch(() => {});
+      if (prevVideo && prevVideo !== activeVideo) setTimeout(() => prevVideo.pause(), 900);
     }
 
     function changeSlide(dir) {
@@ -507,27 +447,17 @@
 
     function updateDotsPosition() {
       const carouselDots = document.getElementById('carouselDots');
-      const dotWidths = Array.from(dots).map((_, index) => index === currentSlide ? 32 : 10);
+      const dotWidths = Array.from(dots).map((_, i) => i === currentSlide ? 32 : 10);
       const gap = 8;
       const secondDotCenter = dotWidths[0] + gap + (dotWidths[1] / 2);
-      const thirdDotCenter = dotWidths[0] + gap + dotWidths[1] + gap + (dotWidths[2] / 2);
+      const thirdDotCenter  = dotWidths[0] + gap + dotWidths[1] + gap + (dotWidths[2] / 2);
       const centerPoint = (secondDotCenter + thirdDotCenter) / 2;
-
       carouselDots.style.transform = `translateX(-${centerPoint}px)`;
     }
 
-    // Init
     showSlide(0);
     startAutoPlay();
-
-    // ---- Mobile Menu ----
-    function toggleMobileMenu() {
-      const menu = document.getElementById('mobileMenu');
-      menu.classList.toggle('hidden');
-    }
   </script>
 
 </body>
-
-
 {% endblock content %}
