@@ -1,6 +1,5 @@
 from django.urls import path
 from . import views
-from gallery import views as gallery_views
 
 app_name = 'core'
 
@@ -11,5 +10,5 @@ urlpatterns = [
     path('keanggotaan/<slug:slug>/', views.detail_member, name='detail_member'),
 
     # ── Galeri ────────────────────────────────────────────────
-    path('galeri/', gallery_views.galeri_list, name='galeri'),
+    path('galeri/', views.galeri_list, name='galeri'),
 ]

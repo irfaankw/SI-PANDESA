@@ -1,12 +1,12 @@
 from django.contrib import admin
-from django.utils.html import format_html
-from .models import StafDesa, Penghargaan, UMKM
+from django.utils.html import format_html, mark_safe
+from .models import StafDesa, Penghargaan, UMKM, Tag, GaleriPhoto
 
 
 # ── Inline: Penghargaan ───────────────────────────────────────────────────────
 class PenghargaanInline(admin.TabularInline):
     model       = Penghargaan
-    extra       = 1          # jumlah form kosong yang muncul secara default
+    extra       = 1
     fields      = ('judul', 'tahun')
     ordering    = ('-tahun',)
     verbose_name        = 'Penghargaan'
@@ -28,7 +28,6 @@ class StafDesaAdmin(admin.ModelAdmin):
 
     inlines = [PenghargaanInline, UMKMInline]
 
-    # ── List View ──────────────────────────────────────────────────────────
     list_display  = (
         'foto_thumbnail', 'nama_lengkap_display', 'jabatan',
         'kategori', 'telepon', 'periode_display',
@@ -40,7 +39,6 @@ class StafDesaAdmin(admin.ModelAdmin):
     list_editable = ('urutan', 'aktif_tampil')
     ordering      = ('urutan', 'nama')
 
-    # ── Detail Form ────────────────────────────────────────────────────────
     prepopulated_fields = {'slug': ('nama',)}
     readonly_fields     = ('dibuat', 'diperbarui', 'foto_preview')
 
@@ -81,7 +79,6 @@ class StafDesaAdmin(admin.ModelAdmin):
         }),
     )
 
-    # ── Custom Display Methods ─────────────────────────────────────────────
     @admin.display(description='Foto')
     def foto_thumbnail(self, obj):
         if obj.foto:
@@ -116,7 +113,7 @@ class StafDesaAdmin(admin.ModelAdmin):
         return "Belum ada foto"
 
 
-# ── Register standalone (opsional, untuk manajemen terpisah) ──────────────────
+# ── Register standalone ───────────────────────────────────────────────────────
 @admin.register(Penghargaan)
 class PenghargaanAdmin(admin.ModelAdmin):
     list_display  = ('judul', 'tahun', 'staf')
@@ -130,3 +127,90 @@ class UMKMAdmin(admin.ModelAdmin):
     list_display  = ('nama_usaha', 'kategori_usaha', 'staf', 'masih_aktif')
     list_filter   = ('kategori_usaha', 'masih_aktif')
     search_fields = ('nama_usaha', 'staf__nama')
+
+
+# ── Tag Admin ─────────────────────────────────────────────────────────────────
+@admin.register(Tag)
+class TagAdmin(admin.ModelAdmin):
+    list_display  = ['nama', 'slug', 'warna_preview', 'warna']
+    prepopulated_fields = {'slug': ('nama',)}
+    search_fields = ['nama']
+
+    @admin.display(description='Preview')
+    def warna_preview(self, obj):
+        COLOR_MAP = {
+            'green':  '#16a34a',
+            'blue':   '#3b82f6',
+            'yellow': '#eab308',
+            'red':    '#ef4444',
+            'purple': '#a855f7',
+            'orange': '#f97316',
+        }
+        color = COLOR_MAP.get(obj.warna, '#16a34a')
+        return format_html(
+            '<span style="display:inline-block;width:16px;height:16px;'
+            'border-radius:50%;background:{};vertical-align:middle;"></span> {}',
+            color, obj.nama
+        )
+
+
+# ── GaleriPhoto Admin ─────────────────────────────────────────────────────────
+@admin.register(GaleriPhoto)
+class GaleriPhotoAdmin(admin.ModelAdmin):
+    list_display  = ['foto_thumbnail', 'judul', 'bulan_tahun_display', 'tag_list', 'ditampilkan', 'urutan']
+    list_editable = ['ditampilkan', 'urutan']
+    list_filter   = ['ditampilkan', 'tags']
+    filter_horizontal = ['tags']
+    search_fields = ['judul', 'deskripsi']
+    ordering      = ['urutan', '-bulan_tahun']
+    readonly_fields = ['foto_preview']
+
+    fieldsets = (
+        ('📷 Foto', {
+            'fields': ('foto', 'foto_preview'),
+        }),
+        ('📝 Informasi', {
+            'fields': ('judul', 'deskripsi', 'tags', 'bulan_tahun'),
+        }),
+        ('⚙️ Pengaturan', {
+            'fields': ('ditampilkan', 'urutan'),
+        }),
+    )
+
+    @admin.display(description='Foto')
+    def foto_thumbnail(self, obj):
+        if obj.foto:
+            return format_html(
+                '<img src="{}" style="width:60px;height:45px;'
+                'object-fit:cover;border-radius:6px;" />',
+                obj.foto.url
+            )
+        return '—'
+
+    @admin.display(description='Preview')
+    def foto_preview(self, obj):
+        if obj.foto:
+            return format_html(
+                '<img src="{}" style="max-height:250px;border-radius:12px;" />',
+                obj.foto.url
+            )
+        return 'Belum ada foto'
+
+    @admin.display(description='Tags')
+    def tag_list(self, obj):
+        tags = obj.tags.all()
+        if not tags:
+            return '—'
+        COLOR_MAP = {
+            'green':  '#16a34a', 'blue':   '#3b82f6',
+            'yellow': '#eab308', 'red':    '#ef4444',
+            'purple': '#a855f7', 'orange': '#f97316',
+        }
+        badges = []
+        for tag in tags:
+            color = COLOR_MAP.get(tag.warna, '#16a34a')
+            badges.append(
+                '<span style="display:inline-block;padding:2px 8px;border-radius:99px;'
+                f'background:{color};color:#fff;font-size:11px;font-weight:600;margin:1px;">{tag.nama}</span>'
+            )
+        return mark_safe(''.join(badges))

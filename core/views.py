@@ -1,8 +1,9 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
-from .models import StafDesa, KategoriStaf
-from news.models import Pengumuman   
-from gallery.models import GaleriPhoto
+from django.core.paginator import Paginator
+from .models import StafDesa, KategoriStaf, GaleriPhoto, Tag
+from news.models import Pengumuman
+ 
 
 
 def home(request):
@@ -77,3 +78,27 @@ def detail_member(request, slug):
         'staf_lain': staf_lain,
     }
     return render(request, template_name, context)
+
+def galeri_list(request):
+    tag_slug = request.GET.get("tag", "")
+    photos = GaleriPhoto.objects.filter(ditampilkan=True).prefetch_related("tags")
+
+    active_tag = None
+    if tag_slug:
+        active_tag = get_object_or_404(Tag, slug=tag_slug)
+        photos = photos.filter(tags=active_tag)
+
+    all_tags = Tag.objects.all()
+    total_photos = GaleriPhoto.objects.filter(ditampilkan=True).count()
+
+    paginator = Paginator(photos, 8)
+    page_number = request.GET.get("page", 1)
+    page_obj = paginator.get_page(page_number)
+
+    context = {
+        "page_obj": page_obj,
+        "all_tags": all_tags,
+        "active_tag": active_tag,
+        "total_photos": total_photos,
+    }
+    return render(request, "core/galeri.html", context)
