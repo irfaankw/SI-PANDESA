@@ -1,11 +1,8 @@
-# welfare/views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
+from core.decorators import verified_required
 from django.contrib import messages
-from django.http import Http404
 from .models import UMKM, Produk
 from .forms import UMKMForm, ProdukForm
-
 
 def _get_profil_data(user):
     nama = user.get_full_name() or user.username
@@ -16,8 +13,7 @@ def _get_profil_data(user):
         pass
     return nama, no_hp
 
-
-@login_required
+@verified_required("Layanan Kesejahteraan")
 def kesejahteraan_view(request):
     umkm_existing = None
     if hasattr(request.user, 'umkm'):
@@ -58,8 +54,7 @@ def kesejahteraan_view(request):
         'tab':           request.GET.get('tab', 'umkm'),
     })
 
-
-@login_required
+@verified_required("Layanan Kesejahteraan")
 def kelola_toko_view(request):
     # Menggunakan try-except blocks standar Django agar aman jika objek tidak ditemukan
     try:
@@ -77,7 +72,7 @@ def kelola_toko_view(request):
         'produk_list': produk_list,
     })
 
-@login_required
+@verified_required("Layanan Kesejahteraan")
 def tambah_produk_view(request):
     umkm = get_object_or_404(UMKM, pemilik=request.user)
 
@@ -104,7 +99,7 @@ def tambah_produk_view(request):
     })
 
 
-@login_required
+@verified_required("Layanan Kesejahteraan")
 def edit_produk_view(request, produk_id):
     umkm   = get_object_or_404(UMKM, pemilik=request.user)
     produk = get_object_or_404(Produk, id=produk_id, umkm=umkm)
@@ -126,7 +121,7 @@ def edit_produk_view(request, produk_id):
     })
 
 
-@login_required
+@verified_required("Layanan Kesejahteraan")
 def hapus_produk_view(request, produk_id):
     umkm   = get_object_or_404(UMKM, pemilik=request.user)
     produk = get_object_or_404(Produk, id=produk_id, umkm=umkm)

@@ -24,6 +24,7 @@ urlpatterns = [
     path('layanan/kesejahteraan/', include('welfare.urls',   namespace='welfare')),
 
     # ── Dashboard Staff Desa ───────────────────────────────────
+    path('layanan/staff/warga/',         include('account.staff_urls',   namespace='account_staff')),
     path('layanan/staff/surat/',         include('service.staff_urls',   namespace='service_staff')),
     path('layanan/staff/pengaduan/',     include('complaint.staff_urls', namespace='complaint_staff')),
     path('layanan/staff/kesejahteraan/', include('welfare.staff_urls',   namespace='welfare_staff')),

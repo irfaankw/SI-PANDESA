@@ -1,0 +1,299 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50">
+
+  {# ── HEADER ── #}
+  <div class="bg-white border-b border-slate-100 shadow-sm">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div class="flex items-center gap-4">
+          <a href="{% url 'account_staff:dashboard' %}"
+             class="flex items-center justify-center h-9 w-9 rounded-xl border border-slate-200 bg-white text-slate-500 hover:bg-slate-50 hover:text-slate-700 transition-colors duration-200 shadow-sm shrink-0">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-4 w-4">
+              <polyline points="15 18 9 12 15 6"/>
+            </svg>
+          </a>
+          <div>
+            <div class="flex items-center gap-2 mb-1">
+              <span class="inline-flex items-center justify-center h-7 w-7 rounded-lg bg-emerald-100 text-emerald-700">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/>
+                </svg>
+              </span>
+              <span class="text-xs font-semibold uppercase tracking-widest text-emerald-600">Dashboard Verifikasi</span>
+            </div>
+            <h1 class="text-2xl font-bold text-slate-800">Detail Profil Warga</h1>
+            <p class="text-sm text-slate-400 mt-0.5">Desa Sungai Meriam · Tinjau dan verifikasi data warga</p>
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          {% if profile.status_verifikasi == 'verified' %}
+          <span class="inline-flex items-center gap-2 rounded-full bg-emerald-50 border border-emerald-200 px-4 py-2 text-sm font-semibold text-emerald-700">
+            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>Terverifikasi
+          </span>
+          {% else %}
+          <span class="inline-flex items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-4 py-2 text-sm font-semibold text-amber-700">
+            <span class="h-2 w-2 rounded-full bg-amber-400 animate-pulse"></span>Pending
+          </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+
+      {# ══ KOLOM KIRI ══ #}
+      <div class="flex flex-col gap-6">
+
+        {# Kartu: Identitas Warga #}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 text-slate-500">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+            </svg>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Identitas Warga</p>
+          </div>
+          <div class="px-6 py-6">
+
+            {# Avatar + nama #}
+            <div class="flex items-center gap-4 mb-6 pb-6 border-b border-slate-100">
+              {% if profile.avatar %}
+              <img src="{{ profile.avatar.url }}" alt=""
+                   class="h-16 w-16 shrink-0 rounded-2xl object-cover">
+              {% else %}
+              <span class="flex h-16 w-16 shrink-0 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700 text-xl font-bold select-none">
+                {{ profile.initials }}
+              </span>
+              {% endif %}
+              <div>
+                <p class="font-bold text-slate-800 text-lg leading-tight">
+                  {{ profile.user.get_full_name|default:profile.user.username }}
+                </p>
+                <p class="text-sm text-slate-400 mt-0.5">{{ profile.user.email }}</p>
+                <p class="text-xs text-slate-400 mt-1">Bergabung {{ profile.created_at|date:"d M Y" }}</p>
+              </div>
+            </div>
+
+            {# Data kependudukan #}
+            <div class="space-y-3">
+              {% if profile.nik %}
+              <div class="flex items-center justify-between py-2.5 px-3 rounded-xl bg-slate-50">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">NIK</span>
+                <span class="font-mono text-sm font-bold text-slate-800">{{ profile.nik }}</span>
+              </div>
+              {% endif %}
+              {% if profile.jenis_kelamin %}
+              <div class="flex items-center justify-between py-2.5 px-3 rounded-xl bg-slate-50">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Jenis Kelamin</span>
+                <span class="text-sm font-semibold text-slate-800">{{ profile.get_jenis_kelamin_display }}</span>
+              </div>
+              {% endif %}
+              {% if profile.tanggal_lahir %}
+              <div class="flex items-center justify-between py-2.5 px-3 rounded-xl bg-slate-50">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Tanggal Lahir</span>
+                <span class="text-sm font-semibold text-slate-800">{{ profile.tanggal_lahir|date:"d M Y" }}</span>
+              </div>
+              {% endif %}
+              {% if profile.no_hp %}
+              <div class="flex items-center justify-between py-2.5 px-3 rounded-xl bg-slate-50">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">No. HP</span>
+                <span class="text-sm font-semibold text-slate-800">{{ profile.no_hp }}</span>
+              </div>
+              {% endif %}
+              {% if profile.pekerjaan %}
+              <div class="flex items-center justify-between py-2.5 px-3 rounded-xl bg-slate-50">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Pekerjaan</span>
+                <span class="text-sm font-semibold text-slate-800">{{ profile.pekerjaan }}</span>
+              </div>
+              {% endif %}
+              {% if profile.agama %}
+              <div class="flex items-center justify-between py-2.5 px-3 rounded-xl bg-slate-50">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Agama</span>
+                <span class="text-sm font-semibold text-slate-800">{{ profile.agama }}</span>
+              </div>
+              {% endif %}
+              {% if profile.alamat %}
+              <div class="flex items-start justify-between gap-4 py-2.5 px-3 rounded-xl bg-slate-50">
+                <span class="text-xs font-semibold text-slate-500 uppercase tracking-wide shrink-0">Alamat</span>
+                <span class="text-sm font-semibold text-slate-800 text-right leading-relaxed">
+                  {{ profile.alamat }}
+                  {% if profile.rt %}, RT {{ profile.rt }}/RW {{ profile.rw }}{% endif %}
+                  {% if profile.dusun %}, {{ profile.dusun }}{% endif %}
+                </span>
+              </div>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+
+        {# Kartu: Foto KTP #}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 text-slate-500">
+              <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Foto KTP</p>
+          </div>
+          <div class="px-6 pt-5 pb-6">
+            {% if profile.foto_ktp %}
+            <a href="{{ profile.foto_ktp.url }}" target="_blank"
+               class="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 hover:border-emerald-300 hover:bg-emerald-50 transition-all duration-200 group">
+              <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-white border border-slate-200 text-slate-400 group-hover:text-emerald-600 transition-colors shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                </svg>
+              </span>
+              <div class="min-w-0 flex-1">
+                <p class="text-sm font-semibold text-slate-700 group-hover:text-emerald-700">Foto KTP Warga</p>
+                <p class="text-xs text-slate-400">Klik untuk buka di tab baru</p>
+              </div>
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 text-slate-300 shrink-0 group-hover:text-emerald-500 transition-colors">
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                <polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/>
+              </svg>
+            </a>
+            {% else %}
+            <div class="flex flex-col items-center justify-center py-12 text-center">
+              <span class="flex h-14 w-14 items-center justify-center rounded-2xl bg-slate-100 text-slate-300 mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="h-7 w-7">
+                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/>
+                </svg>
+              </span>
+              <p class="text-sm font-semibold text-slate-400">Foto KTP belum diunggah</p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+      </div>
+
+      {# ══ KOLOM KANAN ══ #}
+      <div class="flex flex-col gap-6">
+
+        {# Kartu: Ringkasan akun #}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 py-5 bg-gradient-to-r from-emerald-600 to-emerald-500">
+            <div class="flex items-center gap-3">
+              <span class="flex h-11 w-11 items-center justify-center rounded-xl bg-white/20 text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-5 w-5">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+                </svg>
+              </span>
+              <div>
+                <p class="font-bold text-white text-lg leading-tight">
+                  {{ profile.user.get_full_name|default:profile.user.username }}
+                </p>
+                <p class="text-xs font-mono text-emerald-100 mt-0.5">{{ profile.user.email }}</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 divide-x divide-slate-100 border-b border-slate-100">
+            <div class="px-4 py-4">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Bergabung</p>
+              <p class="text-sm font-bold text-slate-800">{{ profile.created_at|date:"d M Y" }}</p>
+              <p class="text-xs text-slate-400">{{ profile.created_at|date:"H:i" }} WITA</p>
+            </div>
+            <div class="px-4 py-4">
+              <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1.5">Diperbarui</p>
+              <p class="text-sm font-bold text-slate-800">{{ profile.updated_at|date:"d M Y" }}</p>
+              <p class="text-xs text-slate-400">{{ profile.updated_at|date:"H:i" }} WITA</p>
+            </div>
+          </div>
+
+          {# Kelengkapan profil #}
+          <div class="px-6 py-5">
+            <p class="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-3">Kelengkapan Data</p>
+            <div class="space-y-2">
+              {% with fields=profile.nik|yesno:"✓,–" %}
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-600">NIK</span>
+                <span class="{% if profile.nik %}text-emerald-600 font-semibold{% else %}text-slate-300{% endif %}">
+                  {% if profile.nik %}✓ Diisi{% else %}– Belum diisi{% endif %}
+                </span>
+              </div>
+              {% endwith %}
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-600">Foto KTP</span>
+                <span class="{% if profile.foto_ktp %}text-emerald-600 font-semibold{% else %}text-slate-300{% endif %}">
+                  {% if profile.foto_ktp %}✓ Diunggah{% else %}– Belum diunggah{% endif %}
+                </span>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-600">Alamat</span>
+                <span class="{% if profile.alamat %}text-emerald-600 font-semibold{% else %}text-slate-300{% endif %}">
+                  {% if profile.alamat %}✓ Diisi{% else %}– Belum diisi{% endif %}
+                </span>
+              </div>
+              <div class="flex items-center justify-between text-sm">
+                <span class="text-slate-600">No. HP</span>
+                <span class="{% if profile.no_hp %}text-emerald-600 font-semibold{% else %}text-slate-300{% endif %}">
+                  {% if profile.no_hp %}✓ Diisi{% else %}– Belum diisi{% endif %}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {# Catatan admin sebelumnya #}
+        {% if profile.catatan_admin %}
+        <div class="bg-slate-50 rounded-2xl border border-slate-200 px-6 py-5">
+          <div class="flex items-center gap-2 mb-3">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 text-slate-400">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+            </svg>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Catatan Admin Sebelumnya</p>
+          </div>
+          <p class="text-sm text-slate-600 leading-relaxed">{{ profile.catatan_admin }}</p>
+        </div>
+        {% endif %}
+
+        {# ── TINDAKAN STAFF ── #}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 text-slate-500">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Tindakan Staff</p>
+          </div>
+          <form method="POST" action="" class="px-6 py-6">
+            {% csrf_token %}
+            <div class="mb-6">
+              <label class="block text-xs font-bold text-slate-600 uppercase tracking-wide mb-3">Catatan Admin</label>
+              <textarea name="catatan" rows="4"
+                        placeholder="Tulis catatan verifikasi atau alasan keputusan di sini…"
+                        class="w-full rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:border-transparent resize-none transition">{{ profile.catatan_admin|default:'' }}</textarea>
+            </div>
+            <div class="flex flex-col gap-3">
+              {% if profile.status_verifikasi == 'pending' %}
+              <button type="submit" name="status" value="verified"
+                      class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 px-4 py-3.5 text-sm font-bold text-white shadow-sm transition-all duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-4 w-4"><polyline points="20 6 9 17 4 12"/></svg>
+                Verifikasi Warga Ini
+              </button>
+              <p class="text-xs text-slate-400 text-center pt-1">Warga akan mendapat akses penuh ke semua layanan desa.</p>
+              {% else %}
+              <button type="submit" name="status" value="pending"
+                      class="w-full inline-flex items-center justify-center gap-2 rounded-xl bg-white hover:bg-amber-50 border border-amber-200 hover:border-amber-300 px-4 py-3.5 text-sm font-bold text-amber-600 hover:text-amber-700 transition-all duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-4 w-4">
+                  <circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                Kembalikan ke Pending
+              </button>
+              <p class="text-xs text-slate-400 text-center pt-1">Akses layanan surat dan kesejahteraan akan dicabut sementara.</p>
+              {% endif %}
+            </div>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}

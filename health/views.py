@@ -6,13 +6,13 @@ from datetime import datetime, timedelta
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, user_passes_test
+from core.decorators import login_required_custom
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
 from django.utils import timezone
 from django.contrib import messages
 
 from .models import AntreanKesehatan
-
 
 # ─────────────────────────────────────────────────────────────────────────────
 # CONSTANTS
@@ -109,7 +109,7 @@ def _get_active_queue(user, today, target_date):
 # USER VIEWS
 # ─────────────────────────────────────────────────────────────────────────────
 
-@login_required
+@login_required_custom
 def appointment_view(request):
     profile     = getattr(request.user, 'profile', None)
     today       = timezone.localdate()
@@ -249,7 +249,7 @@ def appointment_view(request):
     return render(request, 'health/appointment.html', context)
 
 
-@login_required
+@login_required_custom
 def medical_history_view(request):
     profile = getattr(request.user, 'profile', None)
 
