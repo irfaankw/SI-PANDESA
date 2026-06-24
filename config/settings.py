@@ -19,7 +19,12 @@ DEBUG = os.getenv("DEBUG") == "True"
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
+
+CSRF_TRUSTED_ORIGINS = [
+    'https://rd3d9x6s-800s0.asse.devtunnels.ms',
+    'https://*.vercel.app',
+]
 
 LOGIN_URL = '/?auth_modal=login'
 
@@ -32,6 +37,15 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.sites",
+
+    # allauth
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
+    "allauth.socialaccount.providers.google",
+
+    # existing apps
     "core.apps.CoreConfig",
     "market.apps.MarketConfig",
     "news.apps.NewsConfig",
@@ -51,6 +65,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware", 
 ]
 
 ROOT_URLCONF = "config.urls"
@@ -74,10 +89,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "config.wsgi.application"
-
-CSRF_TRUSTED_ORIGINS = [
-    'https://rd3d9x6s-800s0.asse.devtunnels.ms',
-]
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
@@ -162,9 +173,48 @@ STORAGES = {
     },
 }
 
+# Email (Gmail SMTP) — buat kirim kode OTP
+EMAIL_BACKEND       = "django.core.mail.backends.smtp.EmailBackend"
+EMAIL_HOST          = "smtp.gmail.com"
+EMAIL_PORT          = 587
+EMAIL_USE_TLS       = True
+EMAIL_HOST_USER     = os.getenv("EMAIL_HOST_USER")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
+DEFAULT_FROM_EMAIL  = EMAIL_HOST_USER
+
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
-# Default primary key field type
-# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
+SOCIALACCOUNT_ADAPTER = 'account.adapters.SocialAccountAdapter'
+
+SITE_ID = 1
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend',
+]
+
+# allauth config
+ACCOUNT_EMAIL_REQUIRED        = True
+ACCOUNT_USERNAME_REQUIRED     = False
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_EMAIL_VERIFICATION    = 'none'   # Google sudah verifikasi email
+LOGIN_REDIRECT_URL            = '/'
+LOGOUT_REDIRECT_URL           = '/'
+
+# Google OAuth credentials
+SOCIALACCOUNT_PROVIDERS = {
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {'access_type': 'online'},
+        'APP': {
+            'client_id':     os.getenv('GOOGLE_CLIENT_ID'),
+            'secret':        os.getenv('GOOGLE_CLIENT_SECRET'),
+            'key':           '',
+        }
+    }
+}
+
+SOCIALACCOUNT_AUTO_SIGNUP    = True   # auto buat User dari data Google
+SOCIALACCOUNT_LOGIN_ON_GET   = True   # izinkan GET request ke login URL
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"

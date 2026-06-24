@@ -11,6 +11,7 @@ urlpatterns = [
 
     # ── Auth & Account ────────────────────────────────────────
     path('auth/', include('account.urls', namespace='account')),
+    path('accounts/', include('allauth.urls')),
 
     # ── Fitur Publik ──────────────────────────────────────────
     path('pasar/',   include('market.urls', namespace='market')),
