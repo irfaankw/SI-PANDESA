@@ -10,4 +10,5 @@ urlpatterns = [
     # Membership: list + detail via slug
     path('keanggotaan/', views.membership, name='membership'),
     path('keanggotaan/<slug:slug>/', views.detail_member, name='detail_member'),
+    path('beranda/', views.home, name='index'),
 ]
