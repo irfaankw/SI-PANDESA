@@ -110,7 +110,7 @@
                         Biodata
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 ml-auto text-slate-300"><polyline points="9 18 15 12 9 6"/></svg>
                     </a>
-                    <a href="{% url 'service:mail_index' %}"
+                    <a href="{% url 'service:letter_archive' %}"
                        class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium
                               text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors duration-150">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
@@ -129,6 +129,15 @@
                         </svg>
                         Riwayat Berobat
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 ml-auto"><polyline points="9 18 15 12 9 6"/></svg>
+                    </a>
+                    <a href="{% url 'complaint:complaint_history' %}"
+                    class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium
+                            text-slate-600 hover:bg-slate-50 hover:text-slate-800 transition-colors duration-150">
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-slate-400">
+                            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        Riwayat Pengaduan
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5 ml-auto text-slate-300"><polyline points="9 18 15 12 9 6"/></svg>
                     </a>
                     <div class="my-1 border-t border-slate-100"></div>
                     <form method="POST" action="{% url 'account:logout' %}">
@@ -153,21 +162,30 @@
                         <div class="flex items-center justify-between text-sm">
                             <span class="flex items-center gap-2 text-slate-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
-                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                    <polyline points="14 2 14 8 20 8"/>
                                 </svg>
-                                Total Kunjungan
+                                Surat Disetujui
                             </span>
-                            <span class="font-bold text-emerald-600">{{ completed_visits.count }}</span>
+                            <span class="font-bold text-slate-800">{{ surat_disetujui }}</span>
                         </div>
                         <div class="flex items-center justify-between text-sm">
                             <span class="flex items-center gap-2 text-slate-500">
                                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
-                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-                                    <polyline points="14 2 14 8 20 8"/>
+                                    <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
                                 </svg>
-                                Total Surat
+                                Total Kunjungan
                             </span>
-                            <span class="font-bold text-slate-800">0</span>
+                            <span class="font-bold text-emerald-600">{{ total_kunjungan }}</span>
+                        </div>
+                        <div class="flex items-center justify-between text-sm">
+                            <span class="flex items-center gap-2 text-slate-500">
+                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-3.5 w-3.5">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                                </svg>
+                                Total Pengaduan
+                            </span>
+                            <span class="font-bold text-slate-800">{{ total_pengaduan }}</span>
                         </div>
                     </div>
                 </div>

@@ -17,7 +17,7 @@ def _get_profil_data(user):
     return nama, no_hp
 
 
-@login_required(login_url='/?auth_modal=login')
+@login_required
 def kesejahteraan_view(request):
     umkm_existing = None
     if hasattr(request.user, 'umkm'):
@@ -59,7 +59,7 @@ def kesejahteraan_view(request):
     })
 
 
-@login_required(login_url='/?auth_modal=login')
+@login_required
 def kelola_toko_view(request):
     umkm    = get_object_or_404(UMKM, pemilik=request.user)
     produk_list = umkm.produk.all()
@@ -70,7 +70,7 @@ def kelola_toko_view(request):
     })
 
 
-@login_required(login_url='/?auth_modal=login')
+@login_required
 def tambah_produk_view(request):
     umkm = get_object_or_404(UMKM, pemilik=request.user)
 
@@ -97,7 +97,7 @@ def tambah_produk_view(request):
     })
 
 
-@login_required(login_url='/?auth_modal=login')
+@login_required
 def edit_produk_view(request, produk_id):
     umkm   = get_object_or_404(UMKM, pemilik=request.user)
     produk = get_object_or_404(Produk, id=produk_id, umkm=umkm)
@@ -119,7 +119,7 @@ def edit_produk_view(request, produk_id):
     })
 
 
-@login_required(login_url='/?auth_modal=login')
+@login_required
 def hapus_produk_view(request, produk_id):
     umkm   = get_object_or_404(UMKM, pemilik=request.user)
     produk = get_object_or_404(Produk, id=produk_id, umkm=umkm)

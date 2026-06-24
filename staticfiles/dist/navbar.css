@@ -1,0 +1,17 @@
+[x-cloak] { display: none !important; }
+
+/* Glassmorphism bar */
+.sipandesa-nav {
+background: rgba(255,255,255,0.92);
+backdrop-filter: blur(14px);
+-webkit-backdrop-filter: blur(14px);
+border-bottom: 1px solid rgba(16,185,129,0.10);
+}
+
+/* Dropdown card polish */
+.layanan-card {
+box-shadow:
+    0 4px 6px -1px rgba(0,0,0,0.07),
+    0 10px 30px -5px rgba(16,185,129,0.12),
+    0 0 0 1px rgba(16,185,129,0.08);
+}   

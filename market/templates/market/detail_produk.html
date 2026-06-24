@@ -13,12 +13,12 @@
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
     {# Foto #}
-    <div class="bg-white rounded-2xl border border-slate-100 shadow-sm overflow-hidden">
+    <div>
       {% if produk.foto %}
       <img src="{{ produk.foto.url }}" alt="{{ produk.nama }}"
            class="w-full aspect-square object-cover">
       {% else %}
-      <div class="w-full aspect-square flex items-center justify-center text-7xl bg-slate-100 text-slate-300">📦</div>
+      <div class="w-full aspect-square flex items-center justify-center text-7xl bg-slate-100 text-slate-300 rounded-2xl border border-slate-100 shadow-sm">📦</div>
       {% endif %}
     </div>
 

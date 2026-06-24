@@ -1,9 +1,8 @@
-{# ── Floating Button ── #}
+{% load static %}
+
 <div class="fixed bottom-6 right-6 z-50 flex flex-col items-end gap-3">
 
-    {# ────────────────────────────────────────────────
-       Chat Window (tersembunyi default, toggle via JS)
-    ──────────────────────────────────────────────── #}
+    {# ── Jendela Chat ── #}
     <div id="ai-chat-window"
          class="hidden w-80 rounded-2xl bg-white border border-slate-100
                 shadow-2xl shadow-slate-200/80 overflow-hidden
@@ -12,7 +11,6 @@
         {# Header Chat #}
         <div class="bg-emerald-700 px-4 py-3 flex items-center justify-between">
             <div class="flex items-center gap-2.5">
-                {# Avatar Asisten #}
                 <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-emerald-500/40 border border-emerald-400/60">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 24 24"
                          fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -29,7 +27,6 @@
                     </div>
                 </div>
             </div>
-            {# Tombol Tutup #}
             <button onclick="toggleChat()"
                     class="flex h-7 w-7 items-center justify-center rounded-lg
                            text-emerald-200 hover:text-white hover:bg-emerald-600
@@ -47,7 +44,7 @@
              class="flex flex-col gap-3 px-4 py-4 bg-slate-50 overflow-y-auto"
              style="min-height: 220px; max-height: 320px;">
 
-            {# Bubble sapaan awal dari Bot #}
+            {# Bubble sapaan awal — personalisasi jika login #}
             <div class="flex items-end gap-2">
                 <div class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-emerald-600" viewBox="0 0 24 24"
@@ -57,7 +54,11 @@
                 </div>
                 <div class="max-w-[85%] rounded-2xl rounded-bl-sm bg-white border border-slate-100 shadow-sm px-3.5 py-2.5">
                     <p class="text-xs text-slate-700 leading-relaxed">
-                        Halo, <strong class="font-semibold text-emerald-700">{{ request.user.username }}</strong>! 👋
+                        {% if request.user.is_authenticated %}
+                            Halo, <strong class="font-semibold text-emerald-700">{{ request.user.get_full_name|default:request.user.username }}</strong>! 👋
+                        {% else %}
+                            Halo! 👋
+                        {% endif %}
                         Saya asisten digital SI-PANDESA. Ada yang bisa saya bantu hari ini?
                     </p>
                     <p class="text-[10px] text-slate-400 mt-1 text-right">Sekarang</p>
@@ -65,7 +66,7 @@
             </div>
 
             {# Chip Pertanyaan Cepat #}
-            <div class="flex flex-wrap gap-1.5 pl-8">
+            <div id="quick-chips" class="flex flex-wrap gap-1.5 pl-8">
                 <button onclick="sendQuick('Bagaimana cara mengajukan surat?')"
                         class="rounded-full border border-emerald-200 bg-white px-2.5 py-1
                                text-[11px] font-medium text-emerald-600
@@ -73,7 +74,7 @@
                                transition-all duration-150 shadow-sm">
                     📄 Cara mengajukan surat
                 </button>
-                <button onclick="sendQuick('Berapa lama proses verifikasi?')"
+                <button onclick="sendQuick('Berapa lama proses verifikasi surat?')"
                         class="rounded-full border border-emerald-200 bg-white px-2.5 py-1
                                text-[11px] font-medium text-emerald-600
                                hover:bg-emerald-50 hover:border-emerald-300
@@ -91,7 +92,7 @@
 
         </div>
 
-        {# Area Input Chat #}
+        {# Area Input #}
         <div class="border-t border-slate-100 bg-white px-3 py-3 flex gap-2 items-end">
             <textarea id="ai-chat-input"
                       rows="1"
@@ -104,10 +105,11 @@
                              transition-all duration-200"
                       style="max-height: 80px; overflow-y: auto;"></textarea>
             <button onclick="sendMessage()"
+                    id="ai-send-btn"
                     class="shrink-0 flex h-9 w-9 items-center justify-center rounded-xl
                            bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800
                            text-white shadow-sm shadow-emerald-300/40
-                           transition-all duration-200">
+                           transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24"
                      fill="none" stroke="currentColor" stroke-width="2.5">
                     <line x1="22" y1="2" x2="11" y2="13"/>
@@ -116,7 +118,6 @@
             </button>
         </div>
 
-        {# Footer disclaimer #}
         <p class="bg-white px-4 pb-3 text-center text-[9px] text-slate-300 -mt-1">
             Asisten AI · Jawaban mungkin tidak selalu akurat
         </p>
@@ -124,76 +125,57 @@
     </div>
 
     {# ── Floating Action Button ── #}
-    <button onclick="toggleChat()"
-            id="ai-chat-fab"
-            aria-label="Buka asisten AI"
-            class="relative flex h-14 w-14 items-center justify-center rounded-full
-                   bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800
-                   shadow-lg shadow-emerald-400/40 hover:shadow-emerald-500/50
-                   transition-all duration-200 hover:scale-105 active:scale-95">
+<button onclick="toggleChat()"
+        id="ai-chat-fab"
+        aria-label="Buka asisten AI"
+        style="animation: tuing 1.5s ease-in-out infinite; animation-delay: 2s;"
+        class="relative flex items-center justify-center
+               bg-transparent shadow-none transition-all duration-200">
+    
+    <div style="width: 75px; height: 75px; border-radius: 50%; border: 4px solid white;
+                background: linear-gradient(135deg, #5eead4, #0d9488);
+                overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.2);">
+        <img src="{% static 'assets/global/Logo-AI.png' %}"
+             style="width: 100%; height: 100%; object-fit: cover; object-position: center 10%; transform: scale(1.0);"
+             alt="Asisten AI">
+    </div>
 
-        {# Ikon utama (chat) #}
-        <svg id="fab-icon-chat"
-             xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white transition-all duration-200"
-             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-             stroke-linecap="round" stroke-linejoin="round">
-            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
-        </svg>
-
-        {# Ikon close (tampil saat chat terbuka) #}
-        <svg id="fab-icon-close"
-             xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white hidden transition-all duration-200"
-             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <line x1="18" y1="6" x2="6" y2="18"/>
-            <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-
-        {# Badge notifikasi #}
-        <span id="ai-badge"
-              class="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center
-                     rounded-full bg-white border-2 border-emerald-500
-                     text-[10px] font-bold text-emerald-600">
-            1
-        </span>
-
-    </button>
+    <span id="ai-badge"
+          class="absolute top-0 right-0 flex h-5 w-5 items-center justify-center
+                rounded-full bg-emerald-600 border-2 border-white
+                text-[10px] font-bold text-white z-10">
+        1
+    </span>
+</button>
 </div>
 
-
-{# ── JavaScript: Toggle & Chat Logic ── #}
 <script>
-  let chatOpen = false;
+  let chatOpen  = false;
+  let isWaiting = false;
 
-  /** Buka / tutup jendela chat */
-  function toggleChat() {
+function toggleChat() {
     chatOpen = !chatOpen;
-    const win       = document.getElementById('ai-chat-window');
-    const iconChat  = document.getElementById('fab-icon-chat');
-    const iconClose = document.getElementById('fab-icon-close');
-    const badge     = document.getElementById('ai-badge');
+    const win    = document.getElementById('ai-chat-window');
+    const fab    = document.getElementById('ai-chat-fab');
+    const badge  = document.getElementById('ai-badge');
 
     if (chatOpen) {
-      win.classList.remove('hidden');
-      iconChat.classList.add('hidden');
-      iconClose.classList.remove('hidden');
-      badge.classList.add('hidden');    // sembunyikan badge setelah dibaca
-      // Scroll ke bawah area pesan
-      const msgArea = document.getElementById('ai-chat-messages');
-      msgArea.scrollTop = msgArea.scrollHeight;
+        win.classList.remove('hidden');
+        fab.classList.add('hidden');
+        badge.classList.add('hidden');
+        const msgArea = document.getElementById('ai-chat-messages');
+        msgArea.scrollTop = msgArea.scrollHeight;
     } else {
-      win.classList.add('hidden');
-      iconChat.classList.remove('hidden');
-      iconClose.classList.add('hidden');
+        win.classList.add('hidden');
+        fab.classList.remove('hidden');
     }
-  }
+}
 
-  /** Auto-resize textarea sesuai konten */
   function autoResize(el) {
     el.style.height = 'auto';
     el.style.height = Math.min(el.scrollHeight, 80) + 'px';
   }
 
-  /** Kirim pesan saat tekan Enter (Shift+Enter = newline) */
   function handleKey(e) {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
@@ -201,24 +183,21 @@
     }
   }
 
-  /** Kirim pertanyaan cepat dari chip */
   function sendQuick(text) {
+    const chips = document.getElementById('quick-chips');
+    if (chips) chips.remove();
     document.getElementById('ai-chat-input').value = text;
     sendMessage();
   }
 
-  /** Tambahkan bubble pesan ke area chat */
   function appendBubble(text, isUser) {
     const msgArea = document.getElementById('ai-chat-messages');
 
-    // Bersihkan chip pertanyaan cepat jika sudah ada pesan
-    const chips = msgArea.querySelector('.flex.flex-wrap');
+    const chips = document.getElementById('quick-chips');
     if (chips) chips.remove();
 
     const wrapper = document.createElement('div');
-    wrapper.className = isUser
-      ? 'flex justify-end'
-      : 'flex items-end gap-2';
+    wrapper.className = isUser ? 'flex justify-end' : 'flex items-end gap-2';
 
     const now = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
 
@@ -229,6 +208,10 @@
           <p class="text-[10px] text-emerald-200 mt-1 text-right">${now}</p>
         </div>`;
     } else {
+      const formatted = escHtml(text)
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+
       wrapper.innerHTML = `
         <div class="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-emerald-100">
           <svg xmlns="http://www.w3.org/2000/svg" class="h-3 w-3 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
@@ -236,7 +219,7 @@
           </svg>
         </div>
         <div class="max-w-[85%] rounded-2xl rounded-bl-sm bg-white border border-slate-100 shadow-sm px-3.5 py-2.5">
-          <p class="text-xs text-slate-700 leading-relaxed">${text}</p>
+          <p class="text-xs text-slate-700 leading-relaxed">${formatted}</p>
           <p class="text-[10px] text-slate-400 mt-1 text-right">${now}</p>
         </div>`;
     }
@@ -245,7 +228,6 @@
     msgArea.scrollTop = msgArea.scrollHeight;
   }
 
-  /** Bubble "sedang mengetik..." */
   function appendTyping() {
     const msgArea = document.getElementById('ai-chat-messages');
     const el = document.createElement('div');
@@ -271,26 +253,36 @@
     if (el) el.remove();
   }
 
-  /** Escape HTML untuk mencegah XSS */
   function escHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
   }
 
-  /**
-   * Mengirim pesan dan memanggil Anthropic API via endpoint Django.
-   * Endpoint Django (service/views.py) yang meneruskan ke Claude API
-   * menggunakan AI_TOKEN dari settings.py.
-   * Ganti '/api/ai/chat/' dengan URL endpoint Anda yang sebenarnya.
-   */
+  function getCookie(name) {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return '';
+  }
+
   async function sendMessage() {
+    if (isWaiting) return;
+
     const inputEl = document.getElementById('ai-chat-input');
-    const text = inputEl.value.trim();
+    const sendBtn = document.getElementById('ai-send-btn');
+    const text    = inputEl.value.trim();
     if (!text) return;
+
+    isWaiting = true;
+    inputEl.disabled = true;
+    sendBtn.disabled = true;
 
     inputEl.value = '';
     inputEl.style.height = 'auto';
 
-    // Tampilkan bubble user
     appendBubble(text, true);
     appendTyping();
 
@@ -299,7 +291,6 @@
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          // Django CSRF token dari cookie
           'X-CSRFToken': getCookie('csrftoken'),
         },
         body: JSON.stringify({ message: text }),
@@ -314,16 +305,13 @@
 
     } catch (err) {
       removeTyping();
-      appendBubble('Maaf, saya sedang tidak dapat menjawab. Silakan coba beberapa saat lagi.', false);
+      appendBubble('Maaf, saya sedang tidak dapat menjawab. Silakan coba beberapa saat lagi. 🙏', false);
       console.error('AI chat error:', err);
+    } finally {
+      isWaiting = false;
+      inputEl.disabled = false;
+      sendBtn.disabled = false;
+      inputEl.focus();
     }
-  }
-
-  /** Ambil nilai cookie berdasarkan nama (untuk CSRF token Django) */
-  function getCookie(name) {
-    const value = `; ${document.cookie}`;
-    const parts = value.split(`; ${name}=`);
-    if (parts.length === 2) return parts.pop().split(';').shift();
-    return '';
   }
 </script>

@@ -1,12 +1,20 @@
 from django.shortcuts import render, get_object_or_404
 from django.db.models import Q
 from .models import StafDesa, KategoriStaf
+from news.models import Pengumuman   # ← TAMBAHKAN INI
 
 
 def home(request):
     template = 'core/index.html'
+
+    # Ambil 3 berita terbaru — yang ditandai 'penting' selalu di urutan atas
+    berita_terkini = Pengumuman.objects.all().order_by(
+        '-is_penting', '-tanggal_dibuat'
+    )[:3]
+
     context = {
-        'title': 'Website Resmi Desa Sungai Meriam'
+        'title': 'Website Resmi Desa Sungai Meriam',
+        'berita_terkini': berita_terkini,   # ← TAMBAHKAN INI
     }
     return render(request, template, context)
 
@@ -20,12 +28,6 @@ def village_profile(request):
 
 
 def membership(request):
-    """
-    Halaman direktori perangkat desa.
-    Mendukung filter kategori (via GET ?kategori=...) dan
-    pencarian (via GET ?q=...) sebagai fallback server-side
-    di samping Alpine.js client-side.
-    """
     template_name = 'core/membership.html'
 
     staffs   = StafDesa.objects.filter(aktif_tampil=True)
@@ -52,12 +54,6 @@ def membership(request):
 
 
 def detail_member(request, slug):
-    """
-    Halaman profil detail satu staf desa.
-    URL: /membership/<slug>/
-    Menggunakan prefetch_related agar query penghargaan & UMKM
-    tidak N+1 (efisien).
-    """
     template_name = 'core/detail_member.html'
 
     staff = get_object_or_404(
