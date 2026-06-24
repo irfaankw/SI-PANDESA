@@ -24,25 +24,14 @@
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.store('auth', {
-                // tab aktif: 'login' atau 'register'
-                tab: 'login',
-                // apakah modal terbuka
                 open: false,
-
                 openLogin() {
                     this.tab = 'login';
-                    this.open = true;
-                },
-                openRegister() {
-                    this.tab = 'register';
                     this.open = true;
                 },
                 close() {
                     this.open = false;
                 },
-                switchTab(tab) {
-                    this.tab = tab;
-                }
             });
         });
     </script>

@@ -257,41 +257,21 @@
                 Keluar
             </button>
         </form>
-        
         {% else %}
-
-            {# Belum login — tombol Masuk & Daftar #}
-            <div class="flex flex-col gap-2">
-                <button @click="open = false; $store.auth.openLogin()"
-                        class="flex w-full items-center justify-center gap-2 rounded-full
-                            bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800
-                            py-2.5 text-sm font-semibold text-white
-                            shadow-sm shadow-emerald-400/30 transition-all duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0">
-                        <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
-                        <polyline points="10 17 15 12 10 7"/>
-                        <line x1="15" y1="12" x2="3" y2="12"/>
-                    </svg>
-                    Masuk
-                </button>
-                <button @click="open = false; $store.auth.openRegister()"
-                        class="flex w-full items-center justify-center gap-2 rounded-full
-                            border border-emerald-200 bg-emerald-50 hover:bg-emerald-100
-                            py-2.5 text-sm font-semibold text-emerald-700
-                            transition-all duration-200">
-                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0">
-                        <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
-                        <circle cx="8.5" cy="7" r="4"/>
-                        <line x1="20" y1="8" x2="20" y2="14"/>
-                        <line x1="23" y1="11" x2="17" y2="11"/>
-                    </svg>
-                    Daftar
-                </button>
-            </div>
-
+            {# Belum login — tombol Masuk #}
+            <button @click="open = false; $store.auth.openLogin()"
+                    class="flex w-full items-center justify-center gap-2 rounded-full
+                        bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800
+                        py-2.5 text-sm font-semibold text-white
+                        shadow-sm shadow-emerald-400/30 transition-all duration-200">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="h-4 w-4 shrink-0">
+                    <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/>
+                    <polyline points="10 17 15 12 10 7"/>
+                    <line x1="15" y1="12" x2="3" y2="12"/>
+                </svg>
+                Masuk
+            </button>
         {% endif %}
-
     </div>{# /tombol masuk & daftar mobile #}
-
 </div>{# /sidebar mobile #}
 {# ─── END: NAVBAR MOBILE ─────────────────────── #}
