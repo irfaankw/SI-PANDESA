@@ -195,19 +195,24 @@
                         Riwayat Pengaduan
                     </a>
                     <!-- Tambahkan setelah menu Biodata atau sebelum Keluar -->
-                    {% if request.user.umkm %}
                     <a href="{% url 'welfare:kelola_toko' %}"
-                        class="flex items-center gap-3 px-4 py-3 rounded-xl text-slate-600
-                            hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-150">
-                        <span class="flex h-7 w-7 items-center justify-center rounded-lg bg-slate-100 text-slate-500 text-sm">🏪</span>
-                        <span class="text-sm font-medium">Kelola Toko</span>
-                        {% if request.user.umkm.status == 'pending' %}
-                        <span class="ml-auto text-xs bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
-                        Pending
+                    class="flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium transition-colors duration-150
+                            {% if active_tab == 'kelola_toko' %}bg-emerald-50 text-emerald-700{% else %}text-slate-600 hover:bg-emerald-50 hover:text-emerald-700{% endif %}">
+                        
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" 
+                            class="h-4 w-4 shrink-0 {% if active_tab == 'kelola_toko' %}text-emerald-600{% else %}text-slate-400{% endif %}">
+                            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                            <polyline points="9 22 9 12 15 12 15 22"/>
+                        </svg>
+                        
+                        Kelola Toko
+                        
+                        {% if request.user.umkm and request.user.umkm.status == 'pending' %}
+                        <span class="ml-auto text-[10px] bg-yellow-100 text-yellow-700 px-2 py-0.5 rounded-full font-medium">
+                            Pending
                         </span>
                         {% endif %}
                     </a>
-                    {% endif %}
 
                     <div class="my-1 border-t border-slate-100"></div>
                     <form method="POST" action="{% url 'account:logout' %}">

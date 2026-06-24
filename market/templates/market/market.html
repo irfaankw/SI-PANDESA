@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load utils %}
 
 {% block content %}
 <div class="min-h-screen bg-gray-50 py-8">
@@ -90,9 +91,9 @@
         </p>
         <div class="flex items-center justify-between mt-auto">
           <div>
-            <p class="font-bold text-emerald-600 text-sm">Rp {{ p.harga|floatformat:0 }}</p>
+            <p class="font-bold text-emerald-600 text-sm">{{ p.harga|rupiah }}</p>
             {% if p.harga_coret %}
-            <p class="text-slate-400 text-xs line-through">Rp {{ p.harga_coret|floatformat:0 }}</p>
+            <p class="text-slate-400 text-xs line-through">{{ p.harga_coret|rupiah }}</p>
             {% endif %}
           </div>
           <span class="flex items-center gap-1 bg-emerald-500 text-white text-xs
