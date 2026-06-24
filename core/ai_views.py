@@ -7,9 +7,9 @@ from django.views.decorators.http import require_POST
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
 
-import os 
-print(">>> GEMINI KEY:", settings.GEMINI_API_KEY) 
-print(">>> ENV KEY:", os.getenv("GEMINI_API_KEY"))
+# import os 
+# print(">>> GEMINI KEY:", settings.GEMINI_API_KEY) 
+# print(">>> ENV KEY:", os.getenv("GEMINI_API_KEY"))
 
 # ─────────────────────────────────────────────────────────────
 # System Prompt — Konteks SI-PANDESA

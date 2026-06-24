@@ -1,70 +1,13 @@
 from django import forms
 from .models import UserProfile
 
-
-# ─────────────────────────────────────────────────────────────
-#  AUTH FORMS
-# ─────────────────────────────────────────────────────────────
-
-class LoginForm(forms.Form):
-    email    = forms.EmailField(
-        widget=forms.EmailInput(attrs={'placeholder': 'email@contoh.com'})
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'placeholder': 'Masukkan password'})
-    )
-
-
-class RegisterForm(forms.Form):
-    nama_lengkap = forms.CharField(
-        max_length=100,
-        widget=forms.TextInput(attrs={'placeholder': 'Nama sesuai KTP'})
-    )
-    email = forms.EmailField(
-        widget=forms.EmailInput(attrs={'placeholder': 'email@contoh.com'})
-    )
-    no_hp = forms.CharField(
-        max_length=15,
-        widget=forms.TextInput(attrs={'placeholder': '08xxxxxxxxxx'})
-    )
-    password = forms.CharField(
-        widget=forms.PasswordInput(attrs={'placeholder': 'Min. 8 karakter'})
-    )
-
-    def clean_password(self):
-        password = self.cleaned_data.get('password', '')
-        if len(password) < 8:
-            raise forms.ValidationError('Password minimal 8 karakter.')
-        return password
-
-    def clean_no_hp(self):
-        no_hp = self.cleaned_data.get('no_hp', '')
-        if not no_hp.isdigit():
-            raise forms.ValidationError('Nomor HP hanya boleh berisi angka.')
-        return no_hp
-
-
-# ─────────────────────────────────────────────────────────────
-#  PROFILE FORM
-# ─────────────────────────────────────────────────────────────
-
 class UserProfileForm(forms.ModelForm):
-
     class Meta:
         model  = UserProfile
         fields = [
-            'avatar',
-            'nik',
-            'jenis_kelamin',
-            'tanggal_lahir',
-            'no_hp',
-            'alamat',
-            'rt',
-            'rw',
-            'dusun',
-            'pekerjaan',
-            'agama',
-            'foto_ktp',
+            'avatar', 'nik', 'jenis_kelamin', 'tanggal_lahir',
+            'no_hp', 'alamat', 'rt', 'rw', 'dusun', 'pekerjaan',
+            'agama', 'foto_ktp',
         ]
         widgets = {
             'tanggal_lahir': forms.DateInput(attrs={'type': 'date'}),
@@ -79,7 +22,6 @@ class UserProfileForm(forms.ModelForm):
         }
 
     def __init__(self, *args, **kwargs):
-        # Jika sudah verified, kunci field sensitif
         self.is_verified = kwargs.pop('is_verified', False)
         super().__init__(*args, **kwargs)
         if self.is_verified:
@@ -93,7 +35,20 @@ class UserProfileForm(forms.ModelForm):
         return nik
 
 class AvatarForm(forms.ModelForm):
-    """Form khusus untuk upload avatar saja."""
     class Meta:
         model  = UserProfile
         fields = ['avatar']
+
+class EmailOTPRequestForm(forms.Form):
+    email = forms.EmailField(
+        widget=forms.EmailInput(attrs={'placeholder': 'nama@email.com'})
+    )
+
+class EmailOTPVerifyForm(forms.Form):
+    code = forms.CharField(max_length=6, min_length=6)
+
+    def clean_code(self):
+        code = self.cleaned_data['code']
+        if not code.isdigit():
+            raise forms.ValidationError('Kode harus 6 digit angka.')
+        return code
