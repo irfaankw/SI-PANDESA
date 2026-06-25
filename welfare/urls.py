@@ -10,4 +10,6 @@ urlpatterns = [
     path('kelola-toko/tambah-produk/',  views.tambah_produk_view,  name='tambah_produk'),
     path('kelola-toko/edit/<int:produk_id>/',  views.edit_produk_view,   name='edit_produk'),
     path('kelola-toko/hapus/<int:produk_id>/', views.hapus_produk_view,  name='hapus_produk'),
+   
+    path('bansos/batalkan/<int:pk>/',          views.batalkan_bansos_view, name='batalkan_bansos'),
 ]

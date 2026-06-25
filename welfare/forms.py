@@ -1,12 +1,46 @@
 from django import forms
 from .models import UMKM, Produk
 from core.utils import parse_rupiah, format_rupiah
+from .models import UMKM, Produk, ProgramBansos, PengajuanBansos
 
 _INPUT = (
     "w-full px-4 py-3 border border-slate-200 rounded-xl "
     "focus:outline-none focus:ring-2 focus:ring-emerald-500 "
     "bg-white text-slate-800 text-sm transition-all duration-200"
 )
+
+class PengajuanBansosForm(forms.ModelForm):
+    class Meta:
+        model  = PengajuanBansos
+        fields = ['program', 'jumlah_anggota', 'alasan']
+        widgets = {
+            'program': forms.Select(attrs={
+                'class': _INPUT,
+            }),
+            'jumlah_anggota': forms.NumberInput(attrs={
+                'placeholder': 'Contoh: 4',
+                'min': 1,
+                'class': _INPUT,
+            }),
+            'alasan': forms.Textarea(attrs={
+                'placeholder': 'Jelaskan mengapa Anda layak menerima bantuan ini...',
+                'rows': 3,
+                'class': _INPUT,
+            }),
+        }
+
+    def __init__(self, *args, user=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        # Hanya tampilkan program yang aktif
+        self.fields['program'].queryset = ProgramBansos.objects.filter(aktif=True)
+        # Sembunyikan program yang sudah didaftarkan user ini
+        if user:
+            sudah_daftar = PengajuanBansos.objects.filter(
+                user=user
+            ).values_list('program_id', flat=True)
+            self.fields['program'].queryset = ProgramBansos.objects.filter(
+                aktif=True
+            ).exclude(id__in=sudah_daftar)
 
 
 class UMKMForm(forms.ModelForm):

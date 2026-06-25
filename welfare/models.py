@@ -3,6 +3,80 @@ from django.db import models
 from django.contrib.auth.models import User
 import datetime, random, string
 
+class ProgramBansos(models.Model):
+    KATEGORI_CHOICES = [
+        ('pkh',    'PKH (Program Keluarga Harapan)'),
+        ('blt',    'BLT Dana Desa'),
+        ('bpnt',   'BPNT (Sembako)'),
+        ('kip',    'KIP (Kartu Indonesia Pintar)'),
+        ('lainnya','Lainnya'),
+    ]
+
+    nama             = models.CharField(max_length=150)
+    kategori         = models.CharField(max_length=10, choices=KATEGORI_CHOICES, default='lainnya')
+    deskripsi        = models.TextField(blank=True, null=True)
+    anggaran         = models.BigIntegerField(default=0, help_text='Total anggaran dalam rupiah')
+    kuota_penerima   = models.PositiveIntegerField(default=0, help_text='Maks jumlah penerima')
+    aktif            = models.BooleanField(default=True)
+
+    created_at       = models.DateTimeField(auto_now_add=True)
+    updated_at       = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name        = 'Program Bansos'
+        verbose_name_plural = 'Program Bansos'
+        ordering            = ['-aktif', 'nama']
+
+    def __str__(self):
+        return self.nama
+
+    @property
+    def jumlah_penerima(self):
+        return self.pengajuan.filter(status='disetujui').count()
+
+    @property
+    def total_tersalur(self):
+        """Estimasi: anggaran / kuota * jumlah disetujui"""
+        if self.kuota_penerima and self.jumlah_penerima:
+            per_orang = self.anggaran // self.kuota_penerima
+            return per_orang * self.jumlah_penerima
+        return 0
+
+
+class PengajuanBansos(models.Model):
+    STATUS_CHOICES = [
+        ('pending',   'Menunggu Verifikasi'),
+        ('disetujui', 'Disetujui'),
+        ('ditolak',   'Ditolak'),
+    ]
+
+    user             = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name='pengajuan_bansos'
+    )
+    program          = models.ForeignKey(
+        ProgramBansos, on_delete=models.CASCADE, related_name='pengajuan'
+    )
+    jumlah_anggota   = models.PositiveIntegerField(default=1, help_text='Jumlah anggota keluarga')
+    alasan           = models.TextField(blank=True, null=True, help_text='Alasan pengajuan')
+    status           = models.CharField(max_length=10, choices=STATUS_CHOICES, default='pending')
+    catatan_staff    = models.TextField(blank=True, null=True)
+
+    created_at       = models.DateTimeField(auto_now_add=True)
+    updated_at       = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        verbose_name        = 'Pengajuan Bansos'
+        verbose_name_plural = 'Pengajuan Bansos'
+        ordering            = ['-created_at']
+        # Satu user tidak bisa daftar program yang sama dua kali
+        unique_together     = ('user', 'program')
+
+    def __str__(self):
+        return f"{self.user.username} — {self.program.nama}"
+
+    @property
+    def nama_pemohon(self):
+        return self.user.get_full_name() or self.user.username
 
 class UMKM(models.Model):
     STATUS_CHOICES = [

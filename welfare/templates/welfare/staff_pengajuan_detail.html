@@ -1,0 +1,228 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50">
+
+  {# ── HEADER ── #}
+  <div class="bg-white border-b border-slate-100 shadow-sm">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex items-center gap-4">
+        <a href="{% url 'welfare_staff:pengajuan_list' %}"
+           class="flex items-center justify-center h-9 w-9 rounded-xl border border-slate-200
+                  bg-white text-slate-500 hover:bg-slate-50 transition shadow-sm shrink-0">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="h-4 w-4">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </a>
+        <div>
+          <div class="flex items-center gap-2 mb-1">
+            <span class="text-xs font-semibold uppercase tracking-widest text-amber-600">Detail Pengajuan</span>
+          </div>
+          <h1 class="text-2xl font-bold text-slate-800">{{ pengajuan.nama_pemohon }}</h1>
+          <p class="text-sm text-slate-400 mt-0.5">{{ pengajuan.program.nama }} · {{ pengajuan.created_at|date:"d M Y" }}</p>
+        </div>
+        <div class="ml-auto">
+          {% if pengajuan.status == 'pending' %}
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-amber-50 border
+                       border-amber-200 px-4 py-1.5 text-sm font-semibold text-amber-700">
+            <span class="h-2 w-2 rounded-full bg-amber-400 animate-pulse"></span>Menunggu Verifikasi
+          </span>
+          {% elif pengajuan.status == 'disetujui' %}
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 border
+                       border-emerald-200 px-4 py-1.5 text-sm font-semibold text-emerald-700">
+            <span class="h-2 w-2 rounded-full bg-emerald-500"></span>Disetujui
+          </span>
+          {% else %}
+          <span class="inline-flex items-center gap-1.5 rounded-full bg-red-50 border
+                       border-red-200 px-4 py-1.5 text-sm font-semibold text-red-600">
+            <span class="h-2 w-2 rounded-full bg-red-400"></span>Ditolak
+          </span>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-8">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+      {# ── KOLOM KIRI: Info Pemohon + Pengajuan ── #}
+      <div class="lg:col-span-2 space-y-6">
+
+        {# Info Pemohon #}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 bg-slate-50 border-b border-slate-200">
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Data Pemohon</p>
+          </div>
+          <div class="p-6 grid grid-cols-2 gap-4">
+            <div>
+              <p class="text-xs text-slate-400 mb-1">Nama Lengkap</p>
+              <p class="text-sm font-semibold text-slate-800">{{ pengajuan.nama_pemohon }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400 mb-1">Username</p>
+              <p class="text-sm font-semibold text-slate-800">{{ pengajuan.user.username }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400 mb-1">Email</p>
+              <p class="text-sm font-semibold text-slate-800">{{ pengajuan.user.email }}</p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400 mb-1">No. WA</p>
+              <p class="text-sm font-semibold text-slate-800">
+                {{ pengajuan.user.profile.no_hp|default:'-' }}
+              </p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400 mb-1">NIK</p>
+              <p class="text-sm font-mono font-semibold text-slate-800">
+                {{ pengajuan.user.profile.nik|default:'-' }}
+              </p>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400 mb-1">Alamat</p>
+              <p class="text-sm font-semibold text-slate-800">
+                {{ pengajuan.user.profile.alamat|default:'-' }}
+                {% if pengajuan.user.profile.rt %}
+                RT {{ pengajuan.user.profile.rt }}/RW {{ pengajuan.user.profile.rw }}
+                {% endif %}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {# Detail Pengajuan #}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 bg-slate-50 border-b border-slate-200">
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Detail Pengajuan</p>
+          </div>
+          <div class="p-6 space-y-4">
+            <div class="grid grid-cols-2 gap-4">
+              <div>
+                <p class="text-xs text-slate-400 mb-1">Program</p>
+                <p class="text-sm font-semibold text-slate-800">{{ pengajuan.program.nama }}</p>
+              </div>
+              <div>
+                <p class="text-xs text-slate-400 mb-1">Jumlah Anggota Keluarga</p>
+                <p class="text-sm font-semibold text-slate-800">{{ pengajuan.jumlah_anggota }} orang</p>
+              </div>
+              <div>
+                <p class="text-xs text-slate-400 mb-1">Tanggal Pengajuan</p>
+                <p class="text-sm font-semibold text-slate-800">{{ pengajuan.created_at|date:"d M Y, H:i" }}</p>
+              </div>
+            </div>
+            {% if pengajuan.alasan %}
+            <div>
+              <p class="text-xs text-slate-400 mb-1">Alasan Pengajuan</p>
+              <p class="text-sm text-slate-700 bg-slate-50 rounded-xl px-4 py-3 leading-relaxed">
+                {{ pengajuan.alasan }}
+              </p>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+
+        {# Catatan Staff (jika sudah diproses) #}
+        {% if pengajuan.catatan_staff %}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 bg-slate-50 border-b border-slate-200">
+            <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Catatan Staff</p>
+          </div>
+          <div class="p-6">
+            <p class="text-sm text-slate-700 leading-relaxed">{{ pengajuan.catatan_staff }}</p>
+          </div>
+        </div>
+        {% endif %}
+
+      </div>
+
+      {# ── KOLOM KANAN: Aksi ── #}
+      <div class="space-y-4">
+
+        {% if pengajuan.status == 'pending' %}
+        {# Form Setujui #}
+        <div class="bg-white rounded-2xl border border-emerald-200 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 bg-emerald-50 border-b border-emerald-200">
+            <p class="text-xs font-bold uppercase tracking-widest text-emerald-700">Setujui Pengajuan</p>
+          </div>
+          <form method="POST" class="p-6 space-y-4">
+            {% csrf_token %}
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">
+                Catatan <span class="text-slate-400 font-normal">opsional</span>
+              </label>
+              <textarea name="catatan_staff" rows="3"
+                placeholder="Catatan untuk pemohon…"
+                class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm
+                       text-slate-700 bg-slate-50 focus:outline-none
+                       focus:ring-2 focus:ring-emerald-400 resize-none"></textarea>
+            </div>
+            <button type="submit" name="action" value="setujui"
+              class="w-full inline-flex items-center justify-center gap-2 rounded-xl
+                     bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-sm
+                     font-semibold text-white transition">
+              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="h-4 w-4">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              Setujui Pengajuan
+            </button>
+          </form>
+        </div>
+
+        {# Form Tolak #}
+        <div class="bg-white rounded-2xl border border-red-200 shadow-sm overflow-hidden">
+          <div class="px-6 py-4 bg-red-50 border-b border-red-200">
+            <p class="text-xs font-bold uppercase tracking-widest text-red-600">Tolak Pengajuan</p>
+          </div>
+          <form method="POST" class="p-6 space-y-4">
+            {% csrf_token %}
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">
+                Alasan Penolakan <span class="text-red-500">*</span>
+              </label>
+              <textarea name="catatan_staff" rows="3" required
+                placeholder="Jelaskan alasan penolakan…"
+                class="w-full px-4 py-3 border border-slate-200 rounded-xl text-sm
+                       text-slate-700 bg-slate-50 focus:outline-none
+                       focus:ring-2 focus:ring-red-300 resize-none"></textarea>
+            </div>
+            <button type="submit" name="action" value="tolak"
+              class="w-full inline-flex items-center justify-center gap-2 rounded-xl
+                     bg-red-500 hover:bg-red-600 px-4 py-2.5 text-sm
+                     font-semibold text-white transition">
+              <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="h-4 w-4">
+                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+              </svg>
+              Tolak Pengajuan
+            </button>
+          </form>
+        </div>
+
+        {% else %}
+        {# Sudah diproses #}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 text-center">
+          {% if pengajuan.status == 'disetujui' %}
+          <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="h-6 w-6 text-emerald-600">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <p class="text-sm font-semibold text-emerald-700">Pengajuan Disetujui</p>
+          {% else %}
+          <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-3">
+            <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="h-6 w-6 text-red-500">
+              <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+            </svg>
+          </div>
+          <p class="text-sm font-semibold text-red-600">Pengajuan Ditolak</p>
+          {% endif %}
+          <p class="text-xs text-slate-400 mt-1">Diproses {{ pengajuan.updated_at|date:"d M Y" }}</p>
+        </div>
+        {% endif %}
+
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
