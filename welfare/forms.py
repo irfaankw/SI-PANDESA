@@ -1,7 +1,6 @@
 from django import forms
-from .models import UMKM, Produk
-from core.utils import parse_rupiah, format_rupiah
 from .models import UMKM, Produk, ProgramBansos, PengajuanBansos
+from core.utils import parse_rupiah, format_rupiah
 
 _INPUT = (
     "w-full px-4 py-3 border border-slate-200 rounded-xl "
@@ -9,14 +8,13 @@ _INPUT = (
     "bg-white text-slate-800 text-sm transition-all duration-200"
 )
 
+
 class PengajuanBansosForm(forms.ModelForm):
     class Meta:
         model  = PengajuanBansos
         fields = ['program', 'jumlah_anggota', 'alasan']
         widgets = {
-            'program': forms.Select(attrs={
-                'class': _INPUT,
-            }),
+            'program': forms.Select(attrs={'class': _INPUT}),
             'jumlah_anggota': forms.NumberInput(attrs={
                 'placeholder': 'Contoh: 4',
                 'min': 1,
@@ -31,16 +29,36 @@ class PengajuanBansosForm(forms.ModelForm):
 
     def __init__(self, *args, user=None, **kwargs):
         super().__init__(*args, **kwargs)
-        # Hanya tampilkan program yang aktif
+        self.user = user
         self.fields['program'].queryset = ProgramBansos.objects.filter(aktif=True)
-        # Sembunyikan program yang sudah didaftarkan user ini
+
         if user:
+            # Exclude pending + disetujui — ditolak boleh daftar ulang
             sudah_daftar = PengajuanBansos.objects.filter(
-                user=user
+                user=user,
+                status__in=['pending', 'disetujui']
             ).values_list('program_id', flat=True)
             self.fields['program'].queryset = ProgramBansos.objects.filter(
                 aktif=True
             ).exclude(id__in=sudah_daftar)
+
+    def clean_program(self):
+        program = self.cleaned_data.get('program')
+        if not program:
+            return program
+
+        # Cek kuota — hitung yang sudah disetujui
+        if program.kuota_penerima > 0:
+            jumlah_disetujui = PengajuanBansos.objects.filter(
+                program=program,
+                status='disetujui'
+            ).count()
+            if jumlah_disetujui >= program.kuota_penerima:
+                raise forms.ValidationError(
+                    f'Kuota program "{program.nama}" sudah penuh '
+                    f'({jumlah_disetujui}/{program.kuota_penerima} penerima).'
+                )
+        return program
 
 
 class UMKMForm(forms.ModelForm):
@@ -86,9 +104,7 @@ class ProdukForm(forms.ModelForm):
                 'placeholder': 'Contoh: 200000 atau 200.000',
                 'class': _INPUT,
             }),
-            'kategori': forms.Select(attrs={
-                'class': _INPUT,
-            }),
+            'kategori': forms.Select(attrs={'class': _INPUT}),
             'tags': forms.TextInput(attrs={
                 'placeholder': 'Contoh: organik, segar, lokal',
                 'class': _INPUT,
@@ -99,69 +115,47 @@ class ProdukForm(forms.ModelForm):
                 'id': 'foto-input',
             }),
         }
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        
-        # Format harga saat edit (hanya saat load form, bukan saat submit)
         if self.instance.pk and not self.is_bound:
             if self.instance.harga:
                 formatted = format_rupiah(self.instance.harga)
                 self.fields['harga'].initial = formatted.replace("Rp ", "")
-            
             if self.instance.harga_coret:
                 formatted = format_rupiah(self.instance.harga_coret)
                 self.fields['harga_coret'].initial = formatted.replace("Rp ", "")
-    
+
     def clean_harga(self):
-        """Validasi dan parse harga jual"""
         harga_raw = self.data.get('harga', '').strip()
-        
         if not harga_raw:
             raise forms.ValidationError('Harga tidak boleh kosong')
-        
         harga = parse_rupiah(harga_raw)
-        
         if harga == 0:
             raise forms.ValidationError('Format harga tidak valid')
-        
         if harga < 1000:
             raise forms.ValidationError('Harga minimal Rp 1.000')
-        
         return harga
 
     def clean_harga_coret(self):
-        """Validasi dan parse harga sebelum diskon"""
         harga_coret_raw = self.data.get('harga_coret', '').strip()
-        
-        # Field opsional - boleh kosong
         if not harga_coret_raw:
             return None
-        
         harga_coret = parse_rupiah(harga_coret_raw)
-        
         if harga_coret == 0:
             raise forms.ValidationError('Format harga diskon tidak valid')
-        
         if harga_coret < 1000:
             raise forms.ValidationError('Harga diskon minimal Rp 1.000')
-        
         return harga_coret
-    
+
     def clean(self):
-        """Validasi cross-field: harga_coret harus > harga"""
         cleaned_data = super().clean()
-        
-        harga = cleaned_data.get('harga')
-        harga_coret = cleaned_data.get('harga_coret')
-        
-        # Jika ada keduanya, validasi
+        harga        = cleaned_data.get('harga')
+        harga_coret  = cleaned_data.get('harga_coret')
         if harga and harga_coret:
             if harga_coret <= harga:
-                error_msg = (
+                self.add_error('harga_coret',
                     f'Harga sebelum diskon harus lebih tinggi dari harga jual. '
                     f'Sekarang: Diskon {format_rupiah(harga_coret)} < Jual {format_rupiah(harga)}'
                 )
-                self.add_error('harga_coret', error_msg)
-        
         return cleaned_data
