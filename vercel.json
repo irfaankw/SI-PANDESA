@@ -24,6 +24,11 @@
       "dest": "config/wsgi.py"
     }
   ],
+  "functions": {
+    "config/wsgi.py": {
+      "maxDuration": 30
+    }
+  },
   "env": {
     "DJANGO_SETTINGS_MODULE": "config.settings"
   }
