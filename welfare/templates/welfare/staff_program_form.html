@@ -77,10 +77,33 @@
         <div class="grid grid-cols-2 gap-4">
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">
-              Total Anggaran (Rp)
+              Total Anggaran (Rp) <span class="text-red-500">*</span>
             </label>
-            {{ form.anggaran }}
+            
+            <select id="anggaran_select" onchange="handleAnggaranChange(this)"
+                    class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-slate-800 text-sm transition-all duration-200">
+              <option value="" disabled selected>-- Pilih Anggaran --</option>
+              <option value="500000">Rp 500.000</option>
+              <option value="1000000">Rp 1.000.000</option>
+              <option value="2500000">Rp 2.500.000</option>
+              <option value="5000000">Rp 5.000.000</option>
+              <option value="10000000">Rp 10.000.000</option>
+              <option value="lainnya">Lainnya (Isi Manual)</option>
+            </select>
+
+            <div id="manual_input_container" class="mt-2 hidden">
+              <input type="number" id="anggaran_manual" 
+                     placeholder="Masukkan nominal angka saja..."
+                     class="w-full px-4 py-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 bg-white text-slate-800 text-sm transition-all duration-200">
+            </div>
+
+            <input type="hidden" id="anggaran_real_field" name="anggaran" value="{{ form.anggaran.value|default:'' }}">
+
+            {% if form.anggaran.errors %}
+            <p class="text-red-500 text-xs mt-1">{{ form.anggaran.errors.0 }}</p>
+            {% endif %}
           </div>
+
           <div>
             <label class="block text-sm font-medium text-slate-700 mb-1">
               Kuota Penerima
@@ -109,8 +132,7 @@
                    font-semibold text-white transition shadow-sm">
             {% if program %}
             <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="h-4 w-4">
-              <path stroke-linecap="round" stroke-linejoin="round"
-                    d="M5 13l4 4L19 7"/>
+              <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
             </svg>
             Simpan Perubahan
             {% else %}
@@ -130,4 +152,59 @@
     </div>
   </div>
 </div>
+
+{# ── LOGIKA JAVASCRIPT DROPDOWN LAINNYA ── #}
+<script>
+  const selectEl = document.getElementById('anggaran_select');
+  const containerEl = document.getElementById('manual_input_container');
+  const manualInputEl = document.getElementById('anggaran_manual');
+  const realFieldEl = document.getElementById('anggaran_real_field');
+
+  function handleAnggaranChange(select) {
+    if (select.value === 'lainnya') {
+      containerEl.classList.remove('hidden');
+      manualInputEl.required = true;
+      // Sinkronkan nilai dari ketikan manual ke backend field
+      realFieldEl.value = manualInputEl.value;
+    } else {
+      containerEl.classList.add('hidden');
+      manualInputEl.required = false;
+      manualInputEl.value = '';
+      // Ambil nilai murni langsung dari dropdown pilihan
+      realFieldEl.value = select.value;
+    }
+  }
+
+  // Dengarkan setiap ketikan user di input manual
+  manualInputEl.addEventListener('input', function() {
+    if (selectEl.value === 'lainnya') {
+      realFieldEl.value = this.value;
+    }
+  });
+
+  // Penanganan Autofill Otomatis Saat Edit Data Berlangsung
+  document.addEventListener("DOMContentLoaded", function() {
+    const initialValue = realFieldEl.value;
+    
+    if (initialValue) {
+      // Cek apakah nilai awal cocok dengan salah satu opsi dropdown preset kita
+      let isMatched = false;
+      for (let i = 0; i < selectEl.options.length; i++) {
+        if (selectEl.options[i].value === initialValue) {
+          selectEl.selectedIndex = i;
+          isMatched = true;
+          break;
+        }
+      }
+      
+      // Jika nilai lama dari database tidak ada di list preset, tandanya user dulu mengisi manual
+      if (!isMatched && initialValue !== '') {
+        selectEl.value = 'lainnya';
+        containerEl.classList.remove('hidden');
+        manualInputEl.value = initialValue;
+        manualInputEl.required = true;
+      }
+    }
+  });
+</script>
 {% endblock content %}

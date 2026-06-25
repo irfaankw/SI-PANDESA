@@ -159,3 +159,15 @@ class ProdukForm(forms.ModelForm):
                     f'Sekarang: Diskon {format_rupiah(harga_coret)} < Jual {format_rupiah(harga)}'
                 )
         return cleaned_data
+
+class ProgramBansosForm(forms.ModelForm):  # Menggunakan ModelForm
+    class Meta:
+        model = ProgramBansos
+        fields = ['nama', 'kategori', 'deskripsi', 'anggaran', 'kuota_penerima', 'aktif']
+        widgets = {
+            'nama': forms.TextInput(attrs={'placeholder': 'Contoh: KIP (Kartu Indonesia Pintar)', 'class': _INPUT}),
+            'kategori': forms.Select(attrs={'class': _INPUT}),
+            'deskripsi': forms.Textarea(attrs={'placeholder': 'Deskripsi singkat program...', 'rows': 3, 'class': _INPUT}),
+            'kuota_penerima': forms.NumberInput(attrs={'placeholder': 'Contoh: 100', 'min': 1, 'class': _INPUT}),
+            'aktif': forms.CheckboxInput(attrs={'class': 'w-4 h-4 text-emerald-600 border-slate-300 rounded focus:ring-emerald-500'}),
+        }

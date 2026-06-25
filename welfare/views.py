@@ -1,6 +1,6 @@
 # welfare/views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from core.decorators import login_required_custom
+from core.decorators import verified_required
 from django.contrib import messages
 from django.urls import reverse
 from .models import UMKM, Produk, ProgramBansos, PengajuanBansos
@@ -24,7 +24,7 @@ def _get_profile(user):
         return None
 
 
-@login_required_custom
+@verified_required
 def kesejahteraan_view(request):
     profile     = _get_profile(request.user)
     is_verified = profile.is_verified if profile else False
@@ -113,7 +113,7 @@ def kesejahteraan_view(request):
     })
 
 
-@login_required_custom
+@verified_required
 def batalkan_bansos_view(request, pk):
     pengajuan = get_object_or_404(
         PengajuanBansos, pk=pk, user=request.user, status='pending'
@@ -125,7 +125,7 @@ def batalkan_bansos_view(request, pk):
     return redirect(reverse('welfare:kesejahteraan') + '?tab=bansos')
 
 
-@login_required_custom
+@verified_required
 def kelola_toko_view(request):
     try:
         umkm        = UMKM.objects.get(pemilik=request.user)
@@ -141,7 +141,7 @@ def kelola_toko_view(request):
     })
 
 
-@login_required_custom
+@verified_required
 def tambah_produk_view(request):
     umkm = get_object_or_404(UMKM, pemilik=request.user)
 
@@ -167,7 +167,7 @@ def tambah_produk_view(request):
     })
 
 
-@login_required_custom
+@verified_required
 def edit_produk_view(request, produk_id):
     umkm   = get_object_or_404(UMKM, pemilik=request.user)
     produk = get_object_or_404(Produk, id=produk_id, umkm=umkm)
@@ -189,7 +189,7 @@ def edit_produk_view(request, produk_id):
     })
 
 
-@login_required_custom
+@verified_required
 def hapus_produk_view(request, produk_id):
     umkm   = get_object_or_404(UMKM, pemilik=request.user)
     produk = get_object_or_404(Produk, id=produk_id, umkm=umkm)
