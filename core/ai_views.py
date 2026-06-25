@@ -1,15 +1,13 @@
 import json
-from google import genai
-from google.genai import types
+import urllib.request
 
 from django.http import JsonResponse
-from django.views.decorators.http import require_POST
-from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
+from django.conf import settings
 
-# import os 
-# print(">>> GEMINI KEY:", settings.GEMINI_API_KEY) 
-# print(">>> ENV KEY:", os.getenv("GEMINI_API_KEY"))
+import os
+print(">>> GROQ KEY:", settings.GROQ_API_KEY)
+print(">>> ENV KEY:", os.getenv("GROQ_API_KEY"))
 
 # ─────────────────────────────────────────────────────────────
 # System Prompt — Konteks SI-PANDESA
@@ -83,9 +81,6 @@ def ai_chat(request):
         if len(user_message) > 1000:
             return JsonResponse({'error': 'Pesan terlalu panjang.'}, status=400)
 
-        client = genai.Client(api_key=settings.GEMINI_API_KEY)
-
-        # Handle anonymous user
         if request.user.is_authenticated:
             full_name = request.user.get_full_name() or request.user.username
         else:
@@ -93,19 +88,43 @@ def ai_chat(request):
 
         contextualized_message = f"[Warga: {full_name}]\n{user_message}"
 
-        response = client.models.generate_content(
-            model='gemini-2.5-flash',
-            config=types.GenerateContentConfig(
-                system_instruction=SYSTEM_PROMPT,
-            ),
-            contents=contextualized_message,
+        payload = json.dumps({
+            "model": "llama-3.3-70b-versatile",
+            "messages": [
+                {"role": "system", "content": SYSTEM_PROMPT},
+                {"role": "user", "content": contextualized_message},
+            ],
+            "max_tokens": 500,
+            "temperature": 0.7,
+        }).encode()
+
+        req = urllib.request.Request(
+            "https://api.groq.com/openai/v1/chat/completions",
+            data=payload,
+            headers={
+                "Content-Type": "application/json",
+                "Authorization": f"Bearer {settings.GROQ_API_KEY}",
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+            }
         )
 
-        return JsonResponse({'reply': response.text})
+        try:
+            with urllib.request.urlopen(req, timeout=25) as resp:
+                result = json.loads(resp.read().decode())
+        except urllib.error.HTTPError as e:
+            print(">>> HTTP ERROR:", e.code, e.reason)
+            print(">>> BODY:", e.read().decode())
+            raise
+
+        reply = result["choices"][0]["message"]["content"]
+        return JsonResponse({'reply': reply})
 
     except json.JSONDecodeError:
         return JsonResponse({'error': 'Format request tidak valid.'}, status=400)
     except Exception as e:
         import traceback
         traceback.print_exc()
-        return JsonResponse({'error': 'Terjadi kesalahan server.', 'detail': str(e)}, status=500)
+        return JsonResponse({
+            'error': 'Terjadi kesalahan server.',
+            'detail': str(e)
+        }, status=500)
