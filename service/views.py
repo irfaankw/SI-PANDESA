@@ -1,6 +1,7 @@
 # Views untuk WARGA. Pengajuan surat digital, unduh PDF, verifikasi QR, arsip.
 
 from django.contrib.auth.decorators import login_required
+from core.decorators import verified_required
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, Http404
 
@@ -22,22 +23,19 @@ def _is_profile_complete(profile):
         return False
     return all([profile.nik, profile.alamat, profile.rt, profile.rw, profile.dusun])
 
-
 def _get_profile(user):
     try:
         return user.profile
     except Exception:
         return None
 
-
 # ─────────────────────────────────────────────────────────────
 # Index — daftar 7 layanan surat digital
 # ─────────────────────────────────────────────────────────────
 
-@login_required
+@verified_required("Layanan Surat Digital")
 def digital_mail_index(request):
     return render(request, 'service/digital_mail.html', {'active_tab': 'surat'})
-
 
 # ─────────────────────────────────────────────────────────────
 # Verifikasi QR — publik, tanpa login
@@ -71,12 +69,11 @@ def verify_letter_view(request, ref):
         'letter_type': letter_type,
     })
 
-
 # ─────────────────────────────────────────────────────────────
 # Surat Pindah
 # ─────────────────────────────────────────────────────────────
 
-@login_required
+@verified_required("Layanan Surat Digital")
 def move_letter_view(request):
     profile          = _get_profile(request.user)
     profile_complete = _is_profile_complete(profile)
@@ -124,7 +121,6 @@ def move_letter_view(request):
                   _letter_ctx(profile, profile_complete, is_pending_view,
                                is_rejected_view, is_approved_view, latest, MoveLetterForm()))
 
-
 @login_required
 def download_move_letter_pdf(request, ref):
     letter = get_object_or_404(MoveLetterRequest, reference_number=ref,
@@ -135,12 +131,11 @@ def download_move_letter_pdf(request, ref):
     response['Content-Disposition'] = f'attachment; filename="surat-pindah-{letter.reference_number}.pdf"'
     return response
 
-
 # ─────────────────────────────────────────────────────────────
 # Surat Domisili
 # ─────────────────────────────────────────────────────────────
 
-@login_required
+@verified_required("Layanan Surat Digital")
 def domicile_letter_view(request):
     profile          = _get_profile(request.user)
     profile_complete = _is_profile_complete(profile)
@@ -199,12 +194,11 @@ def download_domicile_letter_pdf(request, ref):
     response['Content-Disposition'] = f'attachment; filename="surat-domisili-{letter.reference_number}.pdf"'
     return response
 
-
 # ─────────────────────────────────────────────────────────────
 # Surat Kematian
 # ─────────────────────────────────────────────────────────────
 
-@login_required
+@verified_required("Layanan Surat Digital")
 def death_letter_view(request):
     profile          = _get_profile(request.user)
     profile_complete = _is_profile_complete(profile)
@@ -257,7 +251,6 @@ def death_letter_view(request):
                   _letter_ctx(profile, profile_complete, is_pending_view,
                                is_rejected_view, is_approved_view, latest, DeathLetterForm()))
 
-
 @login_required
 def download_death_letter_pdf(request, ref):
     letter = get_object_or_404(DeathLetterRequest, reference_number=ref,
@@ -268,12 +261,11 @@ def download_death_letter_pdf(request, ref):
     response['Content-Disposition'] = f'attachment; filename="surat-kematian-{letter.reference_number}.pdf"'
     return response
 
-
 # ─────────────────────────────────────────────────────────────
 # Surat Kelahiran
 # ─────────────────────────────────────────────────────────────
 
-@login_required
+@verified_required("Layanan Surat Digital")
 def birth_letter_view(request):
     profile          = _get_profile(request.user)
     profile_complete = _is_profile_complete(profile)
@@ -324,7 +316,6 @@ def birth_letter_view(request):
                   _letter_ctx(profile, profile_complete, is_pending_view,
                                is_rejected_view, is_approved_view, latest, BirthLetterForm()))
 
-
 @login_required
 def download_birth_letter_pdf(request, ref):
     letter = get_object_or_404(BirthLetterRequest, reference_number=ref,
@@ -335,12 +326,11 @@ def download_birth_letter_pdf(request, ref):
     response['Content-Disposition'] = f'attachment; filename="surat-kelahiran-{letter.reference_number}.pdf"'
     return response
 
-
 # ─────────────────────────────────────────────────────────────
 # Surat Tidak Mampu
 # ─────────────────────────────────────────────────────────────
 
-@login_required
+@verified_required("Layanan Surat Digital")
 def poverty_letter_view(request):
     profile          = _get_profile(request.user)
     profile_complete = _is_profile_complete(profile)
@@ -391,7 +381,6 @@ def poverty_letter_view(request):
                   _letter_ctx(profile, profile_complete, is_pending_view,
                                is_rejected_view, is_approved_view, latest, PovertyLetterForm()))
 
-
 @login_required
 def download_poverty_letter_pdf(request, ref):
     letter = get_object_or_404(PovertyLetterRequest, reference_number=ref,
@@ -402,12 +391,11 @@ def download_poverty_letter_pdf(request, ref):
     response['Content-Disposition'] = f'attachment; filename="surat-tidak-mampu-{letter.reference_number}.pdf"'
     return response
 
-
 # ─────────────────────────────────────────────────────────────
 # Surat Keterangan Usaha
 # ─────────────────────────────────────────────────────────────
 
-@login_required
+@verified_required("Layanan Surat Digital")
 def business_letter_view(request):
     profile          = _get_profile(request.user)
     profile_complete = _is_profile_complete(profile)
@@ -462,7 +450,6 @@ def business_letter_view(request):
                   _letter_ctx(profile, profile_complete, is_pending_view,
                                is_rejected_view, is_approved_view, latest, BusinessLetterForm()))
 
-
 @login_required
 def download_business_letter_pdf(request, ref):
     letter = get_object_or_404(BusinessLetterRequest, reference_number=ref,
@@ -473,12 +460,11 @@ def download_business_letter_pdf(request, ref):
     response['Content-Disposition'] = f'attachment; filename="surat-keterangan-usaha-{letter.reference_number}.pdf"'
     return response
 
-
 # ─────────────────────────────────────────────────────────────
 # Surat Pengantar
 # ─────────────────────────────────────────────────────────────
 
-@login_required
+@verified_required("Layanan Surat Digital")
 def intro_letter_view(request):
     profile          = _get_profile(request.user)
     profile_complete = _is_profile_complete(profile)
@@ -529,7 +515,6 @@ def intro_letter_view(request):
                   _letter_ctx(profile, profile_complete, is_pending_view,
                                is_rejected_view, is_approved_view, latest, IntroLetterForm()))
 
-
 @login_required
 def download_intro_letter_pdf(request, ref):
     letter = get_object_or_404(IntroLetterRequest, reference_number=ref,
@@ -539,7 +524,6 @@ def download_intro_letter_pdf(request, ref):
     response = HttpResponse(buffer, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="surat-pengantar-{letter.reference_number}.pdf"'
     return response
-
 
 # ─────────────────────────────────────────────────────────────
 # Arsip Surat Warga
@@ -582,7 +566,6 @@ def letter_archive_view(request):
         'is_verified'       : is_verified,
         'profile_incomplete': profile_incomplete,
     })
-
 
 # ─────────────────────────────────────────────────────────────
 # Helper context — satu fungsi untuk semua 7 jenis surat

@@ -1,10 +1,10 @@
-from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 
+from core.decorators import login_required_custom
 from .models import ComplaintReport
 from .forms import ComplaintForm
 
-@login_required
+@login_required_custom
 def complaint_view(request):
     # Ambil semua aduan user, urutkan terbaru
     complaints = ComplaintReport.objects.filter(user=request.user).order_by('-created_at')
@@ -38,7 +38,7 @@ def complaint_view(request):
     form = ComplaintForm()
     return render(request, 'complaint/complaint.html', _complaint_ctx(complaints, latest, is_pending_view, form))
 
-@login_required
+@login_required_custom
 def complaint_success_view(request):
     latest = ComplaintReport.objects.filter(user=request.user).order_by('-created_at').first()
     return render(request, 'complaint/complaint_success.html', {
@@ -46,7 +46,7 @@ def complaint_success_view(request):
         'latest_request': latest,
     })
 
-@login_required
+@login_required_custom  
 def complaint_history_view(request):
     complaints = ComplaintReport.objects.filter(user=request.user).order_by('-created_at')
     
