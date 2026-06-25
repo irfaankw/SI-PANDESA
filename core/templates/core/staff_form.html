@@ -1,0 +1,196 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50">
+
+  {# ── HEADER ── #}
+  <div class="bg-white border-b border-slate-100 shadow-sm">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex items-center gap-3 mb-1">
+        <a href="{% url 'core_staff:dashboard' %}"
+           class="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-400 hover:text-emerald-600 transition-colors">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" class="h-3.5 w-3.5">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+          Kelola Anggota Desa
+        </a>
+        <span class="text-slate-200">/</span>
+        <span class="text-xs font-semibold text-slate-500">{{ title }}</span>
+      </div>
+      <h1 class="text-2xl font-bold text-slate-800">{{ title }}</h1>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8 py-8">
+
+    {% if messages %}
+      {% for msg in messages %}
+      <div class="mb-5 rounded-xl border px-4 py-3 text-sm font-medium
+                  {% if msg.tags == 'success' %}bg-emerald-50 border-emerald-200 text-emerald-700
+                  {% else %}bg-red-50 border-red-200 text-red-700{% endif %}">
+        {{ msg }}
+      </div>
+      {% endfor %}
+    {% endif %}
+
+    <form method="post" enctype="multipart/form-data" class="space-y-6">
+      {% csrf_token %}
+
+      {# ── IDENTITAS ── #}
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400 pb-3 border-b border-slate-100">
+          👤 Identitas
+        </h2>
+
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Gelar Depan</label>
+            {{ form.gelar_depan }}
+            {% if form.gelar_depan.errors %}<p class="mt-1 text-xs text-red-500">{{ form.gelar_depan.errors.0 }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Nama Lengkap <span class="text-red-400">*</span></label>
+            {{ form.nama }}
+            {% if form.nama.errors %}<p class="mt-1 text-xs text-red-500">{{ form.nama.errors.0 }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Gelar Belakang</label>
+            {{ form.gelar_belakang }}
+            {% if form.gelar_belakang.errors %}<p class="mt-1 text-xs text-red-500">{{ form.gelar_belakang.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Jabatan <span class="text-red-400">*</span></label>
+            {{ form.jabatan }}
+            {% if form.jabatan.errors %}<p class="mt-1 text-xs text-red-500">{{ form.jabatan.errors.0 }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Kategori / Divisi <span class="text-red-400">*</span></label>
+            {{ form.kategori }}
+            {% if form.kategori.errors %}<p class="mt-1 text-xs text-red-500">{{ form.kategori.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1.5">Akun Pengguna (opsional)</label>
+          {{ form.user }}
+          <p class="mt-1 text-xs text-slate-400">Isi jika staf ini punya akun di sistem & memiliki UMKM terdaftar.</p>
+          {% if form.user.errors %}<p class="mt-1 text-xs text-red-500">{{ form.user.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+
+      {# ── FOTO & BIO ── #}
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400 pb-3 border-b border-slate-100">
+          📸 Foto &amp; Biografi
+        </h2>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1.5">Foto Profil</label>
+          {% if is_edit and staf.foto %}
+            <div class="mb-3 flex items-center gap-3">
+              <img src="{{ staf.foto.url }}" alt="{{ staf.nama_lengkap }}"
+                   class="h-16 w-16 rounded-xl object-cover object-top" />
+              <p class="text-xs text-slate-400">Foto saat ini. Upload baru untuk mengganti.</p>
+            </div>
+          {% endif %}
+          {{ form.foto }}
+          {% if form.foto.errors %}<p class="mt-1 text-xs text-red-500">{{ form.foto.errors.0 }}</p>{% endif %}
+        </div>
+
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1.5">Biografi</label>
+          {{ form.bio }}
+          {% if form.bio.errors %}<p class="mt-1 text-xs text-red-500">{{ form.bio.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+
+      {# ── KONTAK ── #}
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400 pb-3 border-b border-slate-100">
+          📞 Kontak
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Nomor Telepon</label>
+            {{ form.telepon }}
+            {% if form.telepon.errors %}<p class="mt-1 text-xs text-red-500">{{ form.telepon.errors.0 }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Email</label>
+            {{ form.email }}
+            {% if form.email.errors %}<p class="mt-1 text-xs text-red-500">{{ form.email.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-semibold text-slate-600 mb-1.5">Alamat / Dusun</label>
+          {{ form.alamat }}
+          {% if form.alamat.errors %}<p class="mt-1 text-xs text-red-500">{{ form.alamat.errors.0 }}</p>{% endif %}
+        </div>
+      </div>
+
+      {# ── MASA JABATAN ── #}
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-5">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400 pb-3 border-b border-slate-100">
+          📅 Masa Jabatan
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Tahun Mulai <span class="text-red-400">*</span></label>
+            {{ form.tahun_mulai }}
+            {% if form.tahun_mulai.errors %}<p class="mt-1 text-xs text-red-500">{{ form.tahun_mulai.errors.0 }}</p>{% endif %}
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Tahun Selesai</label>
+            {{ form.tahun_selesai }}
+            <p class="mt-1 text-xs text-slate-400">Kosongkan jika masih menjabat.</p>
+            {% if form.tahun_selesai.errors %}<p class="mt-1 text-xs text-red-500">{{ form.tahun_selesai.errors.0 }}</p>{% endif %}
+          </div>
+        </div>
+        <div class="flex items-center gap-3">
+          {{ form.masih_aktif }}
+          <label class="text-sm font-medium text-slate-700">Masih aktif menjabat</label>
+        </div>
+        {% if form.masih_aktif.errors %}<p class="mt-1 text-xs text-red-500">{{ form.masih_aktif.errors.0 }}</p>{% endif %}
+      </div>
+
+      {# ── PENGATURAN TAMPILAN ── #}
+      <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+        <h2 class="text-sm font-bold uppercase tracking-widest text-slate-400 pb-3 border-b border-slate-100">
+          ⚙️ Pengaturan Tampilan
+        </h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1.5">Urutan Tampil</label>
+            {{ form.urutan }}
+            <p class="mt-1 text-xs text-slate-400">Angka lebih kecil tampil lebih awal.</p>
+            {% if form.urutan.errors %}<p class="mt-1 text-xs text-red-500">{{ form.urutan.errors.0 }}</p>{% endif %}
+          </div>
+          <div class="flex items-center gap-3 pt-5">
+            {{ form.aktif_tampil }}
+            <label class="text-sm font-medium text-slate-700">Tampilkan di halaman publik</label>
+          </div>
+        </div>
+      </div>
+
+      {# ── SUBMIT ── #}
+      <div class="flex items-center justify-end gap-3">
+        <a href="{% url 'core_staff:dashboard' %}"
+           class="rounded-xl border border-slate-200 bg-white hover:bg-slate-50
+                  px-5 py-2.5 text-sm font-semibold text-slate-600 shadow-sm transition">
+          Batal
+        </a>
+        <button type="submit"
+                class="rounded-xl bg-emerald-600 hover:bg-emerald-700
+                       px-5 py-2.5 text-sm font-semibold text-white shadow-sm transition">
+          {% if is_edit %}Simpan Perubahan{% else %}Tambah Anggota{% endif %}
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
+{% endblock %}

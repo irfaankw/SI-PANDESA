@@ -296,32 +296,22 @@ function toggleChat() {
         body: JSON.stringify({ message: text }),
       });
 
-removeTyping();
+      removeTyping();
 
-    if (!res.ok) throw new Error('Server error ' + res.status);
+      if (!res.ok) throw new Error('Server error ' + res.status);
 
-    // 🟢 MULAI DARI SINI DIUBAH PAKAI KODE BARU CLAUDE
-    const data = await res.json();
-      
-    if (data.reply) {
-        appendBubble(data.reply, false);
-    } else {
-        // Tampilkan error detail untuk debugging pas development
-        const errDetail = data.detail || data.error || 'Tidak ada respon dari server.';
-        appendBubble('⚠️ ' + errDetail, false);
+      const data = await res.json();
+      appendBubble(data.reply || 'Maaf, terjadi kesalahan. Coba lagi.', false);
+
+    } catch (err) {
+      removeTyping();
+      appendBubble('Maaf, saya sedang tidak dapat menjawab. Silakan coba beberapa saat lagi. 🙏', false);
+      console.error('AI chat error:', err);
+    } finally {
+      isWaiting = false;
+      inputEl.disabled = false;
+      sendBtn.disabled = false;
+      inputEl.focus();
     }
-
-} catch (err) {
-    // 🔴 BAGIAN CATCH JUGA DIUBAH BIAR ERROR-NYA KELIHATAN
-    removeTyping();
-    appendBubble('⚠️ Koneksi gagal: ' + err.message, false);
-    console.error('AI chat error:', err);
-} finally {
-    // 🔓 SISA KODE FINALLY KAMU TETAP SAMA DAN AMAN
-    isWaiting = false;
-    inputEl.disabled = false;
-    sendBtn.disabled = false;
-    inputEl.focus();
-}
   }
 </script>

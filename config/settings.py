@@ -182,6 +182,8 @@ EMAIL_HOST_USER     = os.getenv("EMAIL_HOST_USER")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")
 DEFAULT_FROM_EMAIL  = EMAIL_HOST_USER
 
+SITE_URL = os.getenv("SITE_URL", "https://si-pandesa.vercel.app")
+
 MEDIA_URL = f"https://{AWS_S3_CUSTOM_DOMAIN}/"
 
 SOCIALACCOUNT_ADAPTER = 'account.adapters.SocialAccountAdapter'

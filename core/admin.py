@@ -1,32 +1,10 @@
 from django.contrib import admin
 from django.utils.html import format_html, mark_safe
-from .models import StafDesa, Penghargaan, UMKM, Tag, GaleriPhoto
+from .models import StafDesa, Tag, GaleriPhoto
 
 
-# ── Inline: Penghargaan ───────────────────────────────────────────────────────
-class PenghargaanInline(admin.TabularInline):
-    model       = Penghargaan
-    extra       = 1
-    fields      = ('judul', 'tahun')
-    ordering    = ('-tahun',)
-    verbose_name        = 'Penghargaan'
-    verbose_name_plural = '🏅 Pencapaian & Penghargaan'
-
-
-# ── Inline: UMKM ─────────────────────────────────────────────────────────────
-class UMKMInline(admin.StackedInline):
-    model       = UMKM
-    extra       = 0
-    fields      = ('nama_usaha', 'kategori_usaha', 'produk', 'masih_aktif')
-    verbose_name        = 'UMKM'
-    verbose_name_plural = '🏪 UMKM yang Dikelola'
-
-
-# ── StafDesa Admin ────────────────────────────────────────────────────────────
 @admin.register(StafDesa)
 class StafDesaAdmin(admin.ModelAdmin):
-
-    inlines = [PenghargaanInline, UMKMInline]
 
     list_display  = (
         'foto_thumbnail', 'nama_lengkap_display', 'jabatan',
@@ -51,6 +29,13 @@ class StafDesaAdmin(admin.ModelAdmin):
                 'slug',
             )
         }),
+        ('🔗 Akun Sistem', {
+            'fields': ('user',),
+            'description': (
+                'Opsional. Hubungkan ke akun User jika staf ini punya UMKM '
+                'terdaftar di sistem kesejahteraan.'
+            ),
+        }),
         ('📸 Foto Profil', {
             'fields': ('foto', 'foto_preview'),
         }),
@@ -68,7 +53,7 @@ class StafDesaAdmin(admin.ModelAdmin):
         }),
         ('📝 Biografi', {
             'fields': ('bio',),
-            'description': 'Tulis narasi singkat tentang staf ini. Akan tampil di halaman profil.',
+            'description': 'Tulis narasi singkat tentang staf ini.',
         }),
         ('⚙️ Pengaturan Tampilan', {
             'fields': ('aktif_tampil', 'urutan'),
@@ -113,23 +98,6 @@ class StafDesaAdmin(admin.ModelAdmin):
         return "Belum ada foto"
 
 
-# ── Register standalone ───────────────────────────────────────────────────────
-@admin.register(Penghargaan)
-class PenghargaanAdmin(admin.ModelAdmin):
-    list_display  = ('judul', 'tahun', 'staf')
-    list_filter   = ('tahun',)
-    search_fields = ('judul', 'staf__nama')
-    ordering      = ('-tahun',)
-
-
-@admin.register(UMKM)
-class UMKMAdmin(admin.ModelAdmin):
-    list_display  = ('nama_usaha', 'kategori_usaha', 'staf', 'masih_aktif')
-    list_filter   = ('kategori_usaha', 'masih_aktif')
-    search_fields = ('nama_usaha', 'staf__nama')
-
-
-# ── Tag Admin ─────────────────────────────────────────────────────────────────
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
     list_display  = ['nama', 'slug', 'warna_preview', 'warna']
@@ -154,7 +122,6 @@ class TagAdmin(admin.ModelAdmin):
         )
 
 
-# ── GaleriPhoto Admin ─────────────────────────────────────────────────────────
 @admin.register(GaleriPhoto)
 class GaleriPhotoAdmin(admin.ModelAdmin):
     list_display  = ['foto_thumbnail', 'judul', 'bulan_tahun_display', 'tag_list', 'ditampilkan', 'urutan']

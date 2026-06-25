@@ -207,6 +207,71 @@
                 </svg>
                 Verifikasi Antrean
             </a>
+        {% elif is_staff_desa %}
+            <p class="px-3 pt-2 pb-1 text-[10px] font-bold uppercase tracking-widest text-slate-400">Menu Staff</p>
+
+            <a href="{% url 'account_staff:dashboard' %}" @click="userOpen = false"
+                class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl transition-colors duration-150
+                    {% if 'account_staff' in request.resolver_match.namespace %}bg-emerald-50 text-emerald-700{% else %}text-slate-600 hover:bg-emerald-50 hover:text-emerald-700{% endif %}">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-emerald-500">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <polyline points="17 11 19 13 23 9"/>
+                </svg>
+                Verifikasi Warga
+            </a>
+
+            <a href="{% url 'core_staff:dashboard' %}"
+            class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl
+                    text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-emerald-500">
+                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+                Kelola Anggota Desa
+            </a>
+
+            <a href="{% url 'service_staff:letter_dashboard' %}"
+            class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl
+                    text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-emerald-500">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                </svg>
+                Kelola Surat Digital
+            </a>
+
+            <a href="{% url 'complaint_staff:dashboard' %}"
+            class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl
+                    text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-emerald-500">
+                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+                </svg>
+                Kelola Pengaduan
+            </a>
+
+            <a href="{% url 'welfare_staff:dashboard' %}"
+            class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl
+                    text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-emerald-500">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                </svg>
+                Kelola Kesejahteraan
+            </a>
+
+            <a href="{% url 'account_staff:dashboard' %}"
+            class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl
+                    text-slate-600 hover:bg-emerald-50 hover:text-emerald-700 transition-colors duration-150">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4 shrink-0 text-emerald-500">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                    <circle cx="9" cy="7" r="4"/>
+                    <polyline points="17 11 19 13 23 9"/>
+                </svg>
+                Verifikasi Warga
+            </a>
         {% else %}
             <a href="{% url 'account:profile' %}"
             class="flex items-center gap-2.5 px-3 py-2 text-sm font-medium rounded-xl

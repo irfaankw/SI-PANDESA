@@ -5,9 +5,9 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.conf import settings
 
-import os
-print(">>> GROQ KEY:", settings.GROQ_API_KEY)
-print(">>> ENV KEY:", os.getenv("GROQ_API_KEY"))
+# import os
+# print(">>> GROQ KEY:", settings.GROQ_API_KEY)
+# print(">>> ENV KEY:", os.getenv("GROQ_API_KEY"))
 
 # ─────────────────────────────────────────────────────────────
 # System Prompt — Konteks SI-PANDESA

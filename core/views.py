@@ -3,39 +3,34 @@ from django.db.models import Q
 from django.core.paginator import Paginator
 from .models import StafDesa, KategoriStaf, GaleriPhoto, Tag
 from news.models import Pengumuman
- 
 
 
 def home(request):
     template = 'core/index.html'
 
-    # Ambil 3 berita terbaru — yang ditandai 'penting' selalu di urutan atas
     berita_terkini = Pengumuman.objects.all().order_by(
         '-is_penting', '-tanggal_dibuat'
     )[:3]
 
-    galeri_preview = GaleriPhoto.objects.filter(ditampilkan=True).prefetch_related('tags')[:5] 
+    galeri_preview = GaleriPhoto.objects.filter(ditampilkan=True).prefetch_related('tags')[:5]
 
     context = {
         'title': 'Website Resmi Desa Sungai Meriam',
-        'berita_terkini': berita_terkini,  
-        'galeri_preview': galeri_preview, 
+        'berita_terkini': berita_terkini,
+        'galeri_preview': galeri_preview,
     }
     return render(request, template, context)
 
 
 def village_profile(request):
-    template_name = 'core/village_profile.html'
     context = {
         'title': 'Profil Desa | Website Resmi Desa Sungai Meriam',
     }
-    return render(request, template_name, context)
+    return render(request, 'core/village_profile.html', context)
 
 
 def membership(request):
-    template_name = 'core/membership.html'
-
-    staffs   = StafDesa.objects.filter(aktif_tampil=True)
+    staffs   = StafDesa.objects.filter(aktif_tampil=True).select_related('user')
     q        = request.GET.get('q', '').strip()
     kategori = request.GET.get('kategori', '')
 
@@ -46,26 +41,30 @@ def membership(request):
     if kategori and kategori in KategoriStaf.values:
         staffs = staffs.filter(kategori=kategori)
 
-    kategori_choices = KategoriStaf.choices
-
     context = {
         'title'           : 'Keanggotaan | Website Resmi Desa Sungai Meriam',
         'staffs'          : staffs,
-        'kategori_choices': kategori_choices,
+        'kategori_choices': KategoriStaf.choices,
         'active_kategori' : kategori,
         'search_query'    : q,
     }
-    return render(request, template_name, context)
+    return render(request, 'core/membership.html', context)
 
 
 def detail_member(request, slug):
-    template_name = 'core/detail_member.html'
-
     staff = get_object_or_404(
-        StafDesa.objects.prefetch_related('penghargaan_list', 'umkm_list'),
+        StafDesa.objects.select_related('user', 'user__umkm'),
         slug=slug,
         aktif_tampil=True,
     )
+
+    # welfare.UMKM milik staf ini (None kalau tidak punya akun / belum daftar UMKM)
+    umkm = staff.umkm  # property di model, sudah handle try/except
+
+    # Produk aktif dari UMKM-nya (kosong kalau umkm None atau belum aktif)
+    produk_list = []
+    if umkm and umkm.status == 'aktif':
+        produk_list = umkm.produk.filter(aktif=True).order_by('-created_at')
 
     staf_lain = StafDesa.objects.filter(
         aktif_tampil=True,
@@ -73,11 +72,14 @@ def detail_member(request, slug):
     ).exclude(pk=staff.pk)[:3]
 
     context = {
-        'title'    : f"{staff.nama_lengkap} | Website Resmi Desa Sungai Meriam",
-        'staff'    : staff,
-        'staf_lain': staf_lain,
+        'title'      : f"{staff.nama_lengkap} | Website Resmi Desa Sungai Meriam",
+        'staff'      : staff,
+        'umkm'       : umkm,
+        'produk_list': produk_list,
+        'staf_lain'  : staf_lain,
     }
-    return render(request, template_name, context)
+    return render(request, 'core/detail_member.html', context)
+
 
 def galeri_list(request):
     tag_slug = request.GET.get("tag", "")
@@ -96,9 +98,9 @@ def galeri_list(request):
     page_obj = paginator.get_page(page_number)
 
     context = {
-        "page_obj": page_obj,
-        "all_tags": all_tags,
-        "active_tag": active_tag,
+        "page_obj"    : page_obj,
+        "all_tags"    : all_tags,
+        "active_tag"  : active_tag,
         "total_photos": total_photos,
     }
     return render(request, "core/galeri.html", context)

@@ -3,8 +3,8 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
 from service import views as service_views
-from core import ai_views
-from core import lacak_views 
+from core import ai_views, lacak_views, staff_urls
+# from core import lacak_views 
 
 urlpatterns = [
     # ── Admin Django ──────────────────────────────────────────
@@ -26,6 +26,7 @@ urlpatterns = [
 
     # ── Dashboard Staff Desa ───────────────────────────────────
     path('layanan/staff/warga/',         include('account.staff_urls',   namespace='account_staff')),
+    path('layanan/staff/anggota/', include('core.staff_urls', namespace='core_staff')),
     path('layanan/staff/surat/',         include('service.staff_urls',   namespace='service_staff')),
     path('layanan/staff/pengaduan/',     include('complaint.staff_urls', namespace='complaint_staff')),
     path('layanan/staff/kesejahteraan/', include('welfare.staff_urls',   namespace='welfare_staff')),

@@ -112,8 +112,8 @@ def draw_kop_surat(p, width, height):
     y = height - 1.5 * cm
 
     logo_path = get_logo_path()
-    logo_size = 2.2 * cm
-    logo_y    = y - logo_size + 0.3 * cm
+    logo_size = 1.9 * cm
+    logo_y    = y - logo_size + 0.55 * cm
     if logo_path:
         try:
             p.drawImage(logo_path, 1.8 * cm, logo_y,

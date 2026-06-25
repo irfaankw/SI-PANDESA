@@ -23,7 +23,6 @@
     padding: 1.75rem 0 4rem;
   }
 
-  /* ── Back link ── */
   .back-link {
     display: inline-flex; align-items: center; gap: .4rem;
     font-size: .82rem; font-weight: 600; color: #6b7280;
@@ -32,7 +31,6 @@
   }
   .back-link:hover { color: var(--green-primary); }
 
-  /* ── Layout: left sidebar + right content ── */
   .profile-layout {
     display: grid;
     grid-template-columns: 260px 1fr;
@@ -51,11 +49,9 @@
     box-shadow: 0 1px 3px rgba(0,0,0,0.07), 0 8px 24px rgba(0,0,0,0.06);
     border: 1px solid rgba(0,0,0,.04);
   }
-
   .id-photo {
     width: 100%; aspect-ratio: 3/3.5;
-    object-fit: cover; object-position: top center;
-    display: block;
+    object-fit: cover; object-position: top center; display: block;
   }
   .id-photo-placeholder {
     width: 100%; aspect-ratio: 3/3.5;
@@ -63,9 +59,7 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 3.5rem; font-weight: 800; color: #065f46;
   }
-
   .id-body { padding: 1.25rem 1.2rem 1.5rem; }
-
   .id-name {
     font-size: 1.1rem; font-weight: 800; color: #111827;
     letter-spacing: -.02em; line-height: 1.3; margin-bottom: .25rem;
@@ -74,8 +68,6 @@
     font-family: 'DM Sans', sans-serif; font-size: .82rem;
     font-weight: 600; color: var(--green-primary); margin-bottom: .75rem;
   }
-
-  /* Kategori pill */
   .kategori-pill {
     display: inline-block; padding: .28rem .9rem;
     border-radius: 20px; font-size: .72rem; font-weight: 700;
@@ -88,7 +80,6 @@
   .pill-Kesejahteraan { background: #fce7f3; color: #9d174d; }
   .pill-Pendidikan    { background: #e0f2fe; color: #0369a1; }
 
-  /* Contact rows */
   .id-meta { display: flex; flex-direction: column; gap: .65rem; }
   .id-meta-item {
     display: flex; align-items: flex-start; gap: .65rem;
@@ -113,7 +104,6 @@
     border: 1px solid rgba(0,0,0,.04);
     padding: 1.5rem 1.75rem;
   }
-
   .section-heading {
     display: flex; align-items: center; gap: .55rem;
     font-size: .95rem; font-weight: 800; color: #111827;
@@ -125,89 +115,107 @@
     display: flex; align-items: center; justify-content: center;
     font-size: 1rem;
   }
-  .icon-bio   { background: #e0f2fe; }
-  .icon-award { background: #fef9c3; }
-  .icon-umkm  { background: #ede9fe; }
+  .icon-bio  { background: #e0f2fe; }
+  .icon-umkm { background: #ede9fe; }
 
-  /* Bio */
   .bio-text {
     font-family: 'DM Sans', sans-serif;
     font-size: .9rem; color: #4b5563; line-height: 1.8;
   }
 
-  /* Penghargaan list */
-  .award-list { display: flex; flex-direction: column; gap: .55rem; }
-  .award-item {
-    display: flex; align-items: center; gap: .65rem;
-    font-family: 'DM Sans', sans-serif; font-size: .88rem; color: #374151;
-  }
-  .award-dot {
-    width: 9px; height: 9px; border-radius: 50%;
-    background: #f59e0b; flex-shrink: 0;
-  }
-  .award-tahun {
-    margin-left: auto; font-size: .76rem; color: #9ca3af;
-    font-weight: 600; white-space: nowrap;
-  }
-
-  /* UMKM card */
-  .umkm-card {
-    border: 1.5px solid #f3f4f6; border-radius: 14px;
-    padding: 1rem 1.1rem; margin-bottom: .75rem;
-  }
-  .umkm-card:last-child { margin-bottom: 0; }
-
+  /* UMKM header */
   .umkm-header {
     display: flex; align-items: flex-start; justify-content: space-between;
-    margin-bottom: .35rem;
+    margin-bottom: .25rem; gap: .75rem;
   }
-  .umkm-name {
-    font-size: .95rem; font-weight: 700; color: #111827;
-  }
+  .umkm-name { font-size: 1rem; font-weight: 700; color: #111827; }
   .umkm-status {
-    font-size: .7rem; font-weight: 700; padding: .22rem .7rem;
-    border-radius: 20px; white-space: nowrap;
+    font-size: .7rem; font-weight: 700; padding: .22rem .75rem;
+    border-radius: 20px; white-space: nowrap; flex-shrink: 0;
   }
   .umkm-status.aktif    { background: #d1fae5; color: #065f46; }
+  .umkm-status.pending  { background: #fef3c7; color: #92400e; }
   .umkm-status.nonaktif { background: #f3f4f6; color: #9ca3af; }
 
-  .umkm-kategori {
+  .umkm-meta {
     font-family: 'DM Sans', sans-serif;
-    font-size: .78rem; color: var(--green-primary);
-    font-weight: 500; margin-bottom: .75rem;
+    font-size: .8rem; color: #6b7280; margin-bottom: 1rem;
+    display: flex; flex-wrap: wrap; gap: .5rem 1rem;
   }
 
-  .produk-tags { display: flex; flex-wrap: wrap; gap: .4rem; }
-  .produk-tag {
-    display: inline-block; padding: .22rem .7rem;
-    border: 1.5px solid #e5e7eb; border-radius: 8px;
+  /* Produk grid */
+  .produk-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: .75rem;
+  }
+  .produk-card {
+    border: 1.5px solid #f3f4f6; border-radius: 12px;
+    overflow: hidden; background: #fafafa;
+    transition: border-color .15s;
+  }
+  .produk-card:hover { border-color: #d1fae5; }
+  .produk-foto {
+    width: 100%; aspect-ratio: 1;
+    object-fit: cover; display: block;
+    background: #f0faf4;
+  }
+  .produk-foto-placeholder {
+    width: 100%; aspect-ratio: 1;
+    background: linear-gradient(135deg,#f0fdf4,#dcfce7);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem;
+  }
+  .produk-info { padding: .5rem .65rem .65rem; }
+  .produk-nama {
+    font-size: .78rem; font-weight: 700; color: #111827;
+    margin-bottom: .15rem; line-height: 1.3;
+  }
+  .produk-harga {
     font-family: 'DM Sans', sans-serif;
-    font-size: .76rem; color: #4b5563; background: #fafafa;
+    font-size: .75rem; color: var(--green-primary); font-weight: 600;
   }
 
-  /* Empty state */
-  .empty-state {
-    font-family: 'DM Sans', sans-serif;
-    font-size: .85rem; color: #9ca3af; text-align: center;
-    padding: 1rem 0;
+  /* Staf lain */
+  .staf-lain-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: .75rem;
   }
+  .staf-lain-card {
+    border: 1.5px solid #f3f4f6; border-radius: 14px;
+    overflow: hidden; background: #fafafa; text-decoration: none;
+    transition: border-color .15s, transform .15s;
+    display: block;
+  }
+  .staf-lain-card:hover { border-color: #a7f3d0; transform: translateY(-2px); }
+  .staf-lain-foto {
+    width: 100%; aspect-ratio: 1;
+    object-fit: cover; object-position: top center; display: block;
+  }
+  .staf-lain-placeholder {
+    width: 100%; aspect-ratio: 1;
+    background: linear-gradient(135deg,#d1fae5,#6ee7b7);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; font-weight: 800; color: #065f46;
+  }
+  .staf-lain-info { padding: .5rem .65rem .65rem; }
+  .staf-lain-nama { font-size: .78rem; font-weight: 700; color: #111827; margin-bottom: .1rem; line-height: 1.3; }
+  .staf-lain-jabatan { font-family: 'DM Sans',sans-serif; font-size: .72rem; color: var(--green-primary); }
 </style>
 
 <div class="detail-page">
   <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
 
-    <!-- Back link -->
     <a href="{% url 'core:membership' %}" class="back-link">
       <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
       Kembali ke Direktori
     </a>
 
-    <!-- Main layout -->
     <div class="profile-layout">
 
-      <!-- ── LEFT: Identity Card ───────────────────────────────────────── -->
+      <!-- ── LEFT: Identity Card ── -->
       <div class="identity-card">
-
         {% if staff.foto %}
           <img src="{{ staff.foto.url }}" alt="{{ staff.nama_lengkap }}" class="id-photo" />
         {% else %}
@@ -220,7 +228,6 @@
           <span class="kategori-pill pill-{{ staff.kategori }}">{{ staff.kategori }}</span>
 
           <div class="id-meta">
-
             {% if staff.telepon %}
             <div class="id-meta-item">
               <div class="icon-wrap">
@@ -254,15 +261,13 @@
               </div>
               <span>{{ staff.periode }}</span>
             </div>
-
-          </div><!-- /id-meta -->
-        </div><!-- /id-body -->
+          </div>
+        </div>
       </div><!-- /identity-card -->
 
-      <!-- ── RIGHT: Content sections ──────────────────────────────────── -->
+      <!-- ── RIGHT: Content sections ── -->
       <div class="content-col">
 
-        <!-- Biografi -->
         {% if staff.bio %}
         <div class="section-card">
           <div class="section-heading">
@@ -273,68 +278,83 @@
         </div>
         {% endif %}
 
-        <!-- Pencapaian & Penghargaan -->
-        <div class="section-card">
-          <div class="section-heading">
-            <div class="icon icon-award">🏅</div>
-            Pencapaian &amp; Penghargaan
-          </div>
-
-          {% with penghargaan=staff.penghargaan_list.all %}
-            {% if penghargaan %}
-            <div class="award-list">
-              {% for p in penghargaan %}
-              <div class="award-item">
-                <div class="award-dot"></div>
-                <span>{{ p.judul }}</span>
-                <span class="award-tahun">{{ p.tahun }}</span>
-              </div>
-              {% endfor %}
-            </div>
-            {% else %}
-            <p class="empty-state">Belum ada penghargaan yang ditambahkan.</p>
-            {% endif %}
-          {% endwith %}
-        </div>
-
-        <!-- UMKM yang Dikelola -->
+        {# Card UMKM — hanya tampil kalau staf punya user + UMKM terdaftar #}
+        {% if umkm %}
         <div class="section-card">
           <div class="section-heading">
             <div class="icon icon-umkm">🏪</div>
             UMKM yang Dikelola
           </div>
 
-          {% with umkm_list=staff.umkm_list.all %}
-            {% if umkm_list %}
-              {% for u in umkm_list %}
-              <div class="umkm-card">
-                <div class="umkm-header">
-                  <div class="umkm-name">{{ u.nama_usaha }}</div>
-                  {% if u.masih_aktif %}
-                    <span class="umkm-status aktif">Aktif</span>
-                  {% else %}
-                    <span class="umkm-status nonaktif">Tidak Aktif</span>
-                  {% endif %}
-                </div>
-                <div class="umkm-kategori">{{ u.kategori_usaha }}</div>
-                {% if u.produk_list %}
-                <div class="produk-tags">
-                  {% for produk in u.produk_list %}
-                  <span class="produk-tag">{{ produk }}</span>
-                  {% endfor %}
-                </div>
-                {% endif %}
-              </div>
-              {% endfor %}
+          <div class="umkm-header">
+            <div class="umkm-name">{{ umkm.nama_usaha }}</div>
+            {% if umkm.status == 'aktif' %}
+              <span class="umkm-status aktif">Aktif</span>
+            {% elif umkm.status == 'pending' %}
+              <span class="umkm-status pending">Dalam Verifikasi</span>
             {% else %}
-            <p class="empty-state">Belum ada UMKM yang ditambahkan.</p>
+              <span class="umkm-status nonaktif">Tidak Aktif</span>
             {% endif %}
-          {% endwith %}
+          </div>
+
+          <div class="umkm-meta">
+            {% if umkm.alamat_usaha %}
+              <span>📍 {{ umkm.alamat_usaha }}</span>
+            {% endif %}
+            {% if umkm.deskripsi %}
+              <span>{{ umkm.deskripsi }}</span>
+            {% endif %}
+          </div>
+
+          {% if produk_list %}
+          <div class="produk-grid">
+            {% for produk in produk_list %}
+            <div class="produk-card">
+              {% if produk.foto %}
+                <img src="{{ produk.foto.url }}" alt="{{ produk.nama }}" class="produk-foto" />
+              {% else %}
+                <div class="produk-foto-placeholder">🛒</div>
+              {% endif %}
+              <div class="produk-info">
+                <div class="produk-nama">{{ produk.nama }}</div>
+                <div class="produk-harga">Rp {{ produk.harga|floatformat:0 }}</div>
+              </div>
+            </div>
+            {% endfor %}
+          </div>
+          {% endif %}
+
         </div>
+        {% endif %}
+        {# /UMKM card #}
+
+        {% if staf_lain %}
+        <div class="section-card">
+          <div class="section-heading">
+            <div class="icon" style="background:#f0fdf4;">👥</div>
+            Perangkat Desa Lainnya
+          </div>
+          <div class="staf-lain-grid">
+            {% for s in staf_lain %}
+            <a href="{% url 'core:detail_member' s.slug %}" class="staf-lain-card">
+              {% if s.foto %}
+                <img src="{{ s.foto.url }}" alt="{{ s.nama_lengkap }}" class="staf-lain-foto" />
+              {% else %}
+                <div class="staf-lain-placeholder">{{ s.inisial }}</div>
+              {% endif %}
+              <div class="staf-lain-info">
+                <div class="staf-lain-nama">{{ s.nama_lengkap }}</div>
+                <div class="staf-lain-jabatan">{{ s.jabatan }}</div>
+              </div>
+            </a>
+            {% endfor %}
+          </div>
+        </div>
+        {% endif %}
 
       </div><!-- /content-col -->
     </div><!-- /profile-layout -->
-  </div><!-- /container -->
-</div><!-- /detail-page -->
+  </div>
+</div>
 
 {% endblock %}

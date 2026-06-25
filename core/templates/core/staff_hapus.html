@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50 flex items-center justify-center px-4 py-16">
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm w-full max-w-md p-8 text-center">
+
+    <span class="inline-flex h-14 w-14 items-center justify-center rounded-2xl bg-red-50 text-red-400 mb-5">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-7 w-7">
+        <polyline points="3 6 5 6 21 6"/>
+        <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+        <path d="M10 11v6M14 11v6"/>
+        <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+      </svg>
+    </span>
+
+    <h1 class="text-xl font-bold text-slate-800 mb-2">Hapus Anggota?</h1>
+    <p class="text-sm text-slate-500 mb-1">Kamu akan menghapus data:</p>
+    <p class="text-base font-semibold text-slate-800 mb-1">{{ staf.nama_lengkap }}</p>
+    <p class="text-sm text-slate-400 mb-6">{{ staf.jabatan }} · {{ staf.kategori }}</p>
+
+    <p class="text-xs text-red-500 bg-red-50 rounded-xl px-4 py-2.5 mb-6">
+      Tindakan ini tidak dapat dibatalkan.
+    </p>
+
+    <div class="flex gap-3 justify-center">
+      <a href="{% url 'core_staff:dashboard' %}"
+         class="flex-1 rounded-xl border border-slate-200 bg-white hover:bg-slate-50
+                px-4 py-2.5 text-sm font-semibold text-slate-600 transition text-center">
+        Batal
+      </a>
+      <form method="post" class="flex-1">
+        {% csrf_token %}
+        <button type="submit"
+                class="w-full rounded-xl bg-red-500 hover:bg-red-600
+                       px-4 py-2.5 text-sm font-semibold text-white transition">
+          Ya, Hapus
+        </button>
+      </form>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 from django.utils.text import slugify
 
 
@@ -24,6 +25,17 @@ class StafDesa(models.Model):
         verbose_name='Kategori / Divisi'
     )
     slug           = models.SlugField(max_length=160, unique=True, blank=True)
+
+    # ── Akun (opsional) ────────────────────────────────────────────────────
+    # Diisi kalau staf ini punya akun User di sistem (untuk link ke welfare.UMKM).
+    # Kosongkan untuk staff lapangan/non-IT yang tidak punya akun.
+    user           = models.OneToOneField(
+        User,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        related_name='staf_desa',
+        verbose_name='Akun Pengguna (opsional)'
+    )
 
     # ── Kontak ─────────────────────────────────────────────────────────────
     telepon        = models.CharField(max_length=20, blank=True, verbose_name='Nomor Telepon')
@@ -95,80 +107,14 @@ class StafDesa(models.Model):
         return ''.join(w[0].upper() for w in words[:2])
 
     @property
-    def jumlah_penghargaan(self):
-        return self.penghargaan_list.count()
-
-
-# ── Model Penghargaan (relasi 1 staf → banyak penghargaan) ────────────────────
-class Penghargaan(models.Model):
-    staf  = models.ForeignKey(
-        StafDesa,
-        on_delete=models.CASCADE,
-        related_name='penghargaan_list',
-        verbose_name='Staf'
-    )
-    judul = models.CharField(max_length=200, verbose_name='Judul Penghargaan')
-    tahun = models.PositiveSmallIntegerField(verbose_name='Tahun')
-
-    class Meta:
-        verbose_name        = 'Penghargaan'
-        verbose_name_plural = 'Penghargaan'
-        ordering            = ['-tahun']
-
-    def __str__(self):
-        return f"{self.judul} ({self.tahun})"
-
-
-# ── Model UMKM (relasi 1 staf → banyak UMKM) ─────────────────────────────────
-class UMKM(models.Model):
-    KATEGORI_USAHA = [
-        ('Pertanian Organik', 'Pertanian Organik'),
-        ('Perdagangan',       'Perdagangan'),
-        ('Kerajinan',         'Kerajinan'),
-        ('Kuliner',           'Kuliner'),
-        ('Jasa',              'Jasa'),
-        ('Peternakan',        'Peternakan'),
-        ('Perikanan',         'Perikanan'),
-        ('Teknologi',         'Teknologi'),
-        ('Lainnya',           'Lainnya'),
-    ]
-
-    staf           = models.ForeignKey(
-        StafDesa,
-        on_delete=models.CASCADE,
-        related_name='umkm_list',
-        verbose_name='Staf'
-    )
-    nama_usaha     = models.CharField(max_length=150, verbose_name='Nama Usaha')
-    kategori_usaha = models.CharField(
-        max_length=50,
-        choices=KATEGORI_USAHA,
-        default='Lainnya',
-        verbose_name='Kategori Usaha'
-    )
-    # Tag produk disimpan sebagai teks dipisah koma
-    # Contoh: "Beras organik, Sayuran segar, Pupuk kompos"
-    produk         = models.CharField(
-        max_length=300,
-        blank=True,
-        verbose_name='Produk / Layanan',
-        help_text='Pisahkan dengan koma. Contoh: Beras organik, Sayuran segar, Pupuk kompos'
-    )
-    masih_aktif    = models.BooleanField(default=True, verbose_name='Masih Aktif?')
-
-    class Meta:
-        verbose_name        = 'UMKM'
-        verbose_name_plural = 'UMKM'
-
-    def __str__(self):
-        return f"{self.nama_usaha} ({self.staf.nama})"
-
-    @property
-    def produk_list(self):
-        """Kembalikan list produk dari string yang dipisah koma."""
-        if not self.produk:
-            return []
-        return [p.strip() for p in self.produk.split(',') if p.strip()]
+    def umkm(self):
+        """Kembalikan welfare.UMKM milik staf ini, atau None."""
+        if self.user:
+            try:
+                return self.user.umkm
+            except Exception:
+                return None
+        return None
 
 
 class Tag(models.Model):
@@ -188,7 +134,6 @@ class Tag(models.Model):
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            from django.utils.text import slugify
             self.slug = slugify(self.nama)
         super().save(*args, **kwargs)
 
