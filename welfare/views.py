@@ -1,9 +1,11 @@
+# welfare/views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from core.decorators import verified_required
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.urls import reverse
 from .models import UMKM, Produk, ProgramBansos, PengajuanBansos
 from .forms import UMKMForm, ProdukForm, PengajuanBansosForm
+
 
 def _get_profil_data(user):
     nama = user.get_full_name() or user.username
@@ -165,7 +167,7 @@ def tambah_produk_view(request):
     })
 
 
-@verified_required("Layanan Kesejahteraan")
+@login_required
 def edit_produk_view(request, produk_id):
     umkm   = get_object_or_404(UMKM, pemilik=request.user)
     produk = get_object_or_404(Produk, id=produk_id, umkm=umkm)
@@ -187,7 +189,7 @@ def edit_produk_view(request, produk_id):
     })
 
 
-@verified_required("Layanan Kesejahteraan")
+@login_required
 def hapus_produk_view(request, produk_id):
     umkm   = get_object_or_404(UMKM, pemilik=request.user)
     produk = get_object_or_404(Produk, id=produk_id, umkm=umkm)
