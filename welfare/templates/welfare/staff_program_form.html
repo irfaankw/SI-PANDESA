@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="min-h-screen bg-slate-50">
+
+  {# ── HEADER ── #}
+  <div class="bg-white border-b border-slate-100 shadow-sm">
+    <div class="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-10">
+      <div class="flex items-center gap-4">
+        <a href="{% url 'welfare_staff:bansos_dashboard' %}"
+           class="flex items-center justify-center h-9 w-9 rounded-xl border border-slate-200
+                  bg-white text-slate-500 hover:bg-slate-50 transition shadow-sm shrink-0">
+          <svg fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" class="h-4 w-4">
+            <polyline points="15 18 9 12 15 6"/>
+          </svg>
+        </a>
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-widest text-amber-600">
+            Dashboard Bansos
+          </span>
+          <h1 class="text-2xl font-bold text-slate-800">{{ title }}</h1>
+          <p class="text-sm text-slate-400 mt-0.5">Desa Sungai Meriam</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 py-8">
+    <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+
+      <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center gap-3">
+        <div class="w-9 h-9 bg-amber-100 rounded-xl flex items-center justify-center shrink-0">
+          <svg fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" class="h-5 w-5 text-amber-600">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 8v13m0-13H8.5a2.5 2.5 0 010-5C10 3 12 5 12 8z
+                     M12 8h3.5a2.5 2.5 0 000-5C14 3 12 5 12 8z
+                     M3 8h18v3a1 1 0 01-1 1H4a1 1 0 01-1-1V8z
+                     M4 12h16v9H4z"/>
+          </svg>
+        </div>
+        <div>
+          <p class="text-sm font-semibold text-slate-800">{{ title }}</p>
+          <p class="text-xs text-slate-400">Isi semua data dengan benar</p>
+        </div>
+      </div>
+
+      <form method="POST" class="p-6 space-y-5">
+        {% csrf_token %}
+
+        {# Nama #}
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">
+            Nama Program <span class="text-red-500">*</span>
+          </label>
+          {{ form.nama }}
+          {% if form.nama.errors %}
+          <p class="text-red-500 text-xs mt-1">{{ form.nama.errors.0 }}</p>
+          {% endif %}
+        </div>
+
+        {# Kategori #}
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">
+            Kategori <span class="text-red-500">*</span>
+          </label>
+          {{ form.kategori }}
+        </div>
+
+        {# Deskripsi #}
+        <div>
+          <label class="block text-sm font-medium text-slate-700 mb-1">Deskripsi</label>
+          {{ form.deskripsi }}
+        </div>
+
+        {# Anggaran & Kuota #}
+        <div class="grid grid-cols-2 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">
+              Total Anggaran (Rp)
+            </label>
+            {{ form.anggaran }}
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-slate-700 mb-1">
+              Kuota Penerima
+            </label>
+            {{ form.kuota_penerima }}
+          </div>
+        </div>
+
+        {# Status Aktif #}
+        <div class="flex items-center gap-3 p-4 bg-slate-50 rounded-xl border border-slate-200">
+          {{ form.aktif }}
+          <div>
+            <label for="{{ form.aktif.id_for_label }}"
+                   class="text-sm font-medium text-slate-700 cursor-pointer">
+              Program Aktif
+            </label>
+            <p class="text-xs text-slate-400">Program aktif akan tampil di halaman warga</p>
+          </div>
+        </div>
+
+        {# Tombol #}
+        <div class="flex gap-3 pt-2">
+          <button type="submit"
+            class="flex-1 inline-flex items-center justify-center gap-2 rounded-xl
+                   bg-amber-500 hover:bg-amber-600 px-4 py-3 text-sm
+                   font-semibold text-white transition shadow-sm">
+            {% if program %}
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="h-4 w-4">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M5 13l4 4L19 7"/>
+            </svg>
+            Simpan Perubahan
+            {% else %}
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="h-4 w-4">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+            </svg>
+            Tambah Program
+            {% endif %}
+          </button>
+          <a href="{% url 'welfare_staff:bansos_dashboard' %}"
+             class="px-6 py-3 border border-slate-200 text-slate-600 rounded-xl text-sm
+                    font-semibold hover:bg-slate-50 transition">
+            Batal
+          </a>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock content %}

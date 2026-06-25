@@ -1,8 +1,11 @@
+# welfare/views.py
 from django.shortcuts import render, redirect, get_object_or_404
-from core.decorators import verified_required
+from django.contrib.auth.decorators import login_required
 from django.contrib import messages
-from .models import UMKM, Produk
-from .forms import UMKMForm, ProdukForm
+from django.urls import reverse
+from .models import UMKM, Produk, ProgramBansos, PengajuanBansos
+from .forms import UMKMForm, ProdukForm, PengajuanBansosForm
+
 
 def _get_profil_data(user):
     nama = user.get_full_name() or user.username
@@ -13,22 +16,73 @@ def _get_profil_data(user):
         pass
     return nama, no_hp
 
-@verified_required("Layanan Kesejahteraan")
+
+def _get_profile(user):
+    try:
+        return user.profile
+    except Exception:
+        return None
+
+
+@login_required
 def kesejahteraan_view(request):
+    profile     = _get_profile(request.user)
+    is_verified = profile.is_verified if profile else False
+
+    # ── Data UMKM ──
     umkm_existing = None
     if hasattr(request.user, 'umkm'):
         umkm_existing = request.user.umkm
 
     nama_pemilik, no_hp = _get_profil_data(request.user)
 
-    if request.method == 'POST':
+    # ── Data Bansos ──
+    program_list     = ProgramBansos.objects.filter(aktif=True)
+    pengajuan_user   = PengajuanBansos.objects.filter(
+        user=request.user
+    ).select_related('program')
+    sudah_daftar_ids = set(pengajuan_user.values_list('program_id', flat=True))
+    bansos_form      = PengajuanBansosForm(user=request.user)
+    umkm_form        = UMKMForm()
+
+    _url_bansos = reverse('welfare:kesejahteraan') + '?tab=bansos'
+    _url_umkm   = reverse('welfare:kesejahteraan') + '?tab=umkm'
+
+    # ── Handle POST Bansos ──
+    if request.method == 'POST' and request.POST.get('form_type') == 'bansos':
+        if not is_verified:
+            messages.error(request, 'Akun Anda belum diverifikasi.')
+            return redirect(_url_bansos)
+
+        bansos_form = PengajuanBansosForm(request.POST, user=request.user)
+        if bansos_form.is_valid():
+            pengajuan      = bansos_form.save(commit=False)
+            pengajuan.user = request.user
+            pengajuan.save()
+            messages.success(
+                request,
+                f'Pengajuan "{pengajuan.program.nama}" berhasil dikirim!'
+            )
+            return redirect(_url_bansos)
+        else:
+            for field, errors in bansos_form.errors.items():
+                for error in errors:
+                    messages.error(request, error)
+            return redirect(_url_bansos)
+
+    # ── Handle POST UMKM ──
+    if request.method == 'POST' and request.POST.get('form_type') == 'umkm':
+        if not is_verified:
+            messages.error(request, 'Akun Anda belum diverifikasi.')
+            return redirect(_url_umkm)
+
         if umkm_existing:
             messages.error(request, 'Anda sudah memiliki UMKM terdaftar.')
-            return redirect('welfare:kesejahteraan')
+            return redirect(_url_umkm)
 
-        form = UMKMForm(request.POST)
-        if form.is_valid():
-            umkm         = form.save(commit=False)
+        umkm_form = UMKMForm(request.POST)
+        if umkm_form.is_valid():
+            umkm         = umkm_form.save(commit=False)
             umkm.pemilik = request.user
             umkm.save()
             messages.success(
@@ -36,47 +90,61 @@ def kesejahteraan_view(request):
                 f'UMKM "{umkm.nama_usaha}" berhasil didaftarkan! '
                 f'No. Pengajuan: {umkm.nomor_pengajuan}.'
             )
-            return redirect('welfare:kesejahteraan')
+            return redirect(_url_umkm)
         else:
-            for field, errors in form.errors.items():
+            for field, errors in umkm_form.errors.items():
                 for error in errors:
                     messages.error(request, error)
-    else:
-        form = UMKMForm()
 
     return render(request, 'welfare/kesejahteraan.html', {
-        'title':         'Kesejahteraan Warga',
-        'active_tab':    'kesejahteraan',
-        'form':          form,
-        'nama_pemilik':  nama_pemilik,
-        'no_hp':         no_hp,
-        'umkm_existing': umkm_existing,
-        'tab':           request.GET.get('tab', 'umkm'),
+        'title':            'Kesejahteraan Warga',
+        'active_tab':       'kesejahteraan',
+        'form':             umkm_form,
+        'nama_pemilik':     nama_pemilik,
+        'no_hp':            no_hp,
+        'umkm_existing':    umkm_existing,
+        'tab':              request.GET.get('tab', 'umkm'),
+        'is_verified':      is_verified,
+        'profile':          profile,
+        'program_list':     program_list,
+        'pengajuan_user':   pengajuan_user,
+        'sudah_daftar_ids': sudah_daftar_ids,
+        'bansos_form':      bansos_form,
     })
 
-@verified_required("Layanan Kesejahteraan")
+
+@login_required
+def batalkan_bansos_view(request, pk):
+    pengajuan = get_object_or_404(
+        PengajuanBansos, pk=pk, user=request.user, status='pending'
+    )
+    if request.method == 'POST':
+        nama = pengajuan.program.nama
+        pengajuan.delete()
+        messages.success(request, f'Pengajuan "{nama}" berhasil dibatalkan.')
+    return redirect(reverse('welfare:kesejahteraan') + '?tab=bansos')
+
+
+@login_required
 def kelola_toko_view(request):
-    # Menggunakan try-except blocks standar Django agar aman jika objek tidak ditemukan
     try:
-        # Menggunakan .objects.get() dengan benar melewati ORM Django
-        umkm = UMKM.objects.get(pemilik=request.user)
+        umkm        = UMKM.objects.get(pemilik=request.user)
         produk_list = umkm.produk.all()
     except UMKM.DoesNotExist:
-        # Jika user belum mendaftar UMKM, set nilainya ke None agar dibaca kondisi {% if not umkm %} di template
-        umkm = None
+        umkm        = None
         produk_list = []
 
     return render(request, 'welfare/kelola_toko.html', {
-        'title': f'Kelola Toko — {umkm.nama_usaha}' if umkm else 'Kelola Toko',
-        'umkm': umkm,
+        'title'      : f'Kelola Toko — {umkm.nama_usaha}' if umkm else 'Kelola Toko',
+        'umkm'       : umkm,
         'produk_list': produk_list,
     })
 
-@verified_required("Layanan Kesejahteraan")
+
+@login_required
 def tambah_produk_view(request):
     umkm = get_object_or_404(UMKM, pemilik=request.user)
 
-    # Hanya UMKM aktif yang bisa tambah produk
     if umkm.status != 'aktif':
         messages.error(request, 'UMKM Anda belum aktif. Tunggu verifikasi admin.')
         return redirect('welfare:kelola_toko')
@@ -94,12 +162,12 @@ def tambah_produk_view(request):
 
     return render(request, 'welfare/tambah_produk.html', {
         'title': 'Tambah Produk',
-        'umkm':  umkm,
-        'form':  form,
+        'umkm' : umkm,
+        'form' : form,
     })
 
 
-@verified_required("Layanan Kesejahteraan")
+@login_required
 def edit_produk_view(request, produk_id):
     umkm   = get_object_or_404(UMKM, pemilik=request.user)
     produk = get_object_or_404(Produk, id=produk_id, umkm=umkm)
@@ -114,14 +182,14 @@ def edit_produk_view(request, produk_id):
         form = ProdukForm(instance=produk)
 
     return render(request, 'welfare/tambah_produk.html', {
-        'title':  'Edit Produk',
-        'umkm':   umkm,
-        'form':   form,
-        'produk': produk,   # kalau ada berarti mode edit
+        'title' : 'Edit Produk',
+        'umkm'  : umkm,
+        'form'  : form,
+        'produk': produk,
     })
 
 
-@verified_required("Layanan Kesejahteraan")
+@login_required
 def hapus_produk_view(request, produk_id):
     umkm   = get_object_or_404(UMKM, pemilik=request.user)
     produk = get_object_or_404(Produk, id=produk_id, umkm=umkm)

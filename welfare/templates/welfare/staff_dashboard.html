@@ -22,9 +22,23 @@
           <p class="text-sm text-slate-400 mt-0.5">Desa Sungai Meriam · Kelola UMKM dan kesejahteraan warga</p>
         </div>
         <div class="flex items-center gap-3">
+          <a href="{% url 'welfare_staff:bansos_dashboard' %}"
+            class="inline-flex items-center gap-2 rounded-xl border border-slate-200 bg-white
+                    hover:bg-slate-50 px-4 py-2.5 text-sm font-semibold text-slate-600
+                    shadow-sm transition">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="h-4 w-4">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M12 8v13m0-13H8.5a2.5 2.5 0 010-5C10 3 12 5 12 8z
+                      M12 8h3.5a2.5 2.5 0 000-5C14 3 12 5 12 8z
+                      M3 8h18v3a1 1 0 01-1 1H4a1 1 0 01-1-1V8z
+                      M4 12h16v9H4z"/>
+            </svg>
+            Kelola Bansos
+          </a>
           <a href="{% url 'welfare_staff:umkm_list' %}"
-             class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="h-4 w-4">
+            class="inline-flex items-center gap-2 rounded-xl bg-emerald-600 hover:bg-emerald-700
+                    px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition">
+            <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" class="h-4 w-4">
               <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
               <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
             </svg>
