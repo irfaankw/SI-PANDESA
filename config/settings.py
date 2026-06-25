@@ -54,7 +54,7 @@ INSTALLED_APPS = [
     "health.apps.HealthConfig",
     "complaint.apps.ComplaintConfig",
     "welfare.apps.WelfareConfig",
-    "storages",
+    "storages",   
 ]
 
 MIDDLEWARE = [

@@ -71,7 +71,7 @@
 </head>
 <body class="bg-white font-sans text-gray-900 antialiased">
 
-  <!-- ============================================================
+ <!-- ============================================================
        HERO CAROUSEL
   ============================================================ -->
   <section class="relative w-full hero-height overflow-hidden" id="hero">
@@ -95,7 +95,7 @@
           <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">DESA SUNGAI<br/>MERIAM</h1>
           <h2 class="text-2xl md:text-3xl font-bold text-primary-light mb-4 leading-snug">Tatakelola Pemerintahan yang<br/>Transparan &amp; Akuntabel</h2>
           <p class="text-white/80 text-base md:text-lg mb-8 max-w-lg leading-relaxed">Mewujudkan keterbukaan informasi publik bagi seluruh masyarakat.</p>
-          <a href="#" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl text-sm w-fit transition-colors shadow-lg">
+          <a href="{% url 'news:news_list' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl text-sm w-fit transition-colors shadow-lg">
             Lihat Pengumuman
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
           </a>
@@ -104,49 +104,45 @@
 
       <!-- SLIDE 2 -->
       <div class="carousel-slide relative w-full h-full bg-gray-800 overflow-hidden">
-        <img src="{% static 'assets/global/Farmer.jpg' %}" alt="Petani" class="hero-media object-center">
+        <img src="{% static 'assets/global/Pertanian.jpg' %}" alt="Petani" class="hero-media object-center">
         <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/35 to-black/10"></div>
         <div class="absolute top-[11%] left-8 md:left-16 lg:left-24 z-20">
           <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium rounded-full border border-gray-200 shadow-sm">
             <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
             </svg>
-            Transparansi Publik
+            Potensi Pertanian
           </span>
         </div>
         <div class="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-3xl">
           <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">POTENSI<br/>PERTANIAN</h1>
           <h2 class="text-2xl md:text-3xl font-bold text-primary-light mb-4 leading-snug">Pertanian Lokal<br/>Bertumbuh Bersama</h2>
           <p class="text-white/80 text-base md:text-lg mb-8 max-w-lg leading-relaxed">Menguatkan potensi warga melalui layanan desa yang mudah, cepat, dan terbuka.</p>
-          <a href="#" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl text-sm w-fit transition-colors shadow-lg">
-            Lihat Potensi Desa
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          <a href="{% url 'service:mail_index' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl text-sm w-fit transition-colors shadow-lg">
+          Lihat Layanan
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
           </a>
         </div>
       </div>
 
       <!-- SLIDE 3 -->
       <div class="carousel-slide relative w-full h-full bg-gray-800 overflow-hidden">
-<<<<<<< HEAD
-        <img src="{% static 'assets/global/AlamAsri.jpg' %}" alt="Jalan desa yang teduh dengan rumpun bambu" class="hero-media object-center">
-=======
-        <img src="{% static 'assets/global/Bamboo.jpg' %}" alt="Bambu" class="hero-media object-center">
->>>>>>> 9cbacaf66dc3bf19fbba2e463076cf437e706dd5
+        <img src="{% static 'assets/global/Alamm.jpg' %}" alt="Jalan desa yang teduh dengan rumpun bambu" class="hero-media object-center">
         <div class="absolute inset-0 bg-gradient-to-r from-black/75 via-black/40 to-black/10"></div>
         <div class="absolute top-[11%] left-8 md:left-16 lg:left-24 z-20">
           <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium rounded-full border border-gray-200 shadow-sm">
             <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
             </svg>
-            Transparansi Publik
+            Lingkungan Asri
           </span>
         </div>
         <div class="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-3xl">
           <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">RUANG DESA<br/>YANG ASRI</h1>
           <h2 class="text-2xl md:text-3xl font-bold text-primary-light mb-4 leading-snug">Lingkungan Asri<br/>Pelayanan Terarah</h2>
           <p class="text-white/80 text-base md:text-lg mb-8 max-w-lg leading-relaxed">Menjaga suasana desa yang nyaman sambil menghadirkan informasi publik yang tertata.</p>
-          <a href="#" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl text-sm w-fit transition-colors shadow-lg">
-            Lihat Layanan
+          <a href="{% url 'news:news_list' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl text-sm w-fit transition-colors shadow-lg">
+            Lihat Pengumuman
             <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
           </a>
         </div>
@@ -154,31 +150,29 @@
 
       <!-- SLIDE 4 -->
       <div class="carousel-slide relative w-full h-full bg-gray-800 overflow-hidden">
-<<<<<<< HEAD
-        <img src="{% static 'assets/global/DesaMaju.jpg' %}" alt="Pemandangan sore dengan langit jingga dan pantulan air" class="hero-media object-center">
-=======
-        <img src="{% static 'assets/global/LateAfternoon.jpg' %}" alt="Sore hari" class="hero-media object-center">
->>>>>>> 9cbacaf66dc3bf19fbba2e463076cf437e706dd5
+        <img src="{% static 'assets/global/Pedesaaan.jpg' %}" alt="Pemandangan sore dengan langit jingga dan pantulan air" class="hero-media object-center">
         <div class="absolute inset-0 bg-gradient-to-r from-black/70 via-black/30 to-black/10"></div>
         <div class="absolute top-[11%] left-8 md:left-16 lg:left-24 z-20">
           <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium rounded-full border border-gray-200 shadow-sm">
             <svg class="w-3.5 h-3.5 text-primary" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
             </svg>
-            Transparansi Publik
+            Partisipasi Warga
           </span>
         </div>
         <div class="relative z-10 h-full flex flex-col justify-center px-8 md:px-16 lg:px-24 max-w-3xl">
           <h1 class="text-5xl md:text-7xl font-black text-white leading-tight mb-3">SUNGAI MERIAM<br/>MAJU</h1>
           <h2 class="text-2xl md:text-3xl font-bold text-primary-light mb-4 leading-snug">Bersama Membangun<br/>Desa yang Maju</h2>
           <p class="text-white/80 text-base md:text-lg mb-8 max-w-lg leading-relaxed">Partisipasi aktif warga dalam setiap program pembangunan desa.</p>
-          <a href="#" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl text-sm w-fit transition-colors shadow-lg">
-            Ikut Berpartisipasi
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
-          </a>
+          <a href="{% url 'service:mail_index' %}" class="inline-flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary-dark text-white font-semibold rounded-xl text-sm w-fit transition-colors shadow-lg">
+          Lihat Layanan
+         <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+        </a>
         </div>
       </div>
 
+    </div><!-- /carouselWrapper -->
+    ...
     </div><!-- /carouselWrapper -->
 
     <!-- Prev -->
@@ -202,7 +196,7 @@
   <!-- ============================================================
        SECTION: AKSES CEPAT LAYANAN DESA
   ============================================================ -->
-  <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white">
+  <section class="py-16 px-4 sm:px-6 lg:px-8 bg-white" id="layanan">
     <div class="max-w-7xl mx-auto">
       <div class="text-center mb-10">
         <span class="inline-flex items-center gap-2 px-4 py-1.5 bg-green-50 text-primary text-xs font-semibold rounded-full border border-green-200 mb-4">
